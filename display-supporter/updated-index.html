@@ -1,0 +1,353 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Thank You</title>
+  <!-- Font Awesome for icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" 
+        crossorigin="anonymous" referrerpolicy="no-referrer" />
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      padding: 20px;
+      background-color: #f4f4f9;
+    }
+    h1 {
+      color: #2c3e50;
+      text-align: center;
+    }
+
+    /* Search Box */
+    .search-container {
+      text-align: center;
+      margin: 30px 0;
+    }
+
+    #searchInput {
+      padding: 10px;
+      font-size: 16px;
+      width: 300px;
+      max-width: 90%;
+      border-radius: 8px;
+      border: 1px solid #ccc;
+    }
+
+    .container {
+      display: flex;
+      gap: 20px;
+      justify-content: space-between;
+      flex-wrap: wrap;
+    }
+
+    .column {
+      flex: 1;
+      min-width: 300px;
+    }
+
+    .profile-card {
+      background-color: white;
+      border-radius: 10px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+      overflow: hidden;
+      margin-bottom: 20px;
+      max-width: 100%;
+      transition: transform 0.2s ease;
+      position: relative;
+      border: 2px solid transparent;
+    }
+
+    .profile-card:hover {
+      transform: scale(1.02);
+    }
+
+    /* Top 3 Place Styles */
+    .first-place {
+      border: 4px solid gold;
+      box-shadow: 0 0 15px gold;
+    }
+
+    .second-place {
+      border: 4px solid silver;
+      box-shadow: 0 0 10px silver;
+    }
+
+    .third-place {
+      border: 4px solid #cd7f32;
+      box-shadow: 0 0 10px #cd7f32;
+    }
+
+    .place-number {
+      position: absolute;
+      top: 10px;
+      left: 10px;
+      background-color: rgba(255, 255, 255, 0.9);
+      padding: 5px 10px;
+      border-radius: 5px;
+      font-weight: bold;
+      font-size: 16px;
+      z-index: 2;
+    }
+
+    .crown {
+      color: gold;
+      margin-right: 5px;
+    }
+
+    .card-header {
+      position: relative;
+      height: 70px;
+      background-image: url('https://via.placeholder.com/500x150'); 
+      background-size: cover;
+      background-position: center;
+    }
+
+    .card-body {
+      padding: 5px;
+      text-align: center;
+    }
+
+    .card-profile-pic {
+      width: 250px;
+      height: 250px;
+      object-fit: cover;
+      border-radius: 50%;
+      border: 4px solid #fff;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+      margin-top: -60px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .card-username {
+      font-size: 30px;
+      font-weight: bold;
+      margin: 10px 0 5px;
+    }
+
+    .stats {
+      display: flex;
+      justify-content: center;
+      gap: 50px;
+      margin-bottom: 15px;
+    }
+
+    .stat-box {
+      text-align: center;
+    }
+
+    .stat-value {
+      font-size: 18px;
+      font-weight: bold;
+    }
+
+    .stat-label {
+      font-size: 12px;
+      color: #888;
+    }
+
+    .profile-link {
+      display: inline-block;
+      margin-top: 10px;
+      color: #3498db;
+      text-decoration: none;
+      font-weight: bold;
+    }
+
+    .profile-link:hover {
+      text-decoration: underline;
+    }
+
+    h2 {
+      color: #333;
+      margin-top: 40px;
+      text-align: center;
+    }
+
+    /* Highlight matched search term */
+    .highlight {
+      background-color: yellow;
+      font-weight: bold;
+    }
+  </style>
+</head>
+<body>
+
+<h1>I’m truly blessed to have you in my corner</h1>
+
+<!-- Search Box -->
+<div class="search-container">
+  <input type="text" id="searchInput" placeholder="Search by username..." />
+</div>
+
+<!-- Multiple Ad Banners -->
+<div style="text-align: center; margin: 20px 0;">
+  <a href="https://example.com/1"  target="_blank">
+    <img src="https://via.placeholder.com/300x100?text=Ad+1" alt="Ad 1" style="margin: 5px; max-width: 100%; height: auto; display: none;">
+  </a>
+  <a href="https://example.com/2" target="_blank">
+    <img src="https://via.placeholder.com/300x100?text=Ad+2" alt="Ad 2" style="margin: 5px; max-width: 100%; height: auto; display: none;">
+  </a>
+  <a href="https://example.com/3" target="_blank">
+    <img src="https://via.placeholder.com/300x100?text=Ad+3" alt="Ad 3" style="margin: 5px; max-width: 100%; height: auto; display: none;">
+  </a>
+</div>
+
+<div class="container">
+  <!-- Left Column: Sorted by Total Coins -->
+  <div class="column">
+    <h2>Gift Champions 💎</h2>
+    <div id="profiles-by-coins"></div>
+  </div>
+
+  <!-- Right Column: Sorted by Total Likes -->
+  <div class="column">
+    <h2>Like Legends ❤️</h2>
+    <div id="profiles-by-likes"></div>
+  </div>
+</div>
+
+<script>
+  // 🌍 Global variables
+  let sheetData = [];
+  let sortedByCoins = [];
+  let sortedByLikes = [];
+  const BATCH_SIZE = 6;
+  let coinIndex = 0;
+  let likeIndex = 0;
+
+  // Fetch data from your Google Apps Script Web App
+  fetch("https://script.google.com/macros/s/AKfycbzoN1pku4vRujwZ95y_V4M_oUrTZ6CycIrSbUV8JaJ8MLqnT-qQGW5D3PGcTnkivac/exec") // ← Replace this with your actual Web App URL
+    .then(response => response.json())
+    .then(data => {
+      sheetData = data;
+
+      // Filter out invalid or incomplete entries
+      const validData = sheetData.filter(item =>
+        item && typeof item.totalLikes === 'number' && typeof item.totalCoinsOrGifts === 'number'
+      );
+
+      // Sort data
+      sortedByCoins = [...validData].sort((a, b) => b.totalCoinsOrGifts - a.totalCoinsOrGifts);
+      sortedByLikes = [...validData].sort((a, b) => b.totalLikes - a.totalLikes);
+
+      // Load initial batch
+      loadNextBatch('coins');
+      loadNextBatch('likes');
+
+      // Setup search functionality
+      setupSearch();
+      
+      // Attach scroll listener
+      window.addEventListener('scroll', handleScroll);
+    })
+    .catch(error => {
+      console.error("Error fetching sheet data:", error);
+      document.getElementById('profiles-by-coins').innerHTML = "<p>Error loading data.</p>";
+      document.getElementById('profiles-by-likes').innerHTML = "<p>Error loading data.</p>";
+    });
+
+  function getPlaceClass(index) {
+    if (index === 0) return "first-place";
+    if (index === 1) return "second-place";
+    if (index === 2) return "third-place";
+    return "";
+  }
+
+  function getPlaceLabel(index) {
+    if (index === 0) return `<span class="place-number"><i class="fas fa-crown crown"></i>1st</span>`;
+    if (index === 1) return `<span class="place-number">2nd</span>`;
+    if (index === 2) return `<span class="place-number">3rd</span>`;
+    return `<span class="place-number">${index + 1}th</span>`;
+  }
+
+  function renderProfiles(data, containerId, globalIndex) {
+    let html = '';
+    data.forEach((item, index) => {
+      const position = globalIndex + index;
+      const placeClass = getPlaceClass(position);
+      const placeLabel = getPlaceLabel(position);
+
+      html += `
+        <div class="profile-card ${placeClass}">
+          ${placeLabel}
+          <div class="card-header"></div>
+          <div class="card-body">
+            <img src="${item.profilePictureUrl}" alt="Profile Picture" class="card-profile-pic">
+            <div class="card-username">${item.username}</div>
+            <div class="stats">
+              <div class="stat-box">
+                <div class="stat-value"><i class="fas fa-heart"></i> ${item.totalLikes || 0}</div>
+                <div class="stat-label">Likes</div>
+              </div>
+              <div class="stat-box">
+                <div class="stat-value"><i class="fas fa-gem"></i> ${item.totalCoinsOrGifts || 0}</div>
+                <div class="stat-label">Gems</div>
+              </div>
+            </div>
+            <a href="${item.profileLink}" target="_blank" class="profile-link">View Profile</a>
+          </div>
+        </div>
+      `;
+    });
+
+    document.getElementById(containerId).innerHTML += html;
+  }
+
+  function loadNextBatch(type) {
+    const containerId = type === 'coins' ? 'profiles-by-coins' : 'profiles-by-likes';
+    const sortedData = type === 'coins' ? sortedByCoins : sortedByLikes;
+    const currentIndex = type === 'coins' ? coinIndex : likeIndex;
+
+    const nextBatch = sortedData.slice(currentIndex, currentIndex + BATCH_SIZE);
+    if (nextBatch.length === 0) return;
+
+    renderProfiles(nextBatch, containerId, currentIndex);
+
+    // Update index
+    if (type === 'coins') {
+      coinIndex += BATCH_SIZE;
+    } else {
+      likeIndex += BATCH_SIZE;
+    }
+  }
+
+  function handleScroll() {
+    // Check if we're near bottom of page
+    if (window.innerHeight + window.scrollY >= document.body.offsetHeight - 100) {
+      loadNextBatch('coins');
+      loadNextBatch('likes');
+    }
+  }
+
+  // 🔍 Search/Filter Functionality
+  function setupSearch() {
+    const searchInput = document.getElementById('searchInput');
+    const allProfiles = [...document.querySelectorAll('.profile-card')];
+
+    searchInput.addEventListener('input', function () {
+      const searchTerm = this.value.toLowerCase();
+
+      allProfiles.forEach(profile => {
+        const username = profile.querySelector('.card-username').textContent.toLowerCase();
+        const parentContainer = profile.closest('.column');
+
+        if (username.includes(searchTerm)) {
+          profile.style.display = '';
+          highlightText(profile, username, searchTerm);
+        } else {
+          profile.style.display = 'none';
+        }
+      });
+    });
+  }
+
+  // 🎨 Highlight matched text
+  function highlightText(container, fullText, searchTerm) {
+    const regex = new RegExp(`(${searchTerm})`, 'gi');
+    const html = fullText.replace(regex, '<span class="highlight">$1</span>');
+    container.querySelector('.card-username').innerHTML = html;
+  }
+</script>
+
+</body>
+</html>
