@@ -1,0 +1,294 @@
+
+/* css for sections or home page*/
+body {
+  margin: 0px;
+  font-family: Arial, sans-serif;
+  background-image: url('https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/logos_and_backgound/frontpage.png');
+  background-size: cover;      
+  background-position: center;
+  background-repeat: no-repeat; 
+  background-attachment: fixed;
+}
+.header {
+  display: flex;
+  justify-content: space-around;
+  background-color: #0e4875f3;
+  padding-bottom: 10px;
+  padding-top: 10px;
+}
+.logo {
+  height: 150px;
+  border-radius: 50%;
+}
+
+.n_and_y {
+  display: flex;
+  flex-direction: column;
+  text-align: center;
+  justify-content: center;
+}
+.schoolname {
+  font-size: 40px;
+  font-weight: bolder  ;
+  margin-bottom: none;
+  padding-bottom: 0%;
+}
+.schoolhigh {
+  font-size: 30px;
+  font-weight: bolder  ;
+  margin-bottom: none;
+  padding-bottom: 0%;
+}
+.schoolyear {
+  font-size: 20px;
+  font-weight: bold  ;
+  font-style: italic;
+  margin-top: none;
+}
+
+.main_button {
+  display: flex;
+  height: 50px;
+  
+}
+
+.strand,
+.award,
+.adviser,
+.memories {
+  font-size: 20px;
+  font-style: italic;
+  font-weight: bold;
+  cursor: pointer;
+  border: none;
+  width: 33.33%;
+  background-color: #98f5f3de;
+  border-style: solid;
+}
+
+.strand {
+  background-color: #d9e0e6d2;
+}
+
+
+ .display {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-around;
+  width: 100%;
+  
+  
+ }
+
+ .about_yearbook {
+  text-align: center;
+  font-size: 30px;
+  font-weight: 700;
+  width: 80%;
+  background-color: aliceblue;
+  box-shadow: 0px 15px 30px rgba(0, 0, 0, 0.671);
+  margin-top: 20px;
+  margin-bottom: 30px;
+  border-radius: 10px;
+  padding: 20px;
+  text-shadow: 5px 5px 8px #466983;
+  
+ }
+
+ .strand_button {
+  display: flex;
+  width: 90%;
+  justify-content: center;
+  flex-wrap: wrap;
+ }
+
+ .abm,
+ .humss,
+ .stem,
+ .cookery,
+ .css {
+  display: flex;
+  align-items: center;
+  background-color: rgba(244, 248, 252, 0.76);
+  width: 40%;
+  margin-left: 25px;
+  margin-right: 25px;
+  margin-bottom: 50px;
+  box-shadow: 0px 15px 30px rgba(0, 0, 0, 0.671);
+  border-radius: 20px;
+  justify-content: space-around;
+  text-align: center;
+  cursor: pointer;
+  height: 220px;
+ }
+
+ .strand_name {
+  width: 50%;
+  font-size: 20px;
+ }
+
+ .strand_logo {
+  height: 100%;
+  width: 50%;
+  border-radius: 20px;
+ }
+
+ .section_name {
+  font-size: 25px;
+  font-weight: bold;
+ }
+
+/*------------------------responsive style------------------------*/
+    
+/*------------------------responsive style max width 324------------------------*/
+    
+@media (max-width: 324px) {
+  body {
+    width: 100%;
+  }
+  .header {
+    padding-bottom: 3px;
+    padding-top: 3px;
+  }
+  .logo {
+  height: 50px;
+  border-radius: 50%;
+  }
+  .schoolname {
+    font-size: 12px;
+  }
+  .schoolhigh {
+    font-size: 10px;
+  }
+  .schoolyear {
+    font-size: 8px;
+  }
+  .main_button {
+    height: 20px; 
+  }
+  .strand,
+  .award,
+  .adviser,
+  .memories {
+    font-size: 12px;
+    border: 1px;
+    border-style: solid;
+  }
+  .about_yearbook {
+    font-size: 8px;
+    font-weight: 700;
+    width: 80%;
+    margin-top: 15px;
+    margin-bottom: 20px;
+    padding: 5px;
+    text-shadow: 2px 2px 4px #466983;
+  }
+  .abm,
+  .humss,
+  .stem,
+  .cookery,
+  .css {
+   
+    width: 100%;
+    margin-left: 15px;
+    margin-right: 15px;
+    margin-bottom: 20px;
+    border-radius: 20px;
+    justify-content: space-around;
+    text-align: center;
+    cursor: pointer;
+    height: 80px;
+  }
+  .strand_name {
+    width: 50%;
+    font-size: 9px;
+    
+  
+   }
+  
+   .strand_logo {
+    height: 100%;
+    width: 50%;
+    border-radius: 20px;
+   }
+   .section_name {
+    font-size: 10px;
+   }
+
+}
+
+  /*------------------------responsive style max width 445------------------------*/
+
+@media (min-width: 325px) and (max-width: 445px) {
+  .header {
+    padding-bottom: 5px;
+    padding-top: 5px;
+  }
+  .logo {
+  height: 60px;
+  border-radius: 50%;
+  }
+  .schoolname {
+    font-size: 15px;
+  }
+  .schoolhigh {
+    font-size: 13px;
+  }
+  .schoolyear {
+    font-size: 11px;
+  }
+  .main_button {
+    height: 25px; 
+  }
+  .strand,
+  .award,
+  .adviser,
+  .memories {
+    font-size: 12px;
+    border: 1px;
+    border-style: solid;
+  }
+  .about_yearbook {
+    font-size: 10px;
+    font-weight: 700;
+    width: 80%;
+    margin-top: 15px;
+    margin-bottom: 20px;
+    padding: 5px;
+    text-shadow: 2px 2px 4px #466983;
+  }
+  .abm,
+  .humss,
+  .stem,
+  .cookery,
+  .css {
+   
+    width: 100%;
+    margin-left: 15px;
+    margin-right: 15px;
+    margin-bottom: 20px;
+    border-radius: 20px;
+    justify-content: space-around;
+    text-align: center;
+    cursor: pointer;
+    height: 80px;
+  }
+  .strand_name {
+    width: 50%;
+    font-size: 10px;
+    
+  
+   }
+  
+   .strand_logo {
+    height: 100%;
+    width: 50%;
+    border-radius: 20px;
+   }
+   .section_name {
+    font-size: 12px;
+   }
+
+}

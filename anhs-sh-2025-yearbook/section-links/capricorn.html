@@ -1,0 +1,446 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>capricorn</title>
+  <style>
+
+    body {
+      margin: 0px;
+      font-family: Arial, sans-serif;
+      background-image: url('https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/logos_and_backgound/frontpage.png');
+      background-size: cover;      
+      background-position: center;
+      background-repeat: no-repeat; 
+      background-attachment: fixed;
+    }
+    .header {
+      display: flex;
+      justify-content: space-around;
+      background-color: #0e4875f3;
+      padding-bottom: 10px;
+      padding-top: 10px;
+    }
+    .logo {
+      height: 150px;
+      border-radius: 50%;
+    }
+
+    .n_and_y {
+      display: flex;
+      flex-direction: column;
+      text-align: center;
+      justify-content: center;
+    }
+    .schoolname {
+      font-size: 40px;
+      font-weight: bolder  ;
+      margin-bottom: none;
+      padding-bottom: 0%;
+    }
+    .schoolhigh {
+      font-size: 30px;
+      font-weight: bolder  ;
+      margin-bottom: none;
+      padding-bottom: 0%;
+    }
+    .schoolyear {
+      font-size: 20px;
+      font-weight: bold  ;
+      font-style: italic;
+      margin-top: none;
+    }
+
+    .main_button {
+      display: flex;
+      height: 50px;
+      
+    }
+
+    .strand,
+    .award,
+    .adviser,
+    .memories {
+      font-size: 20px;
+      font-style: italic;
+      font-weight: bold;
+      cursor: pointer;
+      border: none;
+      width: 33.33%;
+      background-color: #98f5f3de;
+      border-style: solid;
+    }
+
+    .display {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .strand_name {
+      font-size: 40px;
+      font-weight: bold;
+      font-style: italic;
+      margin-top: 20px;
+      margin-bottom: 20px;
+      background-color: rgba(240, 248, 255, 0.425);
+      padding: 5px;
+      box-shadow: 0px 15px 30px rgb(22, 22, 22);
+      text-align: center;
+      border-radius: 10px;
+      
+    }
+    .abm_students {
+      display: flex;
+      width: 100%;
+      justify-content: space-around;
+      flex-wrap: wrap;
+    }
+
+    .student_div {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 5px;
+      padding-bottom: 0px;
+      margin: 10px;
+      border-radius: 5px;
+      background-color: rgba(204, 220, 236, 0.774);
+      box-shadow: 0px 15px 30px rgba(0, 0, 0, 0.671);
+    }
+    .student_image {
+      height: 250px;
+      padding: 2px;
+      cursor: pointer;
+
+    }
+    .student_name {
+      font-size: 12px;
+    }
+    .share_button {
+      font-size: 25px;
+      font-style: italic;
+      font-weight: bold;
+      cursor: pointer;
+      border: none;
+      width: 200px;
+      background-color: #98f5f3de;
+      border-style: solid;
+    }
+
+    /*--------------for modal purpose only--------------*/
+
+    /* Thumbnail styling */
+    .thumbnail {
+      width: 200px;
+      cursor: pointer;
+      transition: transform 0.3s ease-in-out;
+    }
+
+    .thumbnail:hover {
+      transform: scale(1.05);
+    }
+
+    /* Modal Background (Ensure it's hidden by default) */
+    .modal {
+      display: none;  /* FIX: Hide modal initially */
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.7);
+      backdrop-filter: blur(10px);
+      align-items: center;
+      justify-content: center;
+    }
+
+    /* Expanded Image */
+    .expanded-img {
+      max-width: 80%;
+      max-height: 80%;
+      border-radius: 10px;
+      box-shadow: 0px 0px 15px rgba(255, 255, 255, 0.5);
+    }
+
+    /* Close Button */
+    .close {
+      position: absolute;
+      top: 20px;
+      right: 40px;
+      font-size: 40px;
+      color: white;
+      cursor: pointer;
+    }
+
+    /*------------------------responsive style max width 324------------------------*/
+    
+    @media (max-width: 324px) {
+      body {
+        width: 100%;
+      }
+      .header {
+        padding-bottom: 3px;
+        padding-top: 3px;
+      }
+      .logo {
+      height: 50px;
+      border-radius: 50%;
+      }
+      .schoolname {
+        font-size: 12px;
+      }
+      .schoolhigh {
+        font-size: 10px;
+      }
+      .schoolyear {
+        font-size: 8px;
+      }
+      .main_button {
+        height: 20px; 
+      }
+      .strand,
+      .award,
+      .adviser,
+      .memories {
+        font-size: 12px;
+        border: 1px;
+        border-style: solid;
+      }
+      .strand_name {
+        font-size: 10px;
+        margin-top: 8px;
+        padding: 2px;
+      }
+      .student_div {
+        padding: 4px;
+        padding-bottom: 0px;
+        margin: 5px;
+        margin-bottom: 8px;
+        border-radius: 2px;
+      }
+      .student_image {
+        height: 120px;
+        cursor: pointer;
+
+      }
+      .student_name {
+        font-size: 8px;
+      }
+      .share_button {
+        font-size: 11px;
+        width: 60px;
+        border: 1px;
+        border-style: solid;
+      }
+    }
+
+  /*------------------------responsive style max width 445------------------------*/
+
+    @media (min-width: 325px) and (max-width: 445px) {
+      .header {
+        padding-bottom: 5px;
+        padding-top: 5px;
+      }
+      .logo {
+      height: 60px;
+      border-radius: 50%;
+      }
+      .schoolname {
+        font-size: 15px;
+      }
+      .schoolhigh {
+        font-size: 13px;
+      }
+      .schoolyear {
+        font-size: 11px;
+      }
+      .main_button {
+        height: 25px; 
+      }
+      .strand,
+      .award,
+      .adviser,
+      .memories {
+        font-size: 12px;
+        border: 1px;
+        border-style: solid;
+      }
+      .strand_name {
+        font-size: 13px;
+        margin-top: 10px;
+        padding: 3px;
+        
+      }
+      .student_div {
+        padding: 1px;
+        padding-bottom: 0px;
+        margin: 5px;
+        margin-bottom: 11px;
+        border-radius: 3px;
+      }
+      .student_image {
+        height: 140px;
+        cursor: pointer;
+
+      }
+      .student_name {
+        font-size: 7px;
+      }
+      .share_button {
+        font-size: 15px;
+        width: 70px;
+        border: 1px;
+        border-style: solid;
+      }
+      
+    }
+
+
+  </style>
+</head>
+<body>
+  <div class="header">
+    <img class="logo" src="https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/logos_and_backgound/deped-logo.png" alt="">
+    <div class="n_and_y">
+      <div class="schoolname">Abuyog National High School</div>
+      <div class="schoolhigh">Senior High</div>
+      <div class="schoolyear">2024-2025</div>
+    </div>
+    <img class="logo" src="https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/logos_and_backgound/anhs-logo.png" alt="">
+  </div>
+
+  <div class="main_button">
+    <button class="strand" onclick="window.location.href='sections.html';">Sections</button>
+    <button class="award" onclick="window.location.href='award.html';">Awards</button>
+    <button class="adviser" onclick="window.location.href='advisers.html'">Advisers</button>
+  </div>
+
+  <div class="display">
+    <div class="strand_name">
+      CAPRICORN
+    </div>
+    <div class="abm_students"></div>
+    <button onclick="sharePage()" class="share_button">Share</button>
+  </div>
+
+   <!---------------for modal purpose only-------------->
+   <div id="imageModal" class="modal">
+    <span class="close" onclick="closeImage()">&times;</span>
+    <img id="expandedImg" class="expanded-img">
+  </div>
+
+</body>
+
+<script>
+
+const section1 = [
+  { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/capricorn/Aaron_P._Atienza.webp", name: "Aaron P. Atienza" },
+  { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/capricorn/Allison_Fate_P._Dalugdugan.webp", name: "Allison Fate P. Dalugdugan" },
+  { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/capricorn/Althea_Genesis_S._Tarinque.webp", name: "Althea Genesis S. Tarinque" },
+  { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/capricorn/Angelene_B._Risos.webp", name: "Angelene B. Risos" },
+  { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/capricorn/Anghelo_L._Olita.webp", name: "Anghelo L. Olita" },
+  { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/capricorn/April_Jean_E._Delgado.webp", name: "April Jean E. Delgado" },
+  { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/capricorn/Crystal_S._Madrona.webp", name: "Crystal S. Madrona" },
+  { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/capricorn/Cyrine_A._Tejero.webp", name: "Cyrine A. Tejero" },
+  { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/capricorn/Darwin_S._Castro.webp", name: "Darwin S. Castro" },
+  { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/capricorn/Daryl_S._Alas.webp", name: "Daryl S. Alas" },
+  { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/capricorn/Donald_C._Larioque.webp", name: "Donald C. Larioque" },
+  { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/capricorn/Edcin_E._Alcoser.webp", name: "Edcin E. Alcoser" },
+  { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/capricorn/Edwin_N._Elmido.webp", name: "Edwin N. Elmido" },
+  { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/capricorn/Ivan_D._Benusa.webp", name: "Ivan D. Benusa" },
+  { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/capricorn/Jamilla_Nicole_R._Cabrera_.webp", name: "Jamilla Nicole R. Cabrera " },
+  { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/capricorn/Janelle_R._Rivera.webp", name: "Janelle R. Rivera" },
+  { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/capricorn/Jenny_M._Quano.webp", name: "Jenny M. Quano" },
+  { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/capricorn/Jenybe_E._Bug-atan.webp", name: "Jenybe E. Bug-atan" },
+  { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/capricorn/Jerome_M._Bracero.webp", name: "Jerome M. Bracero" },
+  { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/capricorn/Jessil_E._Canuday.webp", name: "Jessil E. Canuday" },
+  { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/capricorn/Jhun_Rennan_D._De_Paz.webp", name: "Jhun Rennan D. De Paz" },
+  { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/capricorn/Junny_Boy_L._Cabintoy.webp", name: "Junny Boy L. Cabintoy" },
+  { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/capricorn/Kelvin_Jay_R._Pernites.webp", name: "Kelvin Jay R. Pernites" },
+  { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/capricorn/M-Jay_J._Mediona.webp", name: "M-Jay J. Mediona" },
+  { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/capricorn/Ma._Cherry_C._Perez.webp", name: "Ma. Cherry C. Perez" },
+  { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/capricorn/Malou_U._Olazo.webp", name: "Malou U. Olazo" },
+  { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/capricorn/Marian_Nicol_P._Lomonsod.webp", name: "Marian Nicol P. Lomonsod" },
+  { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/capricorn/Mark_Gary_M._Mistula.webp", name: "Mark Gary M. Mistula" },
+  { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/capricorn/Mark_L._Fuentes.webp", name: "Mark L. Fuentes" },
+  { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/capricorn/Nenien_Joy_A._Cagna-an.webp", name: "Nenien Joy A. Cagna-an" },
+  { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/capricorn/Nicole_B._Balano.webp", name: "Nicole B. Balano" },
+  { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/capricorn/Paul_R._Beyong.webp", name: "Paul R. Beyong" },
+  { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/capricorn/Rannie_M._Alvero.webp", name: "Rannie M. Alvero" },
+  { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/capricorn/Rexander_B._Espina.webp", name: "Rexander B. Espina" },
+  { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/capricorn/Rico_Jay_F._Porazo.webp", name: "Rico Jay F. Porazo" },
+  { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/capricorn/Rochell_C._Ritaga.webp", name: "Rochell C. Ritaga" },
+  { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/capricorn/Ronel_S._Ampong.webp", name: "Ronel S. Ampong" },
+  { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/capricorn/Ronie_E._Turado.webp", name: "Ronie E. Turado" },
+  { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/capricorn/Rouna_Joy_M._Golo.webp", name: "Rouna Joy M. Golo" },
+  { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/capricorn/Ruffa_mae_L._Aluyog.webp", name: "Ruffa mae L. Aluyog" },
+  { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/capricorn/Vincent_D._Dagcutan.webp", name: "Vincent D. Dagcutan" },
+  { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/capricorn/Vincent_Rafael_L._Laderas.webp", name: "Vincent Rafael L. Laderas" },
+  { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/capricorn/Weslie_Vertudazo.webp", name: "Weslie Vertudazo" }
+];
+
+//-------------------------share function---------------
+function sharePage() {
+    if (navigator.share) {
+      navigator.share({
+        title: document.title,
+        text: "Check out this page!",
+        url: window.location.href
+      })
+      .then(() => console.log("Shared successfully!"))
+      .catch((error) => console.log("Error sharing:", error));
+    } else {
+      alert("Your browser does not support Web Share API.");
+    }
+  }
+//------------------------------------------------------------
+
+
+
+
+let elementabm_student = document.querySelector(".abm_students");
+rendered_image = "";
+
+for(let i = 0; i != section1.length; i++){
+    if (window.innerWidth <= 324) {
+    section1[i].name = section1[i].name.slice(0, 19) + "<br>" + section1[i].name.slice(19);
+    } else if (window.innerWidth >= 325 && window.innerWidth <= 445){
+    section1[i].name = section1[i].name.slice(0, 23) + "<br>" + section1[i].name.slice(23);
+    } else if (window.innerWidth >= 446){
+    section1[i].name = section1[i].name.slice(0, 30) + "<br>" + section1[i].name.slice(30);
+    }
+    rendered_image += `
+      <div class="student_div" loading="lazy">
+      <img class= "student_image" src="${section1[i].img}" loading="lazy" alt="refresh this website" onclick="openImage('${section1[i].img}')">
+      <h1 class= "student_name">${section1[i].name}</h1>
+      </div>
+    `
+  };
+
+elementabm_student.innerHTML = rendered_image;
+
+// -------------for modal purpose only-------------
+
+// Function to open image modal
+function openImage(src) {
+  const modal = document.getElementById("imageModal");
+  const expandedImg = document.getElementById("expandedImg");
+
+  expandedImg.src = src;
+  modal.style.display = "flex"; // Show modal
+}
+
+// Function to close image modal
+function closeImage() {
+  document.getElementById("imageModal").style.display = "none";
+}
+
+// Ensure modal is hidden on page load (Failsafe)
+document.addEventListener("DOMContentLoaded", () => {
+  document.getElementById("imageModal").style.display = "none";
+});
+
+</script>
+</html>

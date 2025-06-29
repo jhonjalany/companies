@@ -1,0 +1,403 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Resident Information</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      margin: 2rem;
+      background-color: #f9f9f9;
+      color: #333;
+    }
+    h1 {
+      text-align: center;
+      color: #2c3e50;
+    }
+    .container {
+      max-width: 95%;
+      margin: auto;
+      padding: 0 1rem;
+    }
+    .table-container {
+      overflow-x: auto;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 1rem;
+      background-color: #fff;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+      border-radius: 8px;
+      overflow: hidden;
+    }
+    th, td {
+      padding: 12px 16px;
+      border-bottom: 1px solid #ddd;
+      white-space: nowrap;
+    }
+    th {
+      background-color: #2c3e50;
+      color: white;
+      cursor: pointer;
+    }
+
+    /* Flexbox layout for header content */
+    .th-content {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      width: 100%;
+    }
+
+    .sort-indicator {
+      font-size: 0.9em;
+      opacity: 0.7;
+      white-space: nowrap;
+      margin-left: 8px;
+    }
+
+    .filter-input {
+      width: 100%;
+      padding: 6px 10px;
+      box-sizing: border-box;
+      margin-bottom: 6px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      transition: 0.2s;
+    }
+    .filter-input:focus {
+      border-color: #2980b9;
+      outline: none;
+    }
+    tr:nth-child(even) {
+      background-color: #f9f9f9;
+    }
+    .loading {
+      text-align: center;
+      margin-top: 2rem;
+      color: #666;
+    }
+    .footer-info {
+      margin-top: 1rem;
+      font-size: 0.9rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+    .pagination {
+      display: flex;
+      list-style: none;
+      padding: 0;
+      margin: 0;
+    }
+    .pagination li {
+      margin: 0 4px;
+    }
+    .pagination li button {
+      padding: 6px 12px;
+      border: 1px solid #ccc;
+      background-color: #f2f2f2;
+      cursor: pointer;
+      border-radius: 4px;
+      transition: all 0.2s ease-in-out;
+    }
+    .pagination li button:hover,
+    .pagination li.active button {
+      background-color: #2980b9;
+      color: white;
+      border-color: #2980b9;
+    }
+    .page-length-select {
+      padding: 6px 10px;
+      font-size: 0.9rem;
+      border-radius: 4px;
+      border: 1px solid #ccc;
+    }
+
+    /* Always show all columns */
+    @media (max-width: 768px) {
+      th, td {
+        white-space: normal;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Resident Information</h1>
+    <div class="loading" id="loading">Loading data...</div>
+
+    <div class="table-container">
+      <table id="residentTable" style="display: none;">
+        <thead>
+          <tr>
+            <!-- Row Number -->
+            <th><div class="th-content"><span>No.</span></div></th>
+            <th onclick="sortTable('First Name')">
+              <div class="th-content">
+                <span>First Name</span>
+                <span class="sort-indicator" id="indicator-First Name"></span>
+              </div>
+            </th>
+            <th onclick="sortTable('Middle Name')">
+              <div class="th-content">
+                <span>Middle Name</span>
+                <span class="sort-indicator" id="indicator-Middle Name"></span>
+              </div>
+            </th>
+            <th onclick="sortTable('Last Name')">
+              <div class="th-content">
+                <span>Last Name</span>
+                <span class="sort-indicator" id="indicator-Last Name"></span>
+              </div>
+            </th>
+            <th onclick="sortTable('Date Of Birth')">
+              <div class="th-content">
+                <span>Date Of Birth</span>
+                <span class="sort-indicator" id="indicator-Date Of Birth"></span>
+              </div>
+            </th>
+            <th onclick="sortTable('Age')">
+              <div class="th-content">
+                <span>Age</span>
+                <span class="sort-indicator" id="indicator-Age"></span>
+              </div>
+            </th>
+            <th onclick="sortTable('Zone Number')">
+              <div class="th-content">
+                <span>Zone Number</span>
+                <span class="sort-indicator" id="indicator-Zone Number"></span>
+              </div>
+            </th>
+            <th onclick="sortTable('Gender')">
+              <div class="th-content">
+                <span>Gender</span>
+                <span class="sort-indicator" id="indicator-Gender"></span>
+              </div>
+            </th>
+            <th onclick="sortTable('Civil Status')">
+              <div class="th-content">
+                <span>Civil Status</span>
+                <span class="sort-indicator" id="indicator-Civil Status"></span>
+              </div>
+            </th>
+            <th onclick="sortTable('Religion')">
+              <div class="th-content">
+                <span>Religion</span>
+                <span class="sort-indicator" id="indicator-Religion"></span>
+              </div>
+            </th>
+            <th onclick="sortTable('Occupation')">
+              <div class="th-content">
+                <span>Occupation</span>
+                <span class="sort-indicator" id="indicator-Occupation"></span>
+              </div>
+            </th>
+            <th onclick="sortTable('Contact Number')">
+              <div class="th-content">
+                <span>Contact Number</span>
+                <span class="sort-indicator" id="indicator-Contact Number"></span>
+              </div>
+            </th>
+            <th onclick="sortTable('Email Address')">
+              <div class="th-content">
+                <span>Email Address</span>
+                <span class="sort-indicator" id="indicator-Email Address"></span>
+              </div>
+            </th>
+            <th onclick="sortTable('Status')">
+              <div class="th-content">
+                <span>Status</span>
+                <span class="sort-indicator" id="indicator-Status"></span>
+              </div>
+            </th>
+          </tr>
+          <tr>
+            <th><div class="th-content"><span></span></div></th>
+            <th><input type="text" class="filter-input" data-column="First Name" placeholder="Search"></th>
+            <th><input type="text" class="filter-input" data-column="Middle Name" placeholder="Search"></th>
+            <th><input type="text" class="filter-input" data-column="Last Name" placeholder="Search"></th>
+            <th><input type="text" class="filter-input" data-column="Date Of Birth" placeholder="Search"></th>
+            <th><input type="text" class="filter-input" data-column="Age" placeholder="Search"></th>
+            <th><input type="text" class="filter-input" data-column="Zone Number" placeholder="Search"></th>
+            <th><input type="text" class="filter-input" data-column="Gender" placeholder="Search"></th>
+            <th><input type="text" class="filter-input" data-column="Civil Status" placeholder="Search"></th>
+            <th><input type="text" class="filter-input" data-column="Religion" placeholder="Search"></th>
+            <th><input type="text" class="filter-input" data-column="Occupation" placeholder="Search"></th>
+            <th><input type="text" class="filter-input" data-column="Contact Number" placeholder="Search"></th>
+            <th><input type="text" class="filter-input" data-column="Email Address" placeholder="Search"></th>
+            <th><input type="text" class="filter-input" data-column="Status" placeholder="Search"></th>
+          </tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+    </div>
+    <div class="footer-info">
+      <div id="entryInfo">Showing 0 to 0 of 0 entries</div>
+      <div>
+        Show
+        <select id="pageSize" class="page-length-select">
+          <option value="10">10</option>
+          <option value="25">25</option>
+          <option value="50">50</option>
+          <option value="100">100</option>
+        </select>
+        entries
+      </div>
+      <ul class="pagination" id="pagination"></ul>
+    </div>
+  </div>
+
+  <script>
+    let residentData = [];
+    let filteredData = [];
+    let currentPage = 1;
+    let pageSize = 10;
+    let sortColumn = null;
+    let sortDirection = 'asc';
+
+    window.addEventListener('DOMContentLoaded', () => {
+      const url = 'https://n8n-app-gn6h.onrender.com/webhook/transfer-data ';
+      fetch(url)
+        .then(response => {
+          if (!response.ok) throw new Error('Network response was not ok');
+          return response.json();
+        })
+        .then(data => {
+          residentData = data.data || [];
+          filteredData = [...residentData];
+          renderTable();
+          setupFilters();
+          document.getElementById('loading').style.display = 'none';
+          document.getElementById('residentTable').style.display = 'table';
+        })
+        .catch(error => {
+          console.error('Error fetching ', error);
+          document.getElementById('loading').textContent = 'Failed to load data.';
+        });
+
+      document.getElementById('pageSize').addEventListener('change', e => {
+        pageSize = parseInt(e.target.value);
+        currentPage = 1;
+        renderTable();
+      });
+    });
+
+    function sortTable(column) {
+      if (sortColumn === column) {
+        sortDirection = sortDirection === 'asc' ? 'desc' : 'asc';
+      } else {
+        sortColumn = column;
+        sortDirection = 'asc';
+      }
+      updateSortIndicators();
+      filteredData.sort((a, b) => {
+        let valA = a[column] || '';
+        let valB = b[column] || '';
+        if (column === 'Status') {
+          valA = a['Dead'] ? 'Deceased' : 'Alive';
+          valB = b['Dead'] ? 'Deceased' : 'Alive';
+        }
+        if (valA < valB) return sortDirection === 'asc' ? -1 : 1;
+        if (valA > valB) return sortDirection === 'asc' ? 1 : -1;
+        return 0;
+      });
+      currentPage = 1;
+      renderTable();
+    }
+
+    function updateSortIndicators() {
+      document.querySelectorAll('.sort-indicator').forEach(el => el.textContent = '');
+      const indicator = document.getElementById(`indicator-${sortColumn}`);
+      if (indicator) {
+        indicator.textContent = sortDirection === 'asc' ? ' ↑' : ' ↓';
+      }
+    }
+
+    function renderTable() {
+      const tbody = document.querySelector('#residentTable tbody');
+      const pagination = document.getElementById('pagination');
+      const entryInfo = document.getElementById('entryInfo');
+      tbody.innerHTML = '';
+      pagination.innerHTML = '';
+      const start = (currentPage - 1) * pageSize;
+      const end = start + pageSize;
+      const pageData = filteredData.slice(start, end);
+
+      pageData.forEach((item, index) => {
+        const row = document.createElement('tr');
+        row.innerHTML = `
+          <td>${start + index + 1}</td>
+          <td>${item['First Name'] || ''}</td>
+          <td>${item['Middle Name'] || ''}</td>
+          <td>${item['Last Name'] || ''}</td>
+          <td>${item['Date Of Birth'] || ''}</td>
+          <td>${item['Age'] || ''}</td>
+          <td>${item['Zone Number'] || ''}</td>
+          <td>${item['Gender'] || ''}</td>
+          <td>${item['Civil Status'] || ''}</td>
+          <td>${item['Religion'] || ''}</td>
+          <td>${item['Occupation'] || ''}</td>
+          <td>${item['Contact Number'] || ''}</td>
+          <td>${item['Email Address'] || ''}</td>
+          <td>${item['Dead'] ? 'Deceased' : 'Alive'}</td>
+        `;
+        tbody.appendChild(row);
+      });
+
+      entryInfo.textContent = `Showing ${start + 1} to ${Math.min(end, filteredData.length)} of ${filteredData.length} entries`;
+
+      const totalPages = Math.ceil(filteredData.length / pageSize);
+      for (let i = 1; i <= totalPages; i++) {
+        const li = document.createElement('li');
+        li.className = i === currentPage ? 'active' : '';
+        li.innerHTML = `<button onclick="goToPage(${i})">${i}</button>`;
+        pagination.appendChild(li);
+      }
+    }
+
+    function goToPage(page) {
+      currentPage = page;
+      renderTable();
+    }
+
+    function setupFilters() {
+      const inputs = document.querySelectorAll('.filter-input');
+      inputs.forEach(input => {
+        input.addEventListener('input', () => {
+          const filters = {};
+          inputs.forEach(i => {
+            const col = i.getAttribute('data-column');
+            const val = i.value.toLowerCase().trim();
+            if (val) filters[col] = val;
+          });
+          filterTable(filters);
+        });
+      });
+    }
+
+    function filterTable(filters) {
+      filteredData = residentData.filter(item => {
+        return Object.entries(filters).every(([col, val]) => {
+          let cellText = '';
+          switch (col) {
+            case 'Status':
+              cellText = item['Dead'] ? 'deceased' : 'alive';
+              break;
+            default:
+              cellText = item[col]?.toString().toLowerCase() || '';
+          }
+          return cellText.includes(val.toLowerCase());
+        });
+      });
+      currentPage = 1;
+      sortColumn = null;
+      sortDirection = 'asc';
+      renderTable();
+    }
+  </script>
+</body>
+</html>

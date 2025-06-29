@@ -1,0 +1,2134 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>awards</title>
+  <style>
+
+    body {
+      margin: 0px;
+      font-family: Arial, sans-serif;
+      background-image: url('https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/logos_and_backgound/frontpage.png');
+      background-size: cover;      
+      background-position: center;
+      background-repeat: no-repeat; 
+      background-attachment: fixed;
+    }
+    .header {
+      
+      display: flex;
+      justify-content: space-around;
+      background-color: #0e4875f3;
+      padding-bottom: 10px;
+      padding-top: 10px;
+      
+    }
+    .logo {
+      height: 150px;
+      border-radius: 50%;
+    }
+
+    .n_and_y {
+      display: flex;
+      flex-direction: column;
+      text-align: center;
+      justify-content: center;
+    }
+    .schoolname {
+      font-size: 40px;
+      font-weight: bolder  ;
+      margin-bottom: none;
+      padding-bottom: 0%;
+    }
+    .schoolhigh {
+      font-size: 30px;
+      font-weight: bolder  ;
+      margin-bottom: none;
+      padding-bottom: 0%;
+    }
+    .schoolyear {
+      font-size: 20px;
+      font-weight: bold  ;
+      font-style: italic;
+      margin-top: none;
+    }
+
+    .main_button {
+      display: flex;
+      height: 50px;
+      
+      
+    }
+
+    .strand,
+    .award,
+    .adviser,
+    .memories {
+      font-size: 20px;
+      font-style: italic;
+      font-weight: bold;
+      cursor: pointer;
+      border: none;
+      width: 33.33%;
+      background-color: #98f5f3de;
+      border-style: solid;
+    }
+    .award {
+      background-color: #d9e0e6d2;
+    }
+/*-----------------------------------------*/
+    .display {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      margin-top: 50px;
+    }
+    
+    .honor,
+    .high_honor,
+    .highest_honor {
+      display: flex;
+      align-items: center;
+      justify-content: space-around;
+      width: 95%;
+      flex-wrap: wrap;
+      margin-bottom: 50px;
+    }
+    .student_div {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      background-color: rgba(240, 248, 255, 0.404);
+      box-shadow: 0px 15px 30px rgba(0, 0, 0, 0.671);
+      border-radius: 25px;
+      margin-bottom: 10px;
+      width: 40%;
+      
+    }
+    .student_image {
+      max-height: 300px;
+      padding: 5px;
+      border-radius: 20px;
+    }
+    .name_and_award {
+      width: 70%;
+    }
+    .student_name {
+      font-size: 25px;
+      text-align: center;
+      text-decoration: underline;
+    }
+    .student_award {
+      font-size: 15px;
+      text-align: center;
+    }
+    /*-----------------------------------------*/
+
+    .award_divider {
+      margin-bottom: 0px;
+      margin-top: 30px;
+    }
+    .other_award_5,
+    .other_award_4,
+    .other_award_3,
+    .other_award_2,
+    .other_award_1 {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background-color: rgba(240, 248, 255, 0.404);
+      box-shadow: 0px 15px 30px rgba(0, 0, 0, 0.671);
+      width: 90%;
+      border-radius: 20px;
+      flex-wrap: wrap;
+      margin-bottom: 10px;
+    }
+    .other_award_name {
+      width: 33.33%;
+      text-align: center;
+      font-size: 15px;
+    }
+
+    
+    .share_button {
+      font-size: 25px;
+      font-style: italic;
+      font-weight: bold;
+      cursor: pointer;
+      border: none;
+      width: 200px;
+      background-color: #98f5f3de;
+      border-style: solid;
+    }
+/*------------------scroll up css ----------*/
+    #scrollUp {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      display: none;
+      padding: 10px;
+      font-size: 20px;
+      border: none;
+      background: black;
+      color: white;
+      border-radius: 50%;
+      cursor: pointer;
+    }
+
+    /*--------------for modal purpose only--------------*/
+
+    /* Thumbnail styling */
+    .thumbnail {
+      width: 200px;
+      cursor: pointer;
+      transition: transform 0.3s ease-in-out;
+    }
+
+    .thumbnail:hover {
+      transform: scale(1.05);
+    }
+
+    /* Modal Background (Ensure it's hidden by default) */
+    .modal {
+      display: none;  /* FIX: Hide modal initially */
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.7);
+      backdrop-filter: blur(10px);
+      align-items: center;
+      justify-content: center;
+    }
+
+    /* Expanded Image */
+    .expanded-img {
+      max-width: 80%;
+      max-height: 80%;
+      border-radius: 10px;
+      box-shadow: 0px 0px 15px rgba(255, 255, 255, 0.5);
+    }
+
+    /* Close Button */
+    .close {
+      position: absolute;
+      top: 20px;
+      right: 40px;
+      font-size: 40px;
+      color: white;
+      cursor: pointer;
+    }
+
+    /*------------------------responsive style max width 324------------------------*/
+    
+    @media (max-width: 324px) {
+      body {
+        width: 100%;
+      }
+      .header {
+        padding-bottom: 3px;
+        padding-top: 3px;
+      }
+      .logo {
+      height: 50px;
+      border-radius: 50%;
+      }
+      .schoolname {
+        font-size: 12px;
+      }
+      .schoolhigh {
+        font-size: 10px;
+      }
+      .schoolyear {
+        font-size: 8px;
+      }
+      .main_button {
+        height: 20px; 
+      }
+      .strand,
+      .award,
+      .adviser,
+      .memories {
+        font-size: 12px;
+        border: 1px;
+        border-style: solid;
+      }
+
+      .display {
+        margin-top: 10px;
+      }
+      .award_divider {
+        font-size: 15px;
+        margin: 0px;
+      }
+      .honor,
+      .high_honor,
+      .highest_honor {
+        display: flex;
+        align-items: center;
+        justify-content: space-around;
+        width: 99%;
+        flex-wrap: wrap;
+        margin-bottom: 20px;
+      }
+      .student_div {
+        display: flex;
+        border-radius: 10px;
+        margin-bottom: 10px;
+        width: 90%;
+      
+      }
+      .student_image {
+        max-height: 120px;
+        padding: 5px;
+        border-radius: 10px;
+      }
+      .student_name {
+        font-size: 10px;
+        text-align: center;
+      }
+      .student_award {
+        font-size: 7px;
+        text-align: center;
+      }
+      .other_award_name {
+        font-size: 7px;
+      }
+      
+      .share_button {
+        font-size: 11px;
+        width: 60px;
+        border: 1px;
+        border-style: solid;
+      }
+    }
+
+  /*------------------------responsive style max width 445------------------------*/
+
+    @media (min-width: 325px) and (max-width: 445px) {
+      .header {
+        padding-bottom: 5px;
+        padding-top: 5px;
+      }
+      .logo {
+      height: 60px;
+      border-radius: 50%;
+      }
+      .schoolname {
+        font-size: 15px;
+      }
+      .schoolhigh {
+        font-size: 13px;
+      }
+      .schoolyear {
+        font-size: 11px;
+      }
+      .main_button {
+        height: 25px; 
+      }
+      .strand,
+      .award,
+      .adviser,
+      .memories {
+        font-size: 12px;
+        border: 1px;
+        border-style: solid;
+      }
+
+      .display {
+        margin-top: 10px;
+      }
+      .award_divider {
+        font-size: 15px;
+        margin: 0px;
+      }
+      .honor,
+      .high_honor,
+      .highest_honor {
+        display: flex;
+        width: 99%;
+        flex-wrap: wrap;
+        margin-bottom: 20px;
+      }
+      .student_div {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        border-radius: 10px;
+        margin-bottom: 10px;
+        width: 90%;
+      
+      }
+      .student_image {
+        max-height: 110px;
+        padding: 5px;
+        border-radius: 10px;
+      }
+      
+      .student_name {
+        font-size: 15px;
+        text-align: center;
+      }
+      .student_award {
+        font-size: 9px;
+        text-align: center;
+    }
+    .other_award_name {
+        font-size: 8px;
+      }
+
+      .share_button {
+        font-size: 15px;
+        width: 70px;
+        border: 1px;
+        border-style: solid;
+      }
+      
+    }
+
+    @media (min-width: 446px) and (max-width: 1024px) {
+      .student_div {
+        width: 80%;
+        justify-content: space-around;
+
+      }
+    }
+
+
+  </style>
+</head>
+<body>
+  
+  <div class="header">
+    <img class="logo" src="https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/logos_and_backgound/deped-logo.png" alt="">
+    <div class="n_and_y">
+      <div class="schoolname">Abuyog National High School</div>
+      <div class="schoolhigh">Senior High</div>
+      <div class="schoolyear">2024-2025</div>
+    </div>
+    <img class="logo" src="https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/logos_and_backgound/anhs-logo.png" alt="">
+  </div>
+
+  <div class="main_button">
+    <button class="strand" onclick="window.location.href='sections.html';">Sections</button>
+    <button class="award" onclick="window.location.href='award.html';">Awards</button>
+    <button class="adviser" onclick="window.location.href='advisers.html'">Advisers</button>
+  </div>
+
+  <div class="display">
+    <h1 class="award_divider">With Highest Honors</h1>
+    <div class="highest_honor"></div>
+    <h1 class="award_divider">With High Honors</h1>
+    <div class="high_honor"></div>
+    <h1 class="award_divider">With Honors</h1>
+    <div class="honor"></div>
+    <h1 class="award_divider">FOOD AND BEVERAGE NC II HOLDER</h1>
+    <div class="other_award_3"></div>
+    <h1 class="award_divider">EIM NC II Holder</h1>
+    <div class="other_award_5"></div>
+    <h1 class="award_divider">Conduct Award</h1>
+    <div class="other_award_1"></div>
+    <h1 class="award_divider">Outstanding Athletes</h1>
+    <div class="other_award_2"></div>
+    
+    <h1 class="award_divider">Performing Arts</h1>
+    <div class="other_award_4"></div>
+
+
+    <button onclick="sharePage()" class="share_button">Share</button>
+  </div>
+
+   <!---------------for modal purpose only-------------->
+   <div id="imageModal" class="modal">
+    <span class="close" onclick="closeImage()">&times;</span>
+    <img id="expandedImg" class="expanded-img">
+  </div>
+
+
+  <!------------------Scroll up button--------->
+  <button id="scrollUp">&#8679</button>
+
+</body>
+
+<script>
+
+const section1 = [
+  { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/aquarius/Jay_P._Degrano.webp", 
+  name: "DEGRANO, JAY PITOGO",
+  awards: ["WITH HIGHESTHONOR","OUTSTANDING PERFORMANCE IN RESEARCH","OUTSTANDING PERFORMANCE IN SOCIAL SCIENCE","OUTSTANDING PERFORMANCE IN SCIENCE","OUTSTANDING PERFORMANCE IN BIOLOGY","OUTSTANDING PERFORMANCE IN CHEMISTRY","OUTSTANDING PERFORMANCE IN PHYSICS","PERFECT IN ATTENDANCE","CONDUCT AWARD","LEADERSHIP AWARD","ACADEMIC EXCELLENCE AWARD","M LHUILLIER EXCELLENCE AWARD"]
+  },
+  { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/aries/Cassandra_Juliane_T._Donayre.webp", 
+  name: "DONAYRE, CASSANDRA JULIANE TARINQUE",
+  awards: ["WITH HIGHESTHONOR","OUTSTANDING PERFORMANCE IN BUSINESS MANAGEMENT","CONDUCT AWARD","M LHUILLIER EXCELLENCE AWARD"]
+  },
+
+  { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/aquarius/John_Airon_D._Gadon.webp", 
+  name: "GADON, JOHN AIRON DELA CRUZ",
+  awards: ["WITH HIGHEST HONOR","OUTSTANDING PERFORMANCE IN RESEARCH","OUTSTANDING PERFORMANCE IN COMMUNICATION ARTS","OUTSTANDING PERFORMANCE IN MATHEMATICS","OUTSTANDING PERFORMANCE IN SOCIAL SCIENCE","OUTSTANDING PERFORMANCE IN SCIENCE","OUTSTANDING PERFORMANCE IN CHEMISTRY","CONDUCT AWARD","OUTSTANDING RESEARCHER","LEADERSHIP AWARD","3RD PLACE PAGWAWASTO AT PAG-UULO NG BALITA (DSPC)","1ST PLACE PAGWAWASTO AT PAG-UULO NG BALITA (ASPC)","OUTSTANDING JOURNALISTS","M LHUILLIER EXCELLENCEAWARD"]
+  },
+
+  { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/aquarius/Rodeliza_D._Abilay.webp", 
+  name: "ABILAY, RODELIZA DELIMA", 
+  awards: ["WITH HIGH HONORS","OUTSTANDING PERFORMANCE IN SCIENCE","LEADERSHIP AWARD"]
+  },
+
+  { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/libra/Danica_Albiar.webp", 
+  name: "ALBIAR, D DANICA", 
+  awards: ["WITH HIGH HONORS"]
+  },
+
+  { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/aries/Cindy_B._Anonuevo.webp", 
+  name: "AÑONUEVO, CINDY BALABAT", 
+  awards: ["WITH HIGH HONORS"]
+  },
+
+  { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/taurus/Yashmien_Priya_Olea_G._Cerena.webp", 
+  name: "CERENA, YASHMIEN PRIYA OLEA GERONA", 
+  awards: ["WITH HIGH HONORS"]
+  },
+
+  { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/libra/Jiro_S._Colarte.webp", 
+  name: "COLARTE, JIRO SANCHEZ", 
+  awards: ["WITH HIGH HONORS"]
+  },
+
+  { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/aries/Kathleen_C._Cozares.webp", 
+  name: "COZARES, KATHLEEN CABELTERA", 
+  awards: ["WITH HIGH HONORS"]
+  },
+
+  { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/virgo/CRUZADA,_ALBERT,_GUBAT.webp", 
+  name: "CRUZADA, ALBERT GUBAT", 
+  awards: ["WITH HIGH HONORS","PERFORMING ARTS"]
+  },
+
+  { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/leo/Wesley_Franz_P._Cultura.webp", 
+  name: "CULTURA, WESLEY FRANZ PIDO", 
+  awards: ["WITH HIGH HONORS","OUTSTANDING PERFORMANCE IN HOME ECONOMICS","NATIONAL CERTIFICATE II (NCII) PASSER"]
+  },
+
+  { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/libra/Dexter_P._De_Jesus.webp", 
+  name: "DE JESUS, DEXTER PANAL", 
+  awards: ["WITH HIGH HONORS"]
+  },
+
+  { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/aquarius/Daisy_Jane_T._Mansinadez.webp", 
+  name: "MANSINADEZ, DAISY JANE TAYABAS", 
+  awards: ["WITH HIGH HONORS","OUTSTANDING PERFORMANCE IN RESEARCH","LEADERSHIP AWARD"]
+  },
+
+  { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/aquarius/Antonia_Louisse_R._Mendoza.webp", 
+  name: "MENDOZA, ANTONIA LOUISSE RAMULTE", 
+  awards: ["WITH HIGH HONORS","OUTSTANDING PERFORMANCE IN RESEARCH","OUTSTANDING PERFORMANCE IN COMMUNICATION ARTS","OUTSTANDING PERFORMANCE IN SCIENCE","6TH PLACE PAGSULAT NG BALITA (ASPC)","OUTSTANDING JOURNALISTS","SULAT TANGHAL 1ST PLACER, DFOT 2024","SULAT TANGHAL 8TH PLACER, DFOT 2025"]
+  },
+
+  { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/aries/Christine_Alexis_T._Monleon.webp", 
+  name: "MONLEON, CHRISTINE ALEXIS TAN", 
+  awards: ["WITH HIGH HONORS"]
+  },
+
+  { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/taurus/Angelou_B._Montana.webp", 
+  name: "MONTAÑA, ANGELOU BALLA", 
+  awards: ["WITH HIGH HONORS"]
+  },
+
+  { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/aquarius/Lorlie_Jane_E._Opada.webp", 
+  name: "OPADA, LORLIE JANE ESKEJO", 
+  awards: ["WITH HIGH HONORS","OUTSTANDING PERFORMANCE IN SCIENCE","PERFECT IN ATTENDANCE"]
+  },
+
+  { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/aquarius/Bernard_Jr._M._Padoga.webp", 
+  name: "PADOGA, BERNARD JR MILLOS", 
+  awards: ["WITH HIGH HONORS","OUTSTANDING PERFORMANCE IN SCIENCE","OUTSTANDING PERFORMANCE IN CALCULUS"]
+  },
+
+  { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/taurus/John_Mier_P._Tubesa.webp", 
+  name: "TUBESA, JOHN MIER PUZON", 
+  awards: ["WITH HIGH HONORS","OUTSTANDING PERFORMANCE IN COMMUNICATION ARTS","OUTSTANDING PERFORMANCE IN COMPUTER SYSTEMS SERVICING","DIVISION SCHOOLS PRESS CONFERENCE (DSPC)","2ND PLACE OVERALL RADIO PRODUCTION-ENGLISH","3RD PLACE BEST SCRIPT","1ST PLACE BEST INFOMERCIAL","AREA SCHOOLS PRESS CONFERENCE (ASPC)","2ND PLACE OVERALL RADIO PRODUCTION-ENGLISH","BEST SCRIPT","BEST MALE ANCHOR","OUTSTANDING JOURNALISTS "]
+  },
+
+  { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/libra/Chinalyn_L._Abenoja.webp", 
+  name: "ABENOJA, CHINALYN LABRADOR", 
+  awards: ["WITH HONORS"]
+  },
+
+  { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/virgo/ABUANA,_CAMILLE_.webp", 
+  name: "ABUANA, CAMILLE", 
+  awards: ["WITH HONORS","CONDUCT AWARD"]
+  },
+
+  { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/capricorn/Daryl_S._Alas.webp", 
+  name: "ALAS, DARYL SAVELLINO", 
+  awards: ["WITH HONORS","CONDUCT AWARD","NATIONAL CERTIFICATE II (NCII) PASSER"]
+  },
+
+  { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/aquarius/Hans_Jespher_A._Alfante.webp", 
+  name: "ALFANTE, HANS JESPHER ABUNDO", 
+  awards: ["WITH HONORS","PERFORMING ARTS"]
+  },
+
+  { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/libra/Michelle_J._Alicer.webp", 
+  name: "ALICER, MICHELLE JALANDONI", 
+  awards: ["WITH HONORS"]
+  },
+
+  { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/libra/Mia_D._Alvero.webp", 
+  name: "ALVERO, MIA DASIG", 
+  awards: ["WITH HONORS","SERVICE AWARD"]
+  },
+
+  { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/libra/Kent_Anthony_T._Amago.webp", 
+  name: "AMAGO, KENT ANTHONY TUTONG", 
+  awards: ["WITH HONORS"]
+  },
+
+  { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/aquarius/Mark_Justine_C._Amano.webp", 
+  name: "AMANO, MARK JUSTINE CINCO", 
+  awards: ["WITH HONORS","LEADERSHIP AWARD"]
+  },
+
+  { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/virgo/AMARILLE,_ARNNIE,_TORRES.webp", 
+  name: "AMARILLE, ARNNIE TORRES", 
+  awards: ["WITH HONORS"]
+  },
+
+  { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/taurus/Rosabel_C._Andales.webp", 
+  name: "ANDALES, ROSABEL CATINGUB", 
+  awards: ["WITH HONORS"]
+  },
+
+  { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/virgo/AQUINO,_CASSANDRA_KHAIN,_MABUTE.webp", 
+  name: "AQUINO, CASSANDRA KHAIN MABUTE", 
+  awards: ["WITH HONORS","SERVICE AWARD"]
+  },
+
+  { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/virgo/ATIENZA,_ANGELICA,_COSTIN.webp", 
+  name: "ATIENZA, ANGELICA COSTIN", 
+  awards: ["WITH HONORS","SERVICE AWARD"]
+  },
+
+  { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/taurus/Arianne_Mae_V._Austero.webp", 
+  name: "AUSTERO, ARIANNE MAE VIRRO", 
+  awards: ["WITH HONORS","CONDUCT AWARD"]
+  },
+
+  { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/libra/Erica_Lien_A._Austero.webp", 
+  name: "AUSTERO, ERICA LIEN ABE", 
+  awards: ["WITH HONORS","PERFORMING ARTS"]
+  },
+
+  { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/aries/Rhena_Mae_Bahinting.webp", 
+  name: "BAHINTING, RHENA MAE", 
+  awards: ["WITH HONORS"]
+  },
+
+  { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/capricorn/Nicole_B._Balano.webp", 
+  name: "BALANO, NICOLE BALANGAT", 
+  awards: ["WITH HONORS","PERFECT IN ATTENDANCE","NATIONAL CERTIFICATE II (NCII) PASSER"]
+  },
+
+  { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/libra/Michaella_D._Balena.webp", 
+  name: "BALEÑA, MICHAELLA DORIA", 
+  awards: ["WITH HONORS"]
+  },
+
+  { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/aquarius/Jasson_Kim_O._Bayot.webp", 
+  name: "BAYOT, JASSON KIM OROT", 
+  awards: ["WITH HONORS"]
+  },
+
+  { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/aries/Lyza_M._Bolano.webp", 
+  name: "BOLAÑO, LYZA MERGAL", 
+  awards: ["WITH HONORS"]
+  },
+
+  { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/saguitarius/Marielle_C._Bonife.webp", 
+  name: "BONIFE, MARIELLE CASTRO", 
+  awards: ["WITH HONORS","OUTSTANDING ATHLETES"]
+  },
+
+  { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/taurus/Jhon_Kevin_Boticalao.webp", 
+  name: "BOTICALAO, JHON KEVIN CLARIDAD", 
+  awards: ["WITH HONORS","OUTSTANDING ATHLETES"]
+  },
+
+  { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/saguitarius/John_Reynald_G._Boticalao.webp", 
+  name: "BOTICALAO, JOHN REYNALD GALLO", 
+  awards: ["WITH HONORS"]
+  },
+
+  { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/capricorn/Jenybe_E._Bug-atan.webp", 
+  name: "BUG-ATAN, JENYBE EBALE", 
+  awards: ["WITH HONORS","NATIONAL CERTIFICATE II (NCII) PASSER"]
+  },
+
+  { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/aquarius/Princess_Nazzariane_A._Cabsag.webp", 
+  name: "CABSAG, PRINCESS NAZZARIANE AUSTERO", 
+  awards: ["WITH HONORS","OUTSTANDING PERFORMANCE IN SCIENCE","OUTSTANDING ATHLETES","LEADERSHIP AWARD","PERFORMING ARTS"]
+  },
+
+  { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/virgo/CALO-OY,_JOLLY,_LOQUINTE_.webp", 
+  name: "CALO-OY, JOLLY LOQUINTE", 
+  awards: ["WITH HONORS"]
+  },
+
+  { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/saguitarius/Rochelle_Canane.webp", 
+  name: "CANANE, ROCHELLE", 
+  awards: ["WITH HONORS","PERFECT IN ATTENDANCE"]
+  },
+
+  { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/capricorn/Jessil_E._Canuday.webp", 
+  name: "CANUDAY, JESSIL ESTUDILLO", 
+  awards: ["WITH HONORS","NATIONAL CERTIFICATE II (NCII) PASSER"]
+  },
+
+  { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/aquarius/Princezz_Ellyn_V._Carino.webp", 
+  name: "CARIÑO, PRINCEZZ ELLYN VILLOTE", 
+  awards: ["WITH HONORS"]
+  },
+
+  { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/taurus/Marian_Rose_S._Carrozo.webp", 
+  name: "CARROZO, MARIAN ROSE SALA", 
+  awards: ["WITH HONORS"]
+  },
+
+  { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/libra/Zebastian_A._Cinco.webp", 
+  name: "CINCO, ZEBASTIAN ABUNDO", 
+  awards: ["WITH HONORS","LEADERSHIP AWARD"]
+  },
+
+  { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/saguitarius/Alysza_B._Colarte.webp", 
+  name: "COLARTE, ALYSZA BARRIO", 
+  awards: ["WITH HONORS"]
+  },
+
+  { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/taurus/Lealyn_M._Corbes.webp", 
+  name: "CORBES, LEALYN MALASAGA", 
+  awards: ["WITH HONORS","CONDUCT AWARD"]
+  },
+
+  { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/aquarius/Merian_N._Costin.webp", 
+  name: "COSTIN, MERIAN NOVAL", 
+  awards: ["WITH HONORS"]
+  },
+
+  { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/virgo/CUYSONA,_ZYRA,_DIAZ.webp", 
+  name: "CUYSONA, ZYRA DIAZ", 
+  awards: ["WITH HONORS","OUTSTANDING ATHLETES","NATIONAL CERTIFICATE II (NCII) PASSER"]
+  },
+
+  { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/saguitarius/Jemel_Dagcutan.webp", 
+  name: "DAGCUTAN, JEMEL", 
+  awards: ["WITH HONORS","LEADERSHIP AWARD"]
+  },
+
+  { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/capricorn/April_Jean_E._Delgado.webp", 
+  name: "DELGADO, APRIL JEAN EGCUALADA", 
+  awards: ["WITH HONORS","NATIONAL CERTIFICATE II (NCII) PASSER"]
+  },
+
+  { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/libra/Jerald_Jay_U._Del_Monte.webp", 
+  name: "DELMONTE, JERALD JAY URDANETA", 
+  awards: ["WITH HONORS","CONDUCT AWARD"]
+  },
+
+  { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/aries/Aira_B._Delon.webp", 
+  name: "DELON, AIRA BERTES", 
+  awards: ["WITH HONORS","PERFORMING ARTS"]
+  },
+
+  { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/saguitarius/Jackie_P._Diaz.webp", 
+  name: "DIAZ, JACKIE PADERO", 
+  awards: ["WITH HONORS"]
+  },
+
+  { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/libra/Fritz_N._Dioso.webp", 
+  name: "DIOSO, FRITZ NUÑEZ", 
+  awards: ["WITH HONORS"]
+  },
+
+  { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/libra/Rodela_C._Dioso.webp", 
+  name: "DIOSO, RODELA CALLOS", 
+  awards: ["WITH HONORS"]
+  },
+
+  { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/aries/Alyssa_D._Elmido.webp", 
+  name: "ELMIDO, ALYSSA DELGADO", 
+  awards: ["WITH HONORS","PERFORMING ARTS"]
+  },
+
+  { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/capricorn/Edwin_N._Elmido.webp", 
+  name: "ELMIDO, EDWIN NALLA", 
+  awards: ["WITH HONORS","NATIONAL CERTIFICATE II (NCII) PASSER"]
+  },
+
+  { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/libra/Girlie_Ann_T._Elmido.webp", 
+  name: "ELMIDO, GIRLIE ANN TULANG", 
+  awards: ["WITH HONORS"]
+  },
+
+  { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/taurus/Reymon_C._Elmido.webp", 
+  name: "ELMIDO, REYMON CHAVEZ", 
+  awards: ["WITH HONORS"]
+  },
+
+  { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/libra/Kenniedy_C._Eria.webp", 
+  name: "ERIA, KENNIEDY CONRAD ", 
+  awards: ["WITH HONORS"]
+  },
+
+  { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/virgo/ERNE,_JEROME,_TOMINES_.webp", 
+  name: "ERNE, JEROME TOMINES", 
+  awards: ["WITH HONORS"]
+  },
+
+  { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/virgo/GALENZOGA,_ANGEL_MAE,_ATIENZA.webp", 
+  name: "GALENZOGA, ANGEL MAE ATIENZA", 
+  awards: ["WITH HONORS","PERFORMING ARTS"]
+  },
+
+  { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/leo/Madelyn_E._Garcia.webp", 
+  name: "GARCIA, MADELYN ESCOBELLA", 
+  awards: ["WITH HONORS","NATIONAL CERTIFICATE II (NCII) PASSER"]
+  },
+
+  { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/libra/Stefany_R._Gelarzo.webp", 
+  name: "GELARZO, STEFANY ROCABO", 
+  awards: ["WITH HONORS","CONDUCT AWARD"]
+  },
+
+  { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/libra/Julia_Mae_B._Gimena.webp", 
+  name: "GIMENA, JULIA MAE BARCELON", 
+  awards: ["WITH HONORS","OUTSTANDING ATHLETES","SERVICE AWARD"]
+  },
+
+  { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/aries/Frencess_Mae_A._Gloria.webp", 
+  name: "GLORIA, FRENCESS MAE ALVERO", 
+  awards: ["WITH HONORS"]
+  },
+
+  { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/virgo/GLORIA,_VILMA,_LORENO.webp", 
+  name: "GLORIA, VILMA LOREÑO", 
+  awards: ["WITH HONORS"]
+  },
+
+  { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/aries/Apple_P._Hermida.webp", 
+  name: "HERMIDA, APPLE PORAZO", 
+  awards: ["WITH HONORS"]
+  },
+
+  { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/aquarius/Genos_Denver_A._Hinunangan.webp", 
+  name: "HINUNANGAN, GENOS DENVER AGULLO", 
+  awards: ["WITH HONORS","OUTSTANDING PERFORMANCE IN COMMUNICATION","4TH PLACE EDITORIAL CARTOONING (ASPC)","OUTSTANDING JOURNALISTS","PERFORMING ARTS"]
+  },
+
+  { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/leo/Nimfa_V._Impuesto.webp", 
+  name: "IMPUESTO, NIMFA VILLAMOR", 
+  awards: ["WITH HONORS","PERFECT IN ATTENDANCE","CONDUCT AWARD","NATIONAL CERTIFICATE II (NCII) PASSER"]
+  },
+
+  { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/virgo/JAMINAR,_ALRHEY,_MANDRAS_.webp", 
+  name: "JAMINAR, ALRHEY MANDRAS", 
+  awards: ["WITH HONORS"]
+  },
+
+  { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/virgo/JAVIER,_LOURAIN,_ADOLFO.webp", 
+  name: "JAVIER, LOURAIN ADOLFO", 
+  awards: ["WITH HONORS"]
+  },
+
+  { img : "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/virgo/LABARES,_ANGELIKA,_QUEROBIN_.webp",
+  name: "LABARES, ANGELIKA QUIROBEN",
+  awards: ["WITH HONORS","CONDUCT AWARD"]
+  },
+
+  { img : "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/capricorn/Marian_Nicol_P._Lomonsod.webp",
+  name: "LOMONSOD, MARIAN NICOL PEDORES",
+  awards: ["WITH HONORS","NATIONAL CERTIFICATE II (NCII) PASSER"]
+  },
+
+  { img : "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/saguitarius/Rheanae_T._Lonquias.webp",
+  name: "LONQUIAS, RHEAMAE TUPAZ",
+  awards: ["WITH HONORS","PERFECT IN ATTENDANCE"]
+  },
+
+  { img : "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/saguitarius/Alyssa_Mae_R._Lopez.webp",
+  name: "LOPEZ, ALYSSA MAE REGIS",
+  awards: ["WITH HONORS","CONDUCT AWARD","PERFORMING ARTS"]
+  },
+
+  { img : "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/aquarius/Christal_Mae_T._Loreno.webp",
+  name: "LOREÑO, CHRISTAL MAE TORRES",
+  awards: ["WITH HONORS","OUTSTANDING ATHLETES"]
+  },
+
+  { img : "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/taurus/John_Rich_R._Lorino.webp",
+  name: "LOREÑO, JOHN RICH ROCABO",
+  awards: ["WITH HONORS","NATIONAL CERTIFICATE II (NCII) PASSER"]
+  },
+
+  { img : "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/saguitarius/Maivie_D._Loreno.webp",
+  name: "LOREÑO, MAIVIE DELA CRUZ",
+  awards: ["WITH HONORS"]
+  },
+
+  { img : "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/aquarius/Lady_Hone_T._Macasocol.webp",
+  name: "MACASOCOL, LADY HONE TOMINES",
+  awards: ["WITH HONORS","PERFECT IN ATTENDANCE","PERFORMING ARTS"]
+  },
+
+  { img : "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/aries/Renelyn_A._Madula.webp",
+  name: "MADULA, RENELYN ARCON",
+  awards: ["WITH HONORS"]
+  },
+
+  { img : "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/virgo/MAICO,_FRANCIS_ARTHUR,_URGEL.webp",
+  name: "MAICO, FRANCIS ARTHUR URGEL",
+  awards: ["WITH HONORS"]
+  },
+
+  { img : "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/virgo/MALAREJES,_LORENCE,_ALCASODA.webp",
+  name: "MALAREJES, LORENCE ALCASODA",
+  awards: ["WITH HONORS","OUTSTANDING ATHLETES","PERFORMING ARTS"]
+  },
+
+  { img : "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/saguitarius/Jeannica_Rose_E._Manito.webp",
+  name: "MANITO, JEANNICA ROSE ELMIDO",
+  awards: ["WITH HONORS"]
+  },
+
+  { img : "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/taurus/John_Ray_C._Manlangit.webp",
+  name: "MANLANGIT, JOHN RAY CAÑEDO",
+  awards: ["WITH HONORS","CONDUCT AWARD"]
+  },
+
+  { img : "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/saguitarius/Lyka_I._Mendoza.webp",
+  name: "MENDOZA, LYKA IDA",
+  awards: ["WITH HONORS"]
+  },
+
+  { img : "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/saguitarius/Myra_R._Meras.webp",
+  name: "MERAS, MYRA ROBIN",
+  awards: ["WITH HONORS"]
+  },
+
+  { img : "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/capricorn/Mark_Gary_M._Mistula.webp",
+  name: "MISTULA, MARK GARY MAS",
+  awards: ["WITH HONORS","NATIONAL CERTIFICATE II (NCII) PASSER"]
+  },
+
+  { img : "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/leo/Justine_J._Moquia.webp",
+  name: "MOQUIA, JUSTINE JAPON",
+  awards: ["WITH HONORS","NATIONAL CERTIFICATE II (NCII) PASSER"]
+  },
+
+  { img : "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/virgo/NAVARRO,_CYRA_JAY,_MAJARAS.webp",
+  name: "NAVARRO, CYRA JAY MAJARAS",
+  awards: ["WITH HONORS"]
+  },
+
+  { img : "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/taurus/Princess_Marie_D._Navarro.webp",
+  name: "NAVARRO, PRINCESS MARIE DONAIRE",
+  awards: ["WITH HONORS","CONDUCT AWARD"]
+  },
+
+  { img : "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/saguitarius/Jasmine_A._Paler.webp",
+  name: "PALER, JASMINE AÑONUEVO",
+  awards: ["WITH HONORS","OUTSTANDING ATHLETES"]
+  },
+
+  { img : "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/virgo/PALLAR,_JEMUEL,_ALVARES.webp",
+  name: "PALLAR, JEMUEL ALVARES",
+  awards: ["WITH HONORS","CONDUCT AWARD"]
+  },
+
+  { img : "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/taurus/Kent_Jerick_L._Palomar.webp",
+  name: "PALOMAR, KENT JERICK LAWAG",
+  awards: ["WITH HONORS"]
+  },
+
+  { img : "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/virgo/PARAN,_PRINCE_CARL,_AZUCENA_.webp",
+  name: "PARAN, PRINCE CARL AZUCENA",
+  awards: ["WITH HONORS","CONDUCT AWARD","PERFORMING ARTS"]
+  },
+
+  { img : "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/leo/Jilamae_B._Pasadas.webp",
+  name: "PASADAS, JILAMAE BALILI",
+  awards: ["WITH HONORS","NATIONAL CERTIFICATE II (NCII) PASSER"]
+  },
+
+  { img : "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/virgo/PENARANDA,_KRISFHE,_OLENDAN.webp",
+  name: "PEÑARANDA, KRISFHE OLENDAN",
+  awards: ["WITH HONORS"]
+  },
+
+  { img : "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/leo/Cristopher_A._Porcadilla.webp",
+  name: "PORCADILLA, CRISTOPHER ASIS",
+  awards: ["WITH HONORS","NATIONAL CERTIFICATE II (NCII) PASSER"]
+  },
+
+  { img : "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/libra/Shilby_Pulan.webp",
+  name: "PULAN, SHILBY ",
+  awards: ["WITH HONORS"]
+  },
+
+  { img : "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/saguitarius/Marlon_Jr._G._Reas.webp",
+  name: "REAS JR., MARLON GALGO",
+  awards: ["WITH HONORS"]
+  },
+
+  { img : "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/aquarius/Christian_James_D._Reas.webp",
+  name: "REAS, CHRISTIAN JAMES DELGADO",
+  awards: ["WITH HONORS","OUTSTANDING PERFORMANCE IN SCIENCE"]
+  },
+
+  { img : "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/aries/John_C._Rebojo.webp",
+  name: "REBOJO, JOHN CABILTE",
+  awards: ["WITH HONORS"]
+  },
+
+  { img : "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/virgo/REGIS,_AYHEZA_MAE,_ALLONAR.webp",
+  name: "REGIS, AYHEZA MAE ALLONAR",
+  awards: ["WITH HONORS","NATIONAL CERTIFICATE II (NCII) PASSER"]
+  },
+
+  { img : "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/capricorn/Janelle_R._Rivera.webp",
+  name: "RIVERA, JANELLE ROMA",
+  awards: ["WITH HONORS","PERFECT IN ATTENDANCE","NATIONAL CERTIFICATE II (NCII) PASSER"]
+  },
+
+  { img : "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/aries/Roxan_C._Ritaga.webp",
+  name: "RITAGA, ROXAN CABANGON",
+  awards: ["WITH HONORS","LEADERSHIP AWARD"]
+  },
+
+  { img : "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/leo/Shiena_Mae_L._Ritaga.webp",
+  name: "RITAGA, SHIENA MAE LAWAG",
+  awards: ["WITH HONORS","CONDUCT AWARD","NATIONAL CERTIFICATE II (NCII) PASSER"]
+  },
+
+  { img : "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/taurus/Mark_Louise_M._Robenta.webp",
+  name: "ROBENTA, MARK LOUISE MELO",
+  awards: ["WITH HONORS"]
+  },
+
+  { img : "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/libra/Gecel_G._Robes.webp",
+  name: "ROBES, GECEL GLORIA",
+  awards: ["WITH HONORS"]
+  },
+
+  { img : "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/libra/Izzy_N._Robes.webp",
+  name: "ROBES, IZZY NEBRAO",
+  awards: ["WITH HONORS"]
+  },
+
+  { img : "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/leo/John_Michael_A._Samocino.webp",
+  name: "SAMOCINO, JOHN MICHAEL ANDALES",
+  awards: ["WITH HONORS","NATIONAL CERTIFICATE II (NCII) PASSER"]
+  },
+
+  { img : "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/gemini/Jumong_P._Sarzuela.webp",
+  name: "SARZUELA, JUMONG PABUNAN",
+  awards: ["WITH HONORS","OUTSTANDING PERFORMANCE ELECTRICAL INSTALLATION AND MAINTENANCE","CONDUCT AWARD","NATIONAL CERTIFICATE II (NCII) PASSER"]
+  },
+
+  { img : "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/virgo/SERVANA,_ANGEL,_GACITA.webp",
+  name: "SERVAÑA, ANGEL GACITA",
+  awards: ["WITH HONORS"]
+  },
+
+  { img : "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/libra/Cymon_Jade_O._Sombilon.webp",
+  name: "SOMBILON, CYMON JADE OLAVE",
+  awards: ["WITH HONORS"]
+  },
+
+  { img : "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/aries/Mark_Lorence_R._Soria.webp",
+  name: "SORIA, MARK LORENCE RITAGA",
+  awards: ["WITH HONORS","CONDUCT AWARD"]
+  },
+
+  { img : "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/capricorn/Cyrine_A._Tejero.webp",
+  name: "TEJERO, CYRINE ARGATE",
+  awards: ["WITH HONORS","OUTSTANDING PERFORMANCE IN HOME ECONOMICS","NATIONAL CERTIFICATE II (NCII) PASSER"]
+  },
+
+  { img : "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/virgo/TEROY,_MARIELLE,_PAMIN.webp",
+  name: "TEROY, MARIELLE PAMIN",
+  awards: ["WITH HONORS"]
+  },
+
+  { img : "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/taurus/Alkhilies_V._Tingcungco.webp",
+  name: "TINGCUNGCO, ALKHILIES VERTERRA",
+  awards: ["WITH HONORS"]
+  },
+
+  { img : "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/leo/Sabelle_O._Tisado.webp",
+  name: "TISADO, SABELLE OLAZO",
+  awards: ["WITH HONORS","NATIONAL CERTIFICATE II (NCII) PASSER"]
+  },
+
+  { img : "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/aries/Kim_Alexis_M._Tobia.webp",
+  name: "TOBIA, KIM ALEXIS MASINOGOT",
+  awards: ["WITH HONORS"]
+  },
+
+  { img : "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/virgo/TOBIAS,_AVRIL,_CARDINAL_.webp",
+  name: "TOBIAS, AVRIL CARDINAL",
+  awards: ["WITH HONORS"]
+  },
+
+  { img : "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/libra/Mary_Grace_B._Urdaneta.webp",
+  name: "URDANETA, MARY GRACE BILBAO",
+  awards: ["WITH HONORS"]
+  },
+
+  { img : "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/virgo/VEROS,_JELLO,_GAY.webp",
+  name: "VEROS, JELLO GAY",
+  awards: ["WITH HONORS","NATIONAL CERTIFICATE II (NCII) PASSER"]
+  },
+
+  { img : "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/capricorn/Weslie_Vertudazo.webp",
+  name: "VERTUDAZO, WESLIE",
+  awards: ["WITH HONORS","NATIONAL CERTIFICATE II (NCII) PASSER"]
+  },
+
+  { img : "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/libra/Jessie_Rose_B._Villote.webp",
+  name: "VILLOTE, JESSIE ROSE BAQUIRO",
+  awards: ["WITH HONORS"]
+  },
+
+  { img : "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/libra/Wenje_May_H._Yanag.webp",
+  name: "YANAG, WENJE MAY HUGAR",
+  awards: ["WITH HONORS"]
+  },
+
+  { img : "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/libra/Jessi_Han_M._Yongzon.webp",
+  name: "YONGZON, JESSI HAN MONTAÑA",
+  awards: ["WITH HONORS"]
+  },
+
+  { img : "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/taurus/Ram_Nicko_C._Begonte.webp",
+  name: "BEGONTE, RAM NICKO COSTORIO",
+  awards: ["WITH HIGH HONORS"]
+  },
+
+  { img : "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/aries/Janelle_Rian_A._Beronilla.webp",
+  name: "BERONILLA, JANELLE RIAN ANDALES",
+  awards: ["WITH HIGH HONORS"]
+  },
+
+  { img : "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/aries/Nicole_Ann_R._Cabahug.webp",
+  name: "CABAHUG, NICOLE ANN REMANDABAN",
+  awards: ["WITH HIGH HONORS","OUTSTANDING PERFORMANCE IN ACCOUNTING"]
+  },
+
+  { img : "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/aries/JADE_B._CABAL.webp",
+  name: "CABAL, JADE BISNAR",
+  awards: ["WITH HIGH HONORS","LEADERSHIP AWARD","NATIONAL CERTIFICATE II (NCII) PASSER"]
+  },
+
+  { img : "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/libra/Christine_Margarette_M._Capilitan.webp",
+  name: "CAPILITAN, CHRISTINE MARGARETTE MENDIOLA",
+  awards: ["WITH HIGH HONORS","OUTSTANDING PERFORMANCE IN COMMUNICATION ARTS","LEADERSHIP AWARD","2ND PLACE PAGSULAT NG BALITANG PAMPALAKASAN (ASPC)","OUTSTANDING JOURNALISTS"]
+  },
+
+  { img : "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/saguitarius/Roxane_O._Cayasan.webp",
+  name: "CAYASAN, ROXANE OJEDA",
+  awards: ["WITH HIGH HONORS","SERVICE AWARD"]
+  },
+
+  { img : "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/aries/Apple_Jane_D,_Declaro.webp",
+  name: "DECLARO, APPLE JANE DEMESA",
+  awards: ["WITH HIGH HONORS"]
+  },
+
+  { img : "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/aquarius/Gerard_Alvin_R._Elmido.webp",
+  name: "ELMIDO, GERARD ALVIN REFORMA",
+  awards: ["WITH HIGH HONORS","OUTSTANDING PERFORMANCE IN SCIENCE"]
+  },
+
+  { img : "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/aquarius/Adrian_D._Gallos.webp",
+  name: "GALLOS, ADRIAN DAJOTOY",
+  awards: ["WITH HIGH HONORS","OUTSTANDING PERFORMANCE IN MATHEMATICS","CONDUCT AWARD","LEADERSHIP AWARD"]
+  },
+
+  { img : "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/aries/Jesselle_D._Gubat.webp",
+  name: "GUBAT, JESSELLE DONAYRE",
+  awards: ["WITH HIGH HONORS"]
+  },
+
+  { img : "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/aries/Krystal_A._Japson.webp",
+  name: "JAPSON, KRYSTAL ANDALES",
+  awards: ["WITH HIGH HONORS","OUTSTANDING PERFORMANCE IN COMMUNICATION ARTS","DIVISION SCHOOLS PRESS CONFERENCE (DSPC)","2ND PLACE OVERALL RADIO PRODUCTION-FILIPINO","2ND PLACE BEST SCRIPT","5TH PLACE BEST INFOMERCIAL","AREA SCHOOLS PRESS CONFERENCE (ASPC)","1ST PLACE OVERALL RADIO PRODUCTION-FILIPINO","BEST SCRIPT","BEST INFOMERCIAL","OUTSTANDING JOURNALISTS"]
+  },
+
+  { img : "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/taurus/Jeremie_Kelario.webp",
+  name: "KELARIO, JEREMIE - JEREMIE ",
+  awards: ["WITH HIGH HONORS"]
+  },
+
+  { img : "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/aries/Kate_Nathalie_B._Rapada.webp",
+  name: "RAPADA, KATE NATHALIE BOCTOT",
+  awards: ["WITH HIGH HONORS"]
+  },
+
+  { img : "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/aquarius/Andray_A._Realino.webp",
+  name: "REALINO, ANDRAY ARGALLON",
+  awards: ["WITH HIGH HONORS","OUTSTANDING PERFORMANCE IN RESEARCH","OUTSTANDING PERFORMANCE IN COMMUNICATION ARTS","OUTSTANDING PERFORMANCE IN SOCIAL SCIENCE","OUTSTANDING PERFORMANCE IN SCIENCE","LEADERSHIP AWARD","2ND PLACE COPY READING AND HEADLINE WRITING (ASPC)","OUTSTANDING JOURNALISTS"]
+  },
+
+  { img : "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/aries/Cyrah_Jane_M._Remandaban.webp",
+  name: "REMANDABAN, CYRAH JANE MAMATO",
+  awards: ["WITH HIGH HONORS","OUTSTANDING PERFORMANCE IN COMMUNICATION ARTS","5TH PLACE PAGSULAT NG PANGULONG TUDLING (ASPC)","OUTSTANDING JOURNALISTS"]
+  },
+
+  { img : "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/libra/Angel_C._Rosquites.webp",
+  name: "ROSQUITES, ANGEL COLARES",
+  awards: ["WITH HIGH HONORS"]
+  },
+
+  { img : "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/saguitarius/Glecy_Mae_R._Tagra.webp",
+  name: "TAGRA, GLECY MAE REAS",
+  awards: ["WITH HIGH HONORS"]
+  },
+
+  { img : "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/aquarius/John_Steven_M._Tomines.webp",
+  name: "TOMINES, JOHN STEVEN MADULA",
+  awards: ["WITH HIGH HONORS","OUTSTANDING PERFORMANCE IN RESEARCH","OUTSTANDING PERFORMANCE IN COMMUNICATION ARTS","OUTSTANDING PERFORMANCE IN MATHEMATICS","OUTSTANDING PERFORMANCE IN SCIENCE","PERFECT IN ATTENDANCE","CONDUCT AWARD","OUTSTANDING ATHLETES","LEADERSHIP AWARD","6TH PLACE SCIENCE AND TECHNOLOGY WRITING (ASPC)","OUTSTANDING JOURNALISTS "]
+  },
+
+  { img : "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/leo/Louise_Joy_L._Almaden.webp",
+  name: "ALMADEN, LOUISE JOY LUMBRE",
+  awards: ["WITH HONORS","FOOD AND BEVERAGE SERVICES NCII HOLDER"]
+  },
+
+  { img : "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/aries/Jussel_Fiona_L._Altejar.webp",
+  name: "ALTEJAR, JUSSEL FIONA LILIO",
+  awards: ["WITH HONORS"]
+  },
+
+  { img : "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/virgo/ALUYOG,_ERWIN_BLOBZ_.webp",
+  name: "ALUYOG, ERWIN BLOBZ ABADEJAS",
+  awards: ["WITH HONORS"]
+  },
+
+  { img : "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/taurus/Jeve_A._Aluyog.webp",
+  name: "ALUYOG, JEVE ADOLFO",
+  awards: ["WITH HONORS"]
+  },
+
+  { img : "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/capricorn/Ruffa_mae_L._Aluyog.webp",
+  name: "ALUYOG, RUFFA MAE LUMBOG",
+  awards: ["WITH HONORS","FOOD AND BEVERAGE SERVICES NCII HOLDER"]
+  },
+
+  { img : "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/virgo/ALVERO,_JOSHUA,_NABONG.webp",
+  name: "ALVERO, JOSHUA NABONG",
+  awards: ["WITH HONORS","PERFORMING ARTS"]
+  },
+
+  { img : "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/virgo/AQUINO,_MA._JOAN,_TROYO.webp",
+  name: "AQUINO, MA. JOAN TROYO",
+  awards: ["WITH HONORS"]
+  },
+
+  { img : "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/aries/Alnie_L._Arabis.webp",
+  name: "ARABIS, ALNIE LAURIA",
+  awards: ["WITH HONORS"]
+  },
+
+  { img : "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/libra/Joshua_P._Ardiente.webp",
+  name: "ARDIENTE, JOSHUA PAJA",
+  awards: ["WITH HONORS"]
+  },
+
+  { img : "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/libra/Kim_Jiel_E._Argate.webp",
+  name: "ARGATE, KIM JIEL ESTORICO",
+  awards: ["WITH HONORS"]
+  },
+
+  { img : "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/saguitarius/Anika_Leigh_Arias.webp",
+  name: "ARIAS, ANIKA LEIGH",
+  awards: ["WITH HONORS","PERFECT IN ATTENDANCE"]
+  },
+
+  { img : "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/virgo/ATIENZA,_ANGELA,_COSTIN.webp",
+  name: "ATIENZA, ANGELA COSTIN",
+  awards: ["WITH HONORS","OUTSTANDING ATHLETES"]
+  },
+
+  { img : "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/libra/Princess_Lalaine_M._Balleno.webp",
+  name: "BALLENO, PRINCESS LALAINE MARABE",
+  awards: ["WITH HONORS"]
+  },
+
+  { img : "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/gemini/Jaymark_R._Bansig.webp",
+  name: "BANSIG, JAYMARK ROSALES",
+  awards: ["WITH HONORS","OUTSTANDING PERFORMANCE ELECTRICAL INSTALLATION AND MAINTENANCE","EIM NCII HOLDER"]
+  },
+
+  { img : "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/libra/Sara_Claire_A._Baquiro.webp",
+  name: "BAQUIRO, SARA CLAIRE AUSTRIA",
+  awards: ["WITH HONORS","CONDUCT AWARD"]
+  },
+
+  { img : "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/gemini/Ronald_L._Barcelon.webp",
+  name: "BARCELON, RONALD LAHER",
+  awards: ["WITH HONORS","2ND PLACE ABUYOG FIRE OLYMPICS","EIM NCII HOLDER"]
+  },
+
+  { img : "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/leo/Rhea_Mae_D._Baristo.webp",
+  name: "BARISTO, RHEA MAE DE PAZ",
+  awards: ["WITH HONORS","FOOD AND BEVERAGE SERVICES NCII HOLDER"]
+  },
+
+  { img : "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/libra/Cesario_Jr._R._Barquin.webp",
+  name: "BARQUIN, CESARIO JR RAMIREZ",
+  awards: ["WITH HONORS","PERFORMING ARTS"]
+  },
+
+  { img : "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/libra/Jake_C._Bulan.webp",
+  name: "BULAN, JAKE CALDERON",
+  awards: ["WITH HONORS"]
+  },
+
+  { img : "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/saguitarius/Ariane_C._Cabal.webp",
+  name: "CABAL, ARIANE CAINTOY",
+  awards: ["WITH HONORS"]
+  },
+
+  { img : "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/aquarius/Lady_Charcassie_O._Cabal.webp",
+  name: "CABAL, LADY CHARCASSIE OGANIA",
+  awards: ["WITH HONORS","OUTSTANDING PERFORMANCE IN SCIENCE"]
+  },
+
+  { img : "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/leo/Crystal_N._Cabia.webp",
+  name: "CABIA, CRYSTAL NALDA",
+  awards: ["WITH HONORS","PERFECT IN ATTENDANCE","FOOD AND BEVERAGE SERVICES NCII HOLDER"]
+  },
+
+  { img : "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/aquarius/Lance_C._Cabilogan.webp",
+  name: "CABILOGAN, LANCE CATAMBIS",
+  awards: ["WITH HONORS","OUTSTANDING PERFORMANCE IN SCIENCE","LEADERSHIP AWARD","PERFORMING ARTS"]
+  },
+
+  { img : "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/capricorn/Jamilla_Nicole_R._Cabrera_.webp",
+  name: "CABRERA, JAMILLA NICOLE REAS",
+  awards: ["WITH HONORS","FOOD AND BEVERAGE SERVICES NCII HOLDER"]
+  },
+
+  { img : "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/aries/Kimberly_Anne_D._Casas.webp",
+  name: "CASAS, KIMBERLY ANNE DE PAZ",
+  awards: ["WITH HONORS"]
+  },
+
+  { img : "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/aquarius/Cheska_R._Cecilio.webp",
+  name: "CECILIO, CHESKA RESUSTA",
+  awards: ["WITH HONORS","OUTSTANDING PERFORMANCE IN SCIENCE","PERFORMING ARTS"]
+  },
+
+  { img : "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/leo/Jhoy_A._Ceno.webp",
+  name: "CENO, JHOY AQUINO",
+  awards: ["WITH HONORS","PERFECT IN ATTENDANCE","FOOD AND BEVERAGE SERVICES NCII HOLDER"]
+  },
+
+  { img : "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/aries/Isaiah_Chayanne_George_Kyle_G._Cerena.webp",
+  name : "CERENA, ISAIAH CHAYANNE GEORGE KYLE GERONA",
+  awards : ["WITH HONORS"]
+  },
+
+  { img : "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/leo/Ivy_G._Chavez.webp",
+  name : "CHAVEZ, IVY GIDO",
+  awards : ["WITH HONORS","PERFECT IN ATTENDANCE","FOOD AND BEVERAGE SERVICES NCII HOLDER"]
+  },
+
+  { img : "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/leo/King_B._Cinco.webp",
+  name : "CINCO, KING BALDEBIA",
+  awards : ["WITH HONORS","PERFECT IN ATTENDANCE","FOOD AND BEVERAGE SERVICES NCII HOLDER"]
+  },
+
+  { img : "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/capricorn/Allison_Fate_P._Dalugdugan.webp",
+  name : "DALUGDUGAN, ALLISON FATE PORAZO",
+  awards : ["WITH HONORS","FOOD AND BEVERAGE SERVICES NCII HOLDER"]
+  },
+
+  { img : "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/aquarius/Dinna_C._Dancil.webp",
+  name : "DANCIL, DINNA COSTIN",
+  awards : ["WITH HONORS"]
+  },
+
+  { img : "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/leo/Aira_B._De_Paz.webp",
+  name : "DE PAZ, AIRA BERDAJE",
+  awards : ["WITH HONORS","LEADERSHIP AWARD","FOOD AND BEVERAGE SERVICES NCII HOLDER"]
+  },
+
+  { img : "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/leo/Rieza_Mae_C._De_Paz.webp",
+  name : "DE PAZ, REIZA MAE CAIDOY",
+  awards : ["WITH HONORS","FOOD AND BEVERAGE SERVICES NCII HOLDER"]
+  },
+
+  { img : "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/saguitarius/Daisyrie_S._Degollacion.webp",
+  name : "DEGOLLACION, DAISYRIE SAMSON",
+  awards : ["WITH HONORS"]
+  },
+
+  { img : "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/aries/Annie_Rose_T._Delgado.webp",
+  name : "DELGADO, ANNIE ROSE TAUSA",
+  awards : ["WITH HONORS"]
+  },
+
+  { img : "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/gemini/Christian_B._Dublas.webp",
+  name : "DUBLAS, CHRISTIAN BOLAÑO",
+  awards : ["WITH HONORS","OUTSTANDING PERFORMANCE ELECTRICAL INSTALLATION AND MAINTENANCE","CONDUCT AWARD","EIM NCII HOLDER"]
+  },
+
+  { img : "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/aries/Leliza_Jean_N._Durias.webp",
+  name : "DURIAS, LELAIZA JEAN NUÑEZA",
+  awards : ["WITH HONORS"]
+  },
+
+  { img : "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/libra/Nelly_Fe_C._Duzar.webp",
+  name : "DUZAR, NELLY FE CABUDOY",
+  awards : ["WITH HONORS"]
+  },
+
+  { img : "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/libra/Retchel_R._Echon.webp",
+  name : "ECHON, RETCHEL RODRIGUEZ",
+  awards : ["WITH HONORS"]
+  },
+
+  { img : "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/aquarius/Vince_Patrick_L._Edloy.webp",
+  name : "EDLOY, VINCE PATRICK LUCAÑAS",
+  awards : ["WITH HONORS","OUTSTANDING PERFORMANCE IN COMMUNICATION ARTS","7TH PLACE PAGGUHIT NG KARTUNG PANG-EDITORYAL (ASPC)","OUTSTANDING JOURNALISTS"]
+  },
+
+  { img : "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/libra/Bernadeth_C._Evarrete.webp",
+  name : "EVARRETE, BERNADETH CORPIN",
+  awards : ["WITH HONORS"]
+  },
+
+  { img : "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/libra/Francine_Mae_O._Felizarta.webp",
+  name : "FELIZARTA, FRANCINE MAE OLINARES",
+  awards : ["WITH HONORS"]
+  },
+
+  { img : "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/libra/Frenz_Jay_O._Felizarta.webp",
+  name : "FELIZARTA, FRENZ JAY OLINARES",
+  awards : ["WITH HONORS"]
+  },
+
+  { img : "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/saguitarius/Lester_Jade_B._Fernandez.webp",
+  name : "FERNANDEZ, LESTER JADE BAUYA",
+  awards : ["WITH HONORS"]
+  },
+
+  { img : "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/aquarius/Angel_L._Gabrera.webp",
+  name : "GABRERA, ANGEL LUZON",
+  awards : ["WITH HONORS","OUTSTANDING PERFORMANCE IN SCIENCE","PERFORMING ARTS"]
+  },
+
+  { img : "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/virgo/GACITA,_NOAH_BENEDICTO_III_SEBUGON.webp",
+  name : "GACITA, NOAH BENEDICTO III SEBUGON",
+  awards : ["WITH HONORS"]
+  },
+
+  { img : "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/capricorn/Rouna_Joy_M._Golo.webp",
+  name : "GOLO, ROUNA JOY MAICO",
+  awards : ["WITH HONORS","SERVICE AWARD","FOOD AND BEVERAGE SERVICES NCII HOLDER"]
+  },
+
+  { img : "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/aries/Jecelyn_P._Gonzales.webp",
+  name : "GONZALES, JECELYN PATULEN",
+  awards : ["WITH HONORS"]
+  },
+
+  { img : "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/gemini/Kain_Carlo_J._Grospe.webp",
+  name : "GROSPE, KIAN CARLO JOSER",
+  awards : ["WITH HONORS","LEADERSHIP AWARD","EIM NCII HOLDER"]
+  },
+
+  { img : "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/aquarius/Jhonson_A._Guillano.webp",
+  name : "GUILLANO, JHONSON ASA",
+  awards : ["WITH HONORS"]
+  },
+
+  { img : "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/libra/Chandlier_Justin_Gumba.webp",
+  name : "GUMBA, CHANDLER JUSTIN ",
+  awards : ["WITH HONORS"]
+  },
+
+  { img : "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/aquarius/Richard_P._Guston.webp",
+  name : "GUSTON, RICHARD PAKIG",
+  awards : ["WITH HONORS","OUTSTANDING PERFORMANCE IN SCIENCE"]
+  },
+
+  { img : "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/saguitarius/Aya_Lorain_Y._Laher.webp",
+  name : "LAHER, AYA LORAIN YONGCO",
+  awards : ["WITH HONORS"]
+  },
+
+  { img : "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/aquarius/Maria_Mae_P._Laher.webp",
+  name : "LAHER, MARIA MAE PAPONG",
+  awards : ["WITH HONORS","OUTSTANDING PERFORMANCE IN SCIENCE"]
+  },
+
+  { img : "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/saguitarius/Kean_M._Laurea.webp",
+  name : "LAUREA, KEAN MONTE",
+  awards : ["WITH HONORS"]
+  },
+
+  { img : "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/aries/John_Mark_R._Lawag.webp",
+  name : "LAWAG, JOHN MARK RITAGA",
+  awards : ["WITH HONORS","CONDUCT AWARD","OUTSTANDING ATHLETES"]
+  },
+
+  { img : "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/taurus/Mary_Joy_P._Ligaton.webp",
+  name : "LIGATON, MARY JOY PAKIG",
+  awards : ["WITH HONORS"]
+  },
+
+  { img : "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/libra/Nikki_R._Loreno.webp",
+  name : "LOREÑO, NIKKI ROCABO",
+  awards : ["WITH HONORS","SERVICE AWARD"]
+  },
+
+  { img : "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/saguitarius/Lucille_Anne_R._Loyaga.webp",
+  name : "LOYAGA, LUCILLE ANNE RAMIREZ",
+  awards : ["WITH HONORS","PERFECT IN ATTENDANCE"]
+  },
+
+  { img : "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/libra/A-J_F._Lucapa.webp",
+  name : "LUCAPA, A-J FERMIN",
+  awards : ["WITH HONORS"]
+  },
+
+  { img : "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/aquarius/Harold_P._Luma-as.webp",
+  name : "LUMA-AS, HAROLD PERPECTUA",
+  awards : ["WITH HONORS","OUTSTANDING PERFORMANCE IN SCIENCE"]
+  },
+
+  { img : "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/virgo/LUMA-AS,_JURY_JEAN,_PECITAS.webp",
+  name : "LUMA-AS, JURY JEAN PECITAS",
+  awards : ["WITH HONORS","SERVICE AWARD"]
+  },
+
+  { img : "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/leo/Lovely_Joy_P._Lumbre.webp",
+  name : "LUMBRE, LOVELY JOY PUZON",
+  awards : ["WITH HONORS","FOOD AND BEVERAGE SERVICES NCII HOLDER"]
+  },
+
+  { img : "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/virgo/MANSINADEZ,_DARYLLE,_DUMAGING.webp",
+  name : "MANSINADEZ, DARYLLE DUMAGING",
+  awards : ["WITH HONORS"]
+  },
+
+  { img : "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/saguitarius/Princes_Mae_N._Marasigan.webp",
+  name : "MARASIGAN, PRINCES MAE NAVARRO",
+  awards : ["WITH HONORS","PERFECT IN ATTENDANCE"]
+  },
+
+  { img : "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/taurus/Chris_John_D._Mayola.webp",
+  name : "MAYOLA, CHRIS JOHN DE LEON",
+  awards : ["WITH HONORS"]
+  },
+
+  { img : "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/leo/Rhea_Mae_D._Mecairan.webp",
+  name : "MECAIRAN, RHEA MAE DEGAS",
+  awards : ["WITH HONORS","FOOD AND BEVERAGE SERVICES NCII HOLDER"]
+  },
+
+  { img : "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/capricorn/M-Jay_J._Mediona.webp",
+  name : "MEDIONA, M-JAY JAYMA",
+  awards : ["WITH HONORS","FOOD AND BEVERAGE SERVICES NCII HOLDER"]
+  },
+
+  { img : "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/taurus/Tristan_Jake_R._Mendiola.webp",
+  name : "MENDIOLA, TRISTAN JAKE REAS",
+  awards : ["WITH HONORS"]
+  },
+
+  { img : "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/virgo/NAVARRO,_ROGIE,_CANUTO.webp",
+  name : "NAVARRO, ROGIE CANUTO",
+  awards : ["WITH HONORS","OUTSTANDING ATHLETES"]
+  },
+
+  { img : "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/leo/Madonna_C._Noveda.webp",
+  name : "NOVEDA, MADONNA CABAS",
+  awards : ["WITH HONORS","FOOD AND BEVERAGE SERVICES NCII HOLDER"]
+  },
+
+  { img : "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/aquarius/Jayson_A._Obias.webp",
+  name : "OBIAS, JAYSON ALTEJAR",
+  awards : ["WITH HONORS","OUTSTANDING PERFORMANCE IN SCIENCE","PERFORMING ARTS"]
+  },
+
+  { img : "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/leo/Julius_D._Olazo.webp",
+  name : "OLAZO, JULIUS DELIGA",
+  awards : ["WITH HONORS","FOOD AND BEVERAGE SERVICES NCII HOLDER"]
+  },
+
+  { img : "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/saguitarius/Shera_Mae_Gwyn_J._Pacia.webp",
+  name : "PACIA, SHERA MAE GWYN JIMENEZ",
+  awards : ["WITH HONORS"]
+  },
+
+  { img : "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/aquarius/Felicity_Zoe_M._Palen.webp",
+  name : "PALEN, FELICITY ZOE MANATAD",
+  awards : ["WITH HONORS","OUTSTANDING PERFORMANCE IN SCIENCE"]
+  },
+
+  { img : "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/capricorn/Ma._Cherry_C._Perez.webp",
+  name : "PEREZ, MA. CHERRY CELIZ",
+  awards : ["WITH HONORS","FOOD AND BEVERAGE SERVICES NCII HOLDER"]
+  },
+
+  { img : "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/virgo/PERJES,_MA_CRISTINE,_TOMINES.webp",
+  name : "PERJES, MA. CRISTINE TOMINES",
+  awards : ["WITH HONORS","OUTSTANDING ATHLETES","PERFORMING ARTS"]
+  },
+
+  { img : "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/aquarius/Yuri_Gwen_B._Pinote.webp",
+  name : "PINOTE, YURI GWEN BELOY",
+  awards : ["WITH HONORS"]
+  },
+
+  { img : "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/saguitarius/Angelica_C._Poliquit.webp",
+  name : "POLIQUIT, ANGELICA COSTIN",
+  awards : ["WITH HONORS"]
+  },
+
+  { img : "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/taurus/Chrizia_Mae_G._Poliquit.webp",
+  name : "POLIQUIT, CHRIZIA MAE GALLANO",
+  awards : ["WITH HONORS"]
+  },
+
+  { img : "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/capricorn/Rico_Jay_F._Porazo.webp",
+  name : "PORAZO, RICO JAY FLORES",
+  awards : ["WITH HONORS","FOOD AND BEVERAGE SERVICES NCII HOLDER"]
+  },
+
+  { img : "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/virgo/REMANES,_LENALYN,_COMUNSAD.webp",
+  name : "REMANES, LENALYN COMUNSAD",
+  awards : ["WITH HONORS"]
+  },
+
+  { img : "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/libra/Terence_Jazen_A._Retaga.webp",
+  name : "RETAGA, TERENCE JAZEN AGORING",
+  awards : ["WITH HONORS"]
+  },
+
+  { img : "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/aquarius/Lean_Paul_P._Reyes.webp",
+  name : "REYES, LEAN PAUL PIAMONTE",
+  awards : ["WITH HONORS"]
+  },
+
+  { img : "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/leo/Princess_Diane_V._Ringor.webp",
+  name : "RINGOR, PRINCESS DIANE VERTERRA",
+  awards : ["WITH HONORS","PERFECT IN ATTENDANCE","FOOD AND BEVERAGE SERVICES NCII HOLDER"]
+  },
+
+  { img : "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/aquarius/Ashley_A._Rinos.webp",
+  name : "RIÑOS, ASHLEY ABUCAY",
+  awards : ["WITH HONORS"]
+  },
+
+  { img : "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/libra/Jenalyn_N._Ritaga.webp",
+  name : "RITAGA, JENALYN NEGROS",
+  awards : ["WITH HONORS"]
+  },
+
+  { img : "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/aquarius/Mark_Stevin_J._Robin.webp",
+  name : "ROBIN, MARK STEVIN JOSAIN",
+  awards : ["WITH HONORS"]
+  },
+
+  { img : "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/saguitarius/Marnie_Chin_Joy_C._Robin.webp",
+  name : "ROBIN, MARNIE CHIN JOY CAYABO",
+  awards : ["WITH HONORS"]
+  },
+
+  { img : "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/gemini/R-Jay_M._Ruanes.webp",
+  name : "RUANES, R-JAY MANDIN",
+  awards : ["WITH HONORS","EIM NCII HOLDER"]
+  },
+
+  { img : "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/aries/Anna_Jane_A._Rubes.webp",
+  name : "RUBES, ANNA JANE ADOLFO",
+  awards : ["WITH HONORS"]
+  },
+
+  { img : "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/aries/Ricky_Boy_L._Sabili.webp",
+  name : "SABILI, RICKY BOY LLANES",
+  awards : ["WITH HONORS","CONDUCT AWARD","OUTSTANDING ATHLETES"]
+  },
+
+  { img : "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/leo/Aldrin_Jay_A._Salmoro.webp",
+  name : "SALMORO, ALDRIN JAY ABRANTES",
+  awards : ["WITH HONORS","FOOD AND BEVERAGE SERVICES NCII HOLDER"]
+  },
+
+  { img : "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/aries/Michael_B._Surabia.webp",
+  name : "SURABIA, MICHAEL BATAAN",
+  awards : ["WITH HONORS"]
+  },
+
+  { img : "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/virgo/TABURADA,_SARAH_MAY.webp",
+  name : "TABURADA, SARAH MAY",
+  awards : ["WITH HONORS"]
+  },
+
+  { img : "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/aries/Bianca_G._Tagarao.webp",
+  name : "TAGARAO, BIANCA GARAO",
+  awards : ["WITH HONORS"]
+  },
+
+  { img : "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/libra/Francis_D._Tan.webp",
+  name : "TAN, FRANCIS DELA CRUZ",
+  awards : ["WITH HONORS","CONDUCT AWARD","LEADERSHIP AWARD"]
+  },
+
+  { img : "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/saguitarius/Rodilyn_D._Tano.webp",
+  name : "TANO, RODILYN DAPITON",
+  awards : ["WITH HONORS"]
+  },
+
+  { img : "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/capricorn/Althea_Genesis_S._Tarinque.webp",
+  name : "TARINQUE, ALTHEA GENESIS SALVADOR",
+  awards : ["WITH HONORS","FOOD AND BEVERAGE SERVICES NCII HOLDER"]
+  },
+
+  { img : "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/aquarius/Nicole_S._Tobias.webp",
+  name : "TOBIAS, NICOLE SANTIAGO",
+  awards : ["WITH HONORS","PERFECT IN ATTENDANCE"]
+  },
+
+  { img : "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/saguitarius/Merriam_Webster_D._Tolo.webp",
+  name : "TOLO, MERRIAM WEBSTER DELACRUZ",
+  awards : ["WITH HONORS"]
+  },
+
+  { img : "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/libra/Lowella_V._Tomines.webp",
+  name : "TOMINES, LOWELLA VILLAMOR",
+  awards : ["WITH HONORS"]
+  },
+
+  { img : "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/virgo/TOROTORO,_GIALYN,_ASA.webp",
+  name : "TOROTORO, GIALYN ASA",
+  awards : ["WITH HONORS","OUTSTANDING ATHLETE","LEADERSHIP AWARD","2ND PLACE ABUYOG FIRE OLYMPICS","FOOD AND BEVERAGE SERVICES NCII HOLDER"]
+  },
+
+  { img : "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/libra/Mary_Ann_N._Tubao.webp",
+  name : "TUBAO, MARY ANN NAPOLES",
+  awards : ["WITH HONORS"]
+  },
+
+  { img : "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/libra/Marlito_D._Tupaz.webp",
+  name : "TUPAZ, MARLITO DAGOHOY",
+  awards : ["WITH HONORS"]
+  }
+  
+];
+
+const conduct_award = [
+  "Jay P. Degrano",
+  "John Airon D. Gadon", 
+  "John Steven M. Tomines", 
+  "Adrian D. Gallos",
+  "Cassandra Julian T. Donayre", 
+  "Ricky Boy L. Sabili ",
+  "John Mark R. Lawag ",
+  "Mark Lorence R. Soria", 
+  "Junny Boy L. Cabintoy", 
+  "Paul R. Beyong", 
+  "Daryl S. Alas", 
+  "Malou U. Olazo", 
+  "Jumong P. Sarzuela", 
+  "Christian B. Dublas", 
+  "Nevada Dawn James Padero", 
+  "Roziel Mae A. Barrio", 
+  "Nimfa V. Impuesto",  
+  "Gabriel Loreño ",
+  "Shiena Mae L. Ritaga", 
+  "John Paul L. Cumpio ",
+  "Sara Claire A. Baquiro", 
+  "Francis D. Tan ",
+  "Jerald Jay U. Del Monte", 
+  "Stephany R. Gelarzo ",
+  "John Nikko A. Adaya ",
+  "Justine H. De Leon ",
+  "Joshua H. De Leon ",
+  "Alyssa Mae R. Lopez ",
+  "Princess Marie D. Navarro ",
+  "Arianne Mae V. Austero ",
+  "Lealyn M. Corbes ",
+  "John Ray C. Manlangit", 
+  "Prince Carl A. Paran ",
+  "Camille Abuana ",
+  "Angelika Q. Labares", 
+  "Jemuel A. Pallar "
+];
+
+const outstanding_athletes = [
+  "John Mark A. Lawag ",
+  "Jhon Kevin C. Boticalao ",
+  "Harold Alavera ",
+  "Ricky Boy L. Sabili ",
+  "Rogie C. Navarro ",
+  "Lorence A. Malarejes ",
+  "Aaron P. Atienza ",
+  "Zyra D. Cuysona ",
+  "Christal T. Loreño ",
+  "Marielle C. Bonife ",
+  "Julia Mae B. Gimena ",
+  "Ma. Cristine T. Perjes ",
+  "Gialyn A. Torotoro ",
+  "Jasmine A. Paler ",
+  "Angela C. Atienza ",
+  "Ivan D. Benusa ",
+  "Princess Nazzarianne A. Cabsag",
+  "John Steven M. Tomines ",
+  "Jemwel L. Aluyog  ",
+  "Frederick Jr. N. Gacita ",
+  "Niño Angelo C. Gilbuena ",
+  "Wilmar B. Lleve ",
+  "Nevada Dawn James Padero "
+];
+
+const NCII_holder = [
+  "Daryl S. Alas",
+  "Edcin E. Alcoser",
+  "Ronel S. Ampong ",
+  "Aaron P. Atienza ",
+  "Ivan D. Benusa  ",
+  "Paul R. Beyong  ",
+  "Junny Boy L. Cabintoy",
+  "Darwin S. Castro ",
+  "Edwin N. Elmido ",
+  "Rexander B. Espina ",
+  "Mark L. Fuentes ",
+  "Vincent Rafael L. Laderas",
+  "Donald C. Larioque ",
+  "Mark Gary M. Mistula  ",
+  "Anghelo L. Olita ",
+  "Kelvin Jay R. Pernites",
+  "Rico Jay F. Porazo ",
+  "Weslie Vertudazo ",
+  "Ruffa Mae L. Aluyog ",
+  "Marian Nicol P. Lomonsod",
+  "Crystal S. Madrona ",
+  "M-Jay J. Mediona ",
+  "Malou U. Olazo  ",
+  "Ma. Cherry C. Perez",
+  "Ayheza Mae A. Regis ",
+  "Rochell C. Ritaga ",
+  "Janelle R. Rivera ",
+  "Althea Genesis S. Tarinque",
+  "Cyrine A. Tejero ",
+  "Jello G. Veros ",
+  "Gialyn A. Torotoro",
+  "Jeil C. Alvero ",
+  "Kent Joshua R. Belanigue",
+  "Jade B. Cabal ",
+  "King B. Cinco ",
+  "Mark Jade G. Cinco",
+  "Wesley Franz P. Cultura",
+  "John Paul L. Cumpio ",
+  "Nicole B. Balano ",
+  "Jenybe E. Bug-Atan ",
+  "Jessil E. Canuday ",
+  "Zyra D. Cuysona ",
+  "Allison Fate P. Dalugdugan",
+  "April Jean E. Delgado ",
+  "Jamilla Nicole R. Cabrera",
+  "Rouna Joy M. Golo ",
+  "Rainier D. De Paz ",
+  "Kevin G. Delgado ",
+  "Reymart A. Gabrera ",
+  "Gabriel Loreño ",
+  "John Rich R. Loreño",
+  "Justine J. Moquia ",
+  "Julius D. Olazo ",
+  "Christopher A. Porcadilla",
+  "Aldrin Jay A. Salmoro ",
+  "John Michael A. Samocino ",
+  "Louise Joy L. Almaden ",
+  "Rhea Mae D. Baristo ",
+  "Julian P. Cabal ",
+  "Crystal N. Cabia ",
+  "Jhoy A. Ceno ",
+  "Ivy G. Chavez ",
+  "Aira B. De Paz  ",
+  "Reiza Mae C. De Paz",
+  "Ma. Jenny A. Gabrera ",
+  "Madelyn E. Garcia ",
+  "Mariel A. Impuesto ",
+  "Nimfa V. Impuesto ",
+  "Meriam O. Kininahan ",
+  "Lovely Joy P. Lumbre ",
+  "Rhea Mae D. Mecairan ",
+  "Madonna C. Noveda ",
+  "Chamille D. Olarte ",
+  "Jilamae B. Pasadas ",
+  "Angelie D. Realino ",
+  "Princess Diane V. Ringor",
+  "Shiena Mae L. Ritaga ",
+  "Joyce M. Sabonsolin",
+  "Sabelle O. Tisado "
+];
+
+const eim_holder = [
+  "Isagani C. Andales",
+  "Roziel Mae A. Barrio", 
+  "Jaymark R. Bansig ",
+  "Ronald L. Barcelon ",
+  "Ruben N. Barquin,",
+  "Junray Jr. Cantilang", 
+  "Edison Jr. R. Caspe", 
+  "Joshua P. Ceda", 
+  "Frances Mel T. Corayag", 
+  "Jessie M. Cuizon",
+  "Angelou S. Daniel",
+  "John Dave L. Delgado", 
+  "Kyle Shane Delgado", 
+  "James N. Diaz", 
+  "jude Mark Z. Diaz",  
+  "Rowel L. Diaz", 
+  "James F. Doblun", 
+  "Christian B. Dublas", 
+  "James Ashley M. Elmido", 
+  "Gino A. Escuadra", 
+  "Fate Gerald P. Gonzaga", 
+  "Kian Carlo Grospe", 
+  "Prince Ronald Labides", 
+  "Elgie L. Lacbayo", 
+  "Junnard Robert H. Liporada", 
+  "Ryan C. Naval", 
+  "Mark John P. Norega", 
+  "Nevada Dawn James Padero", 
+  "Stephen Jr. C. Robin", 
+  "R-Jay M. Ruanes",
+  "Ronron B. Rufil",
+  "Jumong P. Sarzuela", 
+  "Jason C. Terante",
+  "Jairus Kylle E. Tomines", 
+  "Rasel D. Villezas",
+  "John Rey D. Yayon"
+
+];
+
+
+const performing_arts = [
+  "Princess Nazzariane A. Cabsag",
+  "Lance C. Cabilogan ",
+  "Jayson A. Obias ",
+  "Aira B. Delon ",
+  "Alyssa D. Elmido ",
+  "Hans Jespher A. Alfante ",
+  "Cheska R. Cecilio ",
+  "Angel L. Gabrera ",
+  "Lady Hone T. Macasocol",
+  "Erica Lein A. Austero ",
+  "Allysa Mae R. Lopez ",
+  "Jiel C. Alvero ",
+  "Joshua N. Alvero ",
+  "Cesario R. Barquin Jr. ",
+  "Albert G. Cruzada ",
+  "Lorence A. Malarejes ",
+  "Aeron V. Quitain ",
+  "Prince Carl A. Paran ",
+  "Angel Mae A. Galenzoga ",
+  "Ma Cristine T. Perjes ",
+  "Genos Denver A. Hinunangan"
+
+];
+
+//-------------------------share function---------------
+function sharePage() {
+    if (navigator.share) {
+      navigator.share({
+        title: document.title,
+        text: "Check out this page!",
+        url: window.location.href
+      })
+      .then(() => console.log("Shared successfully!"))
+      .catch((error) => console.log("Error sharing:", error));
+    } else {
+      alert("Your browser does not support Web Share API.");
+    }
+  }
+//------------------------------------------------------------
+
+
+
+
+let element_highest_honor = document.querySelector(".highest_honor");
+let element_high_honor = document.querySelector(".high_honor");
+let element_honor = document.querySelector(".honor");
+
+let rendered_highest_honor = "";
+let rendered_high_honor = "";
+let rendered_honor = "";
+
+
+
+for(let i = 0; i != section1.length; i++){
+
+    if (section1[i].awards.includes("WITH HIGHESTHONOR") || section1[i].awards.includes("WITH HIGHEST HONOR") || section1[i].awards.includes("WITH HIGHESTHONORS") || section1[i].awards.includes("WITH HIGHEST HONORS")) {
+      let award_list = "";
+      for (let a = 0; a != section1[i].awards.length; a++) {
+        award_list += section1[i].awards[a] + "<br>";
+      }
+      rendered_highest_honor += `
+      <div class="student_div" loading="lazy">
+        <img class= "student_image" src="${section1[i].img}" loading="lazy" alt="refresh this website" onclick="openImage('${section1[i].img}')">
+        <div class="name_and_award">
+          <h1 class= "student_name">${section1[i].name}</h1>
+          <h1 class= "student_award">${award_list}</h1>
+        </div>
+      </div>`
+    }else if (section1[i].awards.includes("WITH HIGHHONOR") || section1[i].awards.includes("WITH     HIGH HONOR") || section1[i].awards.includes("WITH HIGHHONORS") || section1[i].awards.includes("WITH HIGH HONORS")) {
+      let award_list = "";
+      for (let a = 0; a != section1[i].awards.length; a++) {
+        award_list += section1[i].awards[a] + "<br>";
+      }
+      rendered_high_honor += `
+      <div class="student_div" loading="lazy">
+        <img class= "student_image" src="${section1[i].img}" loading="lazy" alt="refresh this website" onclick="openImage('${section1[i].img}')">
+        <div class="name_and_award">
+          <h1 class= "student_name">${section1[i].name}</h1>
+          <h1 class= "student_award">${award_list}</h1>
+        </div>
+      </div>`
+    } else if (section1[i].awards.includes("WITH HONOR") || section1[i].awards.includes("WITH HONORS")) {
+      let award_list = "";
+      for (let a = 0; a != section1[i].awards.length; a++) {
+        award_list += section1[i].awards[a] + "<br>";
+      }
+      rendered_honor += `
+      <div class="student_div" loading="lazy">
+        <img class= "student_image" src="${section1[i].img}" loading="lazy" alt="refresh this website" onclick="openImage('${section1[i].img}')">
+        <div class="name_and_award">
+          <h1 class= "student_name">${section1[i].name}</h1>
+          <h1 class= "student_award">${award_list}</h1>
+        </div>
+      </div>`
+    } else {
+      console.log(section1[i].name);
+      console.log(section1[i].awards);
+      console.log(i);
+    };
+
+  }
+
+
+    
+
+element_highest_honor.innerHTML = rendered_highest_honor;
+element_high_honor.innerHTML =  rendered_high_honor;
+element_honor.innerHTML = rendered_honor;
+
+
+
+//----------------------other award 1----------------------------------
+
+let element_other_award_3 = document.querySelector(".other_award_3");
+
+let rendered_award_3 = "";
+
+for (let i = 0; i != NCII_holder.length; i++) {
+  rendered_award_3 += `<h1 class="other_award_name">${NCII_holder[i]}</h1>`;
+}
+
+element_other_award_3.innerHTML = rendered_award_3;
+
+
+
+
+//---------------------------other award 2 -----------------------
+let element_other_award_5 = document.querySelector(".other_award_5");
+
+let rendered_award_5 = "";
+
+for (let i = 0; i != eim_holder.length; i++) {
+  rendered_award_5 += `<h1 class="other_award_name">${eim_holder[i]}</h1>`;
+}
+
+element_other_award_5.innerHTML = rendered_award_5;
+
+
+//---------------------------other award 3 -----------------------
+let element_other_award_1 = document.querySelector(".other_award_1");
+
+let rendered_award_1 = "";
+
+for (let i = 0; i != conduct_award.length; i++) {
+  rendered_award_1 += `<h1 class="other_award_name">${conduct_award[i]}</h1>`;
+}
+
+element_other_award_1.innerHTML = rendered_award_1;
+
+
+
+//---------------------------other award 4 -----------------------
+
+let element_other_award_2 = document.querySelector(".other_award_2");
+
+let rendered_award_2 = "";
+
+for (let i = 0; i != outstanding_athletes.length; i++) {
+  rendered_award_2 += `<h1 class="other_award_name">${outstanding_athletes[i]}</h1>`;
+}
+
+element_other_award_2.innerHTML = rendered_award_2;
+
+//--------------------------------other award 5-------------
+
+let element_other_award_4 = document.querySelector(".other_award_4");
+
+let rendered_award_4 = "";
+
+for (let i = 0; i != performing_arts.length; i++) {
+  rendered_award_4 += `<h1 class="other_award_name">${performing_arts[i]}</h1>`;
+}
+
+element_other_award_4.innerHTML = rendered_award_4;
+
+
+
+
+// -------------for modal purpose only-------------
+
+// Function to open image modal
+function openImage(src) {
+  const modal = document.getElementById("imageModal");
+  const expandedImg = document.getElementById("expandedImg");
+
+  expandedImg.src = src;
+  modal.style.display = "flex"; // Show modal
+}
+
+// Function to close image modal
+function closeImage() {
+  document.getElementById("imageModal").style.display = "none";
+}
+
+// Ensure modal is hidden on page load (Failsafe)
+document.addEventListener("DOMContentLoaded", () => {
+  document.getElementById("imageModal").style.display = "none";
+});
+
+// -----------------scroll up button --------------
+const scrollUpBtn = document.getElementById("scrollUp");
+
+  window.onscroll = () => {
+    scrollUpBtn.style.display = window.scrollY > 200 ? "block" : "none";
+  };
+
+  scrollUpBtn.onclick = () => {
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  };
+
+</script>
+</html>

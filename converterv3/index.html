@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Image Converter to WebP</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            height: 100vh;
+            background-color: #f0f0f0;
+            margin: 0;
+            padding: 20px;
+            box-sizing: border-box;
+        }
+        .container {
+            text-align: center;
+            background: white;
+            padding: 20px;
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
+            width: 80%;
+            max-width: 1000px;
+            overflow-y: auto;
+            max-height: 90vh;
+            box-sizing: border-box;
+        }
+        #dropZone {
+            width: 100%;
+            padding: 50px;
+            border: 3px dashed #007bff;
+            border-radius: 10px;
+            background-color: #e9f5ff;
+            color: #007bff;
+            margin-bottom: 20px;
+            cursor: pointer;
+            box-sizing: border-box;
+        }
+        .dropZone.hover {
+            background-color: #d1eaff;
+        }
+        .imageContainer {
+            display: flex;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            margin-bottom: 40px;
+            padding-bottom: 20px;
+            border-bottom: 2px solid #ddd;
+            position: relative;
+        }
+        .imagePreview {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            flex-basis: 48%;
+            box-sizing: border-box;
+            margin-bottom: 20px;
+        }
+        canvas, img {
+            height: 300px;
+            margin-bottom: 10px;
+            max-width: 100%;
+        }
+        button {
+            padding: 10px 20px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            cursor: pointer;
+            margin-bottom: 10px;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+        .convertedInfo {
+            font-size: 0.9rem;
+            color: #555;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Image Converter to WebP</h1>
+        <div id="dropZone" class="dropZone">Drag & Drop Images Here</div>
+        <div id="imageContainer"></div>
+    </div>
+
+    <script nonce="MTg3MDIzNjY0NiwzMjQzMzI1MTk4">
+        const dropZone = document.getElementById('dropZone');
+        const imageContainer = document.getElementById('imageContainer');
+
+        dropZone.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            dropZone.classList.add('hover');
+        });
+
+        dropZone.addEventListener('dragleave', () => {
+            dropZone.classList.remove('hover');
+        });
+
+        dropZone.addEventListener('drop', (e) => {
+            e.preventDefault();
+            dropZone.classList.remove('hover');
+            handleFiles(e.dataTransfer.files);
+        });
+
+        function handleFiles(files) {
+            for (let i = 0; i < files.length; i++) {
+                const file = files[i];
+                if (file && file.type.startsWith('image/')) {
+                    convertImage(file);
+                }
+            }
+        }
+
+        function convertImage(file) {
+            const reader = new FileReader();
+            reader.readAsDataURL(file);
+
+            reader.onload = (e) => {
+                const img = new Image();
+                img.src = e.target.result;
+                img.onload = () => {
+                    const canvas = document.createElement('canvas');
+                    const ctx = canvas.getContext('2d');
+                    canvas.width = img.width;
+                    canvas.height = img.height;
+                    ctx.drawImage(img, 0, 0);
+
+                    canvas.toBlob((blob) => {
+                        const cleanFileName = file.name.replace(/ /g, "_").replace(/\.[^.]+$/, ".webp");
+                        const convertedFile = new File([blob], cleanFileName, { type: "image/webp" });
+                        const fileSizeKB = (convertedFile.size / 1024).toFixed(2);
+
+                        const imageComparison = document.createElement('div');
+                        imageComparison.classList.add('imageContainer');
+
+                        const originalPreview = document.createElement('div');
+                        originalPreview.classList.add('imagePreview');
+                        const originalImg = document.createElement('img');
+                        originalImg.src = e.target.result;
+                        originalPreview.appendChild(originalImg);
+                        const originalLabel = document.createElement('p');
+                        originalLabel.textContent = `Original: ${(file.size / 1024).toFixed(2)} KB`;
+                        originalPreview.appendChild(originalLabel);
+
+                        const convertedPreview = document.createElement('div');
+                        convertedPreview.classList.add('imagePreview');
+                        convertedPreview.appendChild(canvas);
+
+                        const downloadBtn = document.createElement('button');
+                        downloadBtn.textContent = `Download WebP`;
+                        downloadBtn.addEventListener('click', () => {
+                            const link = document.createElement('a');
+                            link.href = URL.createObjectURL(convertedFile);
+                            link.download = cleanFileName;
+                            link.click();
+                            
+                            imageContainer.removeChild(imageComparison); // Remove image preview after download
+                        });
+                        convertedPreview.appendChild(downloadBtn);
+
+                        const convertedLabel = document.createElement('p');
+                        convertedLabel.classList.add('convertedInfo');
+                        convertedLabel.textContent = `Converted: ${fileSizeKB} KB`;
+                        convertedPreview.appendChild(convertedLabel);
+
+                        imageComparison.appendChild(convertedPreview);
+                        imageComparison.appendChild(originalPreview);
+
+                        imageContainer.appendChild(imageComparison);
+                    }, 'image/webp');
+                };
+            };
+        }
+    </script>
+</body>
+</html>
