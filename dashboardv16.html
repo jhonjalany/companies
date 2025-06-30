@@ -1,0 +1,589 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Resident Information</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      margin: 2rem;
+      background-color: #f9f9f9;
+      color: #333;
+    }
+    h1 {
+      text-align: center;
+      color: #2c3e50;
+    }
+    .container {
+      max-width: 95%;
+      margin: auto;
+      padding: 0 1rem;
+    }
+    .table-container {
+      overflow-x: auto;
+    }
+    .table-actions {
+      display: flex;
+      justify-content: flex-end;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 10px;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 1rem;
+      background-color: #fff;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+      border-radius: 8px;
+      overflow: hidden;
+    }
+    th, td {
+      padding: 12px 16px;
+      border-bottom: 1px solid #ddd;
+      white-space: nowrap;
+    }
+    th {
+      background-color: #2c3e50;
+      color: white;
+      cursor: grab;
+    }
+    th.drag-over {
+      background-color: #444 !important;
+    }
+    .th-content {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      width: 100%;
+    }
+    .sort-indicator {
+      font-size: 0.9em;
+      opacity: 0.7;
+      white-space: nowrap;
+      margin-left: 8px;
+    }
+    .filter-input {
+      width: 100%;
+      padding: 6px 10px;
+      box-sizing: border-box;
+      margin-bottom: 6px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      transition: 0.2s;
+    }
+    .add-column-input {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+    .remove-col-btn {
+      background: red;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      padding: 2px 6px;
+      cursor: pointer;
+      font-weight: bold;
+      margin-right: 8px;
+      font-size: 14px;
+    }
+    select {
+      padding: 4px;
+      font-size: 14px;
+    }
+    .add-col-btn {
+      background: green;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      padding: 4px 8px;
+      cursor: pointer;
+      font-weight: bold;
+    }
+    tr:nth-child(even) {
+      background-color: #f9f9f9;
+    }
+    .loading {
+      text-align: center;
+      margin-top: 2rem;
+      color: #666;
+    }
+    .footer-info {
+      margin-top: 1rem;
+      font-size: 0.9rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+    .pagination {
+      display: flex;
+      list-style: none;
+      padding: 0;
+      margin: 0;
+    }
+    .pagination li {
+      margin: 0 4px;
+    }
+    .pagination li button {
+      padding: 6px 12px;
+      border: 1px solid #ccc;
+      background-color: #f2f2f2;
+      cursor: pointer;
+      border-radius: 4px;
+      transition: all 0.2s ease-in-out;
+    }
+    /* Modern styled action buttons */
+    .action-btn {
+      padding: 8px 16px;
+      border: none;
+      border-radius: 6px;
+      font-size: 14px;
+      font-weight: bold;
+      color: white;
+      background-color: #3498db;
+      cursor: pointer;
+      transition: background-color 0.3s ease, transform 0.1s ease;
+    }
+    .action-btn:hover {
+      background-color: #2980b9;
+      transform: translateY(-1px);
+    }
+    .save-btn {
+      background-color: #2ecc71;
+    }
+    .save-btn:hover {
+      background-color: #27ae60;
+    }
+    .save-btn:disabled {
+      background-color: #bdc3c7;
+      cursor: not-allowed;
+    }
+    .editable-cell {
+      background-color: #f0f8ff;
+      outline: none;
+      cursor: text;
+    }
+  </style>
+</head>
+<body>
+<div class="container">
+  <h1>Resident Information</h1>
+  <div class="loading" id="loading">Loading data...</div>
+  <div class="table-container">
+    <!-- Buttons on Right -->
+    <div class="table-actions">
+      <button id="editBtn" class="action-btn">Edit</button>
+      <button id="saveBtn" class="action-btn save-btn" disabled>Save</button>
+    </div>
+    <table id="residentTable" style="display: none;">
+      <thead>
+        <tr id="headerRow"></tr>
+        <tr id="filterRow"></tr>
+      </thead>
+      <tbody></tbody>
+    </table>
+  </div>
+  <div class="footer-info">
+    <div id="entryInfo">Showing 0 to 0 of 0 entries</div>
+    <div>
+      Show
+      <select id="pageSize" class="page-length-select">
+        <option value="2">2</option>
+        <option value="5">5</option>
+        <option value="10">10</option>
+        <option value="25">25</option>
+        <option value="50">50</option>
+        <option value="100">100</option>
+      </select>
+      entries
+    </div>
+    <ul class="pagination" id="pagination">
+      <li><button id="prevBtn" onclick="goToPage(currentPage - 1)" disabled>Previous</button></li>
+      <li><button id="nextBtn" onclick="goToPage(currentPage + 1)">Next</button></li>
+    </ul>
+  </div>
+</div>
+
+<script>
+  let residentData = [];
+  let filteredData = [];
+  let currentPage = 1;
+  let pageSize = 10;
+  const defaultColumns = ['No.', 'ID', 'First Name', 'Middle Name', 'Last Name'];
+  const optionalColumns = [
+    'Date Of Birth',
+    'Age',
+    'Zone Number',
+    'Gender',
+    'Civil Status',
+    'Religion',
+    'Occupation',
+    'Contact Number',
+    'Email Address',
+    'Status'
+  ];
+  const visibleColumns = [...defaultColumns];
+  let sortColumn = null;
+  let sortDirection = 'asc';
+
+  function initTable() {
+    const headerRow = document.getElementById('headerRow');
+    const filterRow = document.getElementById('filterRow');
+    headerRow.innerHTML = '';
+    filterRow.innerHTML = '';
+    visibleColumns.forEach((col, index) => {
+      const th = createHeaderCell(col);
+      headerRow.appendChild(th);
+      const ft = createFilterCell(col);
+      filterRow.appendChild(ft);
+    });
+
+    // Add "+" button for adding new columns
+    const addTh = document.createElement('th');
+    const addButton = document.createElement('button');
+    addButton.textContent = '+';
+    addButton.className = 'add-col-btn';
+    addButton.onclick = () => showAddColumnInput(addTh);
+    addTh.appendChild(addButton);
+    headerRow.appendChild(addTh);
+
+    const ft = document.createElement('th');
+    filterRow.appendChild(ft);
+
+    enableColumnReordering();
+    document.getElementById('editBtn').onclick = enableEditing;
+    document.getElementById('saveBtn').onclick = saveEditedData;
+    renderTable();
+  }
+
+  function createHeaderCell(col) {
+    const th = document.createElement('th');
+    if (col === 'No.') {
+      th.innerHTML = `<div class="th-content"><span>No.</span></div>`;
+      return th;
+    }
+    const div = document.createElement('div');
+    div.className = 'th-content';
+    if (!defaultColumns.includes(col)) {
+      const removeBtn = document.createElement('button');
+      removeBtn.textContent = '×';
+      removeBtn.className = 'remove-col-btn';
+      removeBtn.title = 'Remove Column';
+      removeBtn.onclick = () => removeColumn(col);
+      div.appendChild(removeBtn);
+    }
+    const span = document.createElement('span');
+    span.textContent = col;
+    const indicator = document.createElement('span');
+    indicator.className = 'sort-indicator';
+    indicator.id = `indicator-${col}`;
+    div.appendChild(span);
+    div.appendChild(indicator);
+    th.appendChild(div);
+    th.onclick = () => sortTable(col);
+    return th;
+  }
+
+  function createFilterCell(col) {
+    const th = document.createElement('th');
+    if (col === 'No.') {
+      th.innerHTML = `<div class="th-content"><span></span></div>`;
+      return th;
+    }
+    const input = document.createElement('input');
+    input.type = 'text';
+    input.className = 'filter-input';
+    input.dataset.column = col;
+    input.placeholder = 'Search';
+    input.oninput = () => setupFilters();
+    th.appendChild(input);
+    return th;
+  }
+
+  function removeColumn(column) {
+    const idx = visibleColumns.indexOf(column);
+    if (idx > -1 && column !== 'ID') {
+      visibleColumns.splice(idx, 1);
+      initTable();
+    }
+  }
+
+  function showAddColumnInput(cell) {
+    cell.innerHTML = '';
+    const container = document.createElement('div');
+    container.style.display = 'flex';
+    container.style.alignItems = 'center';
+    container.style.gap = '8px';
+    const select = document.createElement('select');
+    const remaining = optionalColumns.filter(c => !visibleColumns.includes(c) && c !== 'ID');
+    remaining.forEach(col => {
+      const option = document.createElement('option');
+      option.value = col;
+      option.textContent = col;
+      select.appendChild(option);
+    });
+    const addBtn = document.createElement('button');
+    addBtn.textContent = 'Add';
+    addBtn.className = 'add-col-btn';
+    addBtn.onclick = () => {
+      const selectedCol = select.value;
+      if (!visibleColumns.includes(selectedCol)) {
+        const lastNameIndex = visibleColumns.indexOf('Last Name');
+        visibleColumns.splice(lastNameIndex + 1, 0, selectedCol);
+        initTable();
+      }
+    };
+    container.appendChild(select);
+    container.appendChild(addBtn);
+    cell.appendChild(container);
+  }
+
+  function sortTable(column) {
+    if (column === 'No.') return;
+    if (sortColumn === column) {
+      sortDirection = sortDirection === 'asc' ? 'desc' : 'asc';
+    } else {
+      sortColumn = column;
+      sortDirection = 'asc';
+    }
+    updateSortIndicators();
+    const numericColumns = ['Age', 'Zone Number', 'Contact Number','ID'];
+    filteredData.sort((a, b) => {
+      let valA = a[column] || '';
+      let valB = b[column] || '';
+      if (numericColumns.includes(column)) {
+        valA = parseFloat(valA);
+        valB = parseFloat(valB);
+        if (isNaN(valA)) valA = -Infinity;
+        if (isNaN(valB)) valB = -Infinity;
+        return sortDirection === 'asc' ? valA - valB : valB - valA;
+      } else {
+        valA = valA.toString().toLowerCase();
+        valB = valB.toString().toLowerCase();
+        if (valA < valB) return sortDirection === 'asc' ? -1 : 1;
+        if (valA > valB) return sortDirection === 'asc' ? 1 : -1;
+        return 0;
+      }
+    });
+    currentPage = 1;
+    renderTable();
+  }
+
+  function updateSortIndicators() {
+    document.querySelectorAll('.sort-indicator').forEach(el => el.textContent = '');
+    const indicator = document.getElementById(`indicator-${sortColumn}`);
+    if (indicator) {
+      indicator.textContent = sortDirection === 'asc' ? ' ↑' : ' ↓';
+    }
+  }
+
+  function renderTable() {
+    const tbody = document.querySelector('#residentTable tbody');
+    const entryInfo = document.getElementById('entryInfo');
+    const prevBtn = document.getElementById('prevBtn');
+    const nextBtn = document.getElementById('nextBtn');
+    tbody.innerHTML = '';
+    const start = (currentPage - 1) * pageSize;
+    const pageData = filteredData.slice(start, start + pageSize);
+    pageData.forEach((item, index) => {
+      const row = document.createElement('tr');
+      let html = `<td>${start + index + 1}</td>`;
+      visibleColumns.slice(1).forEach(col => {
+        html += `<td>${item[col] || ''}</td>`;
+      });
+      row.innerHTML = html;
+      tbody.appendChild(row);
+    });
+    const end = Math.min(start + pageSize, filteredData.length);
+    entryInfo.textContent = `Showing ${start + 1} to ${end} of ${filteredData.length} entries`;
+    const totalPages = Math.ceil(filteredData.length / pageSize);
+    prevBtn.disabled = currentPage === 1;
+    nextBtn.disabled = currentPage === totalPages;
+  }
+
+  function goToPage(page) {
+    const totalPages = Math.ceil(filteredData.length / pageSize);
+    if (page < 1 || page > totalPages) return;
+    currentPage = page;
+    renderTable();
+  }
+
+  function setupFilters() {
+    const inputs = document.querySelectorAll('.filter-input');
+    const filters = {};
+    inputs.forEach(i => {
+      const col = i.getAttribute('data-column');
+      const val = i.value.toLowerCase().trim();
+      if (val) filters[col] = val;
+    });
+    filteredData = residentData.filter(item => {
+      return Object.entries(filters).every(([col, val]) => {
+        let cellText = item[col]?.toString().toLowerCase() || '';
+        return cellText.includes(val.toLowerCase());
+      });
+    });
+    currentPage = 1;
+    sortColumn = null;
+    sortDirection = 'asc';
+    renderTable();
+  }
+
+  function enableColumnReordering() {
+    const table = document.getElementById('residentTable');
+    const headers = table.querySelectorAll('thead th');
+    headers.forEach((header, index) => {
+      if (index === 0 || index === 1) return; // Skip reordering for "No." and "ID"
+      header.setAttribute('draggable', true);
+      header.addEventListener('dragstart', e => {
+        header.classList.add('dragging');
+        e.dataTransfer.setData('text/plain', header.cellIndex);
+      });
+      header.addEventListener('dragover', e => e.preventDefault());
+      header.addEventListener('drop', e => {
+        e.preventDefault();
+        const fromIndex = parseInt(e.dataTransfer.getData('text/plain'));
+        const toIndex = header.cellIndex;
+        if (fromIndex !== toIndex) moveColumn(fromIndex, toIndex);
+        header.classList.remove('dragging');
+      });
+      header.addEventListener('dragend', () => header.classList.remove('dragging'));
+    });
+  }
+
+  function moveColumn(fromIndex, toIndex) {
+    const rows = document.querySelectorAll('tr');
+    rows.forEach(row => {
+      const cells = Array.from(row.children);
+      const movedCell = cells.splice(fromIndex, 1)[0];
+      cells.splice(toIndex, 0, movedCell);
+      row.innerHTML = '';
+      cells.forEach(cell => row.appendChild(cell));
+    });
+    const newHeaders = Array.from(document.querySelectorAll('thead th')).map(th => {
+      const span = th.querySelector('span');
+      return span ? span.textContent.trim() : '';
+    });
+    const reorderedVisible = newHeaders.filter(h => h !== '');
+    visibleColumns.length = 0;
+    visibleColumns.push(...reorderedVisible);
+    renderTable();
+  }
+
+  function enableEditing() {
+    const numericColumns = ['Age', 'Zone Number', 'Contact Number'];
+    const rows = document.querySelectorAll('#residentTable tbody tr');
+    rows.forEach(row => {
+      const cells = row.querySelectorAll('td');
+      cells.forEach((cell, index) => {
+        if (index === 0 || index === 1) return; // skip "No." and "ID"
+        cell.contentEditable = 'true';
+        cell.classList.add('editable-cell');
+        const colName = visibleColumns.slice(1)[index - 1];
+        if (numericColumns.includes(colName)) {
+          cell.onbeforeinput = (e) => {
+            const allowedInput = /^[\d\b]+$/.test(e.data || '');
+            if (!allowedInput && e.data !== null) {
+              e.preventDefault();
+            }
+          };
+        } else {
+          cell.onbeforeinput = null;
+        }
+        cell.addEventListener('input', () => {
+          document.getElementById('saveBtn').disabled = false;
+        });
+      });
+    });
+  }
+
+  function saveEditedData() {
+    const rows = document.querySelectorAll('#residentTable tbody tr');
+    rows.forEach((row, i) => {
+      const cells = row.querySelectorAll('td');
+      const dataIndex = (currentPage - 1) * pageSize + i;
+      const originalRow = { ...filteredData[dataIndex] };
+      const updatedRow = {};
+      visibleColumns.slice(1).forEach((col, j) => {
+        const newValue = cells[j + 1].innerText.trim();
+        const keyMap = {
+          'First Name': 'First Name',
+          'Middle Name': 'Middle Name',
+          'Last Name': 'Last Name',
+          'Date Of Birth': 'Date Of Birth',
+          'Zone Number': 'Zone Number',
+          'Contact Number': 'Contact Number',
+          'Email Address': 'Email Address',
+          'Civil Status': 'Civil Status',
+          'Gender': 'Gender',
+          'Religion': 'Religion',
+          'Occupation': 'Occupation',
+          'Age': 'Age',
+          'Status': 'Status'
+        };
+        const mappedKey = keyMap[col] || col.replace(/\s+/g, '');
+        if (newValue !== originalRow[mappedKey]) {
+          updatedRow[mappedKey] = newValue;
+        }
+      });
+      if (Object.keys(updatedRow).length > 0) {
+        const id = originalRow['ID'];
+        updatedRow.ID = id;
+        fetch('https://n8n-app-gn6h.onrender.com/webhook-test/form ', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(updatedRow)
+        })
+          .then(res => res.json())
+          .then(data => console.log('Saved:', data))
+          .catch(err => console.error('Error saving row:', err));
+        Object.assign(filteredData[dataIndex], updatedRow);
+        const matchIndex = residentData.findIndex(r => r.ID === id);
+        if (matchIndex !== -1) {
+          Object.assign(residentData[matchIndex], updatedRow);
+        }
+      }
+    });
+    alert('Changes saved successfully.');
+    const rowsAll = document.querySelectorAll('#residentTable tbody tr');
+    rowsAll.forEach(row => {
+      const cells = row.querySelectorAll('td');
+      cells.forEach((cell, index) => {
+        if (index === 0 || index === 1) return;
+        cell.contentEditable = 'false';
+        cell.classList.remove('editable-cell');
+      });
+    });
+    document.getElementById('saveBtn').disabled = true;
+  }
+
+  window.addEventListener('DOMContentLoaded', () => {
+    const url = 'https://n8n-app-gn6h.onrender.com/webhook/transfer-data ';
+    fetch(url)
+      .then(response => response.json())
+      .then(data => {
+        residentData = (data.data || []).map((item, idx) => ({
+          ...item,
+          ID: item.ID || `temp-${idx}`
+        }));
+        filteredData = [...residentData];
+        initTable();
+        document.getElementById('loading').style.display = 'none';
+        document.getElementById('residentTable').style.display = 'table';
+      })
+      .catch(error => {
+        console.error('Error fetching:', error);
+        document.getElementById('loading').textContent = 'Failed to load data.';
+      });
+
+    document.getElementById('pageSize').addEventListener('change', e => {
+      pageSize = parseInt(e.target.value);
+      currentPage = 1;
+      renderTable();
+    });
+  });
+</script>
+</body>
+</html>
