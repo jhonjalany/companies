@@ -1,0 +1,1508 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Resident Information</title>
+  <!-- SheetJS Library -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js "></script>
+  <style>
+    .hidden {
+      display: none;
+    }
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      margin: 2rem;
+      background-color: #f9f9f9;
+      color: #333;
+    }
+    h1 {
+      text-align: center;
+      color: #2c3e50;
+    }
+    .container {
+      max-width: 95%;
+      margin: auto;
+      padding: 0 1rem;
+    }
+    .table-container {
+      overflow-x: auto;
+    }
+    .table-actions {
+      display: flex;
+      justify-content: flex-start;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 10px;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 1rem;
+      background-color: #fff;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+      border-radius: 8px;
+      overflow: hidden;
+    }
+    th, td {
+      padding: 12px 16px;
+      border-bottom: 1px solid #ddd;
+      white-space: nowrap;
+    }
+    th {
+      background-color: #2c3e50;
+      color: white;
+      cursor: grab;
+    }
+    th.drag-over {
+      background-color: #444 !important;
+    }
+    .th-content {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      width: 100%;
+    }
+    .sort-indicator {
+      font-size: 0.9em;
+      opacity: 0.7;
+      white-space: nowrap;
+      margin-left: 8px;
+    }
+    .filter-input {
+      width: 100%;
+      padding: 6px 10px;
+      box-sizing: border-box;
+      margin-bottom: 6px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      transition: 0.2s;
+    }
+    .add-column-input {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+    .remove-col-btn {
+      background: red;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      padding: 2px 6px;
+      cursor: pointer;
+      font-weight: bold;
+      margin-right: 8px;
+      font-size: 14px;
+    }
+    select {
+      padding: 4px;
+      font-size: 14px;
+    }
+    .add-col-btn {
+      background: green;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      padding: 4px 8px;
+      cursor: pointer;
+      font-weight: bold;
+    }
+    tr:nth-child(even) {
+      background-color: #f9f9f9;
+    }
+    .loading {
+      text-align: center;
+      margin-top: 2rem;
+      color: #666;
+    }
+    .footer-info {
+      margin-top: 1rem;
+      font-size: 0.9rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+    .pagination {
+      display: flex;
+      list-style: none;
+      padding: 0;
+      margin: 0;
+    }
+    .pagination li {
+      margin: 0 4px;
+    }
+    .pagination li button {
+      padding: 6px 12px;
+      border: 1px solid #ccc;
+      background-color: #f2f2f2;
+      cursor: pointer;
+      border-radius: 4px;
+      transition: all 0.2s ease-in-out;
+    }
+    .action-btn {
+      padding: 8px 16px;
+      border: none;
+      border-radius: 6px;
+      font-size: 14px;
+      font-weight: bold;
+      color: white;
+      background-color: #3498db;
+      cursor: pointer;
+      transition: background-color 0.3s ease, transform 0.1s ease;
+    }
+    .action-btn:hover {
+      background-color: #2980b9;
+      transform: translateY(-1px);
+    }
+    .save-btn {
+      background-color: #2ecc71;
+    }
+    .save-btn:hover {
+      background-color: #27ae60;
+    }
+    .save-btn:disabled {
+      background-color: #bdc3c7;
+      cursor: not-allowed;
+    }
+    tr.row-selected {
+      background-color: #d0ebff !important;
+    }
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+    #spinner {
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      z-index: 9999;
+      background: rgba(0,0,0,0.7);
+      padding: 20px;
+      border-radius: 10px;
+      color: white;
+      text-align: center;
+    }
+    #spinner div {
+      width: 40px;
+      height: 40px;
+      border: 4px solid #f3f3f3;
+      border-top: 4px solid #3498db;
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+      margin: auto;
+    }
+    .print-button {
+      padding: 8px 16px;
+      border: none;
+      border-radius: 6px;
+      font-size: 14px;
+      font-weight: bold;
+      color: white;
+      background-color: #3498db;
+      cursor: pointer;
+      transition: background-color 0.3s ease, transform 0.1s ease;
+    }
+    @media print {
+      .no-print {
+        display: none !important;
+      }
+    }
+    .modal {
+      display: none;
+      position: fixed;
+      z-index: 9999;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      overflow: auto;
+      background-color: rgba(0,0,0,0.4);
+    }
+    .modal-content {
+      background-color: #fff;
+      margin: 8% auto;
+      padding: 2rem;
+      border-radius: 8px;
+      width: 90%;
+      max-width: 600px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+      position: relative;
+    }
+    .modal-close {
+      color: #aaa;
+      float: right;
+      font-size: 24px;
+      font-weight: bold;
+      cursor: pointer;
+    }
+    .modal-close:hover,
+    .modal-close:focus {
+      color: black;
+      text-decoration: none;
+      cursor: pointer;
+    }
+    .modal-footer {
+      margin-top: 1rem;
+      text-align: right;
+    }
+    .form-group {
+      margin-bottom: 1rem;
+    }
+    .form-group label {
+      display: block;
+      font-weight: bold;
+      margin-bottom: 0.5rem;
+    }
+    .form-group input {
+      width: 100%;
+      padding: 8px;
+      box-sizing: border-box;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      font-size: 14px;
+    }
+    .edited-cell {
+      background-color: #ffeeba !important;
+      transition: background-color 0.5s ease;
+    }
+    /* Delete Button */
+    .delete-btn {
+      background-color: #e74c3c;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      padding: 4px 8px;
+      cursor: pointer;
+      font-size: 14px;
+      transition: background-color 0.3s ease;
+    }
+    .delete-btn:hover {
+      background-color: #c0392b;
+    }
+    .date-input {
+      width: 100%;
+      padding: 6px;
+      box-sizing: border-box;
+    }
+  </style>
+</head>
+<body>
+<div class="container">
+  <h1>Resident Information</h1>
+  <div id="spinner" style="display: none;">
+    <div></div>
+    <p style="margin-top: 10px;">Saving changes...</p>
+  </div>
+  <div class="loading" id="loading">Loading data...</div>
+  <div class="table-container"> 
+    <div class="table-actions">
+      <button id="editBtn" class="action-btn no-print">Edit</button>
+      <button id="saveBtn" class="action-btn save-btn no-print" disabled>Save</button>
+      <button onclick="printSection()" class="no-print print-button">Print</button>
+      <button id="addRowBtn" class="action-btn no-print" style="background-color: #e67e22;">Add</button>
+      <button id="addColumnFormulaBtn" class="action-btn no-print" style="background-color: #f1c40f;">Add Formula Column</button>
+      <!-- Inside .table-actions -->
+      <input type="file" id="fileInput" accept=".xlsx,.xls" class="no-print" />
+      <select id="sheetSelector" class="no-print" style="display:none;"></select>
+      
+      <button id="downloadBtn" class="action-btn no-print" style="background-color: #9b59b6;">Download</button>
+      <button id="exportCsvBtn" class="action-btn no-print" style="background-color: #f39c12;">Export CSV</button>
+      <button id="clearLocalStorageBtn" class="action-btn no-print" style="background-color: #e74c3c;">Clear</button>
+    </div>
+    <table id="residentTable" style="display: none;">
+      <thead>
+        <tr id="headerRow"></tr>
+        <tr id="filterRow"></tr>
+      </thead>
+      <tbody></tbody>
+    </table>
+  </div>
+  <div class="footer-info no-print">
+    <div id="entryInfo">Showing 0 to 0 of 0 entries</div>
+    <div>
+      Show
+      <select id="pageSize" class="page-length-select">
+        <option value="10">10</option>
+        <option value="20">20</option>
+        <option value="30">30</option>
+        <option value="40">40</option>
+        <option value="50">50</option>
+        <option value="100">100</option>
+        <option value="200">200</option>
+      </select>
+      entries
+    </div>
+    <ul class="pagination" id="pagination">
+      <li><button id="prevBtn" onclick="goToPage(currentPage - 1)" disabled>Previous</button></li>
+      <li><button id="nextBtn" onclick="goToPage(currentPage + 1)">Next</button></li>
+    </ul>
+  </div>
+</div>
+
+<!-- Add New Resident Modal -->
+<div id="addRowModal" class="modal">
+  <div class="modal-content">
+    <span class="modal-close">&times;</span>
+    <h2>Add New Resident</h2>
+    <form id="addRowForm"></form>
+    <div class="modal-footer">
+      <button type="submit" form="addRowForm" class="action-btn save-btn">Save</button>
+    </div>
+  </div>
+</div>
+
+<!-- Delete Confirmation Modal -->
+<div id="deleteModal" class="modal">
+  <div class="modal-content">
+    <span class="modal-close">&times;</span>
+    <h2>Confirm Deletion</h2>
+    <p>Are you sure you want to delete this resident?</p>
+    <div class="modal-footer">
+      <button id="confirmDeleteBtn" class="action-btn delete-btn">Delete</button>
+      <button id="cancelDeleteBtn" class="action-btn no-print">Cancel</button>
+    </div>
+  </div>
+</div>
+<!-- Add Formula Column Modal -->
+<div id="addColumnModal" class="modal">
+  <div class="modal-content">
+    <span class="modal-close">&times;</span>
+    <h2>Add Custom Formula Column</h2>
+    <form id="addColumnForm">
+      <div class="form-group">
+        <label for="columnName">Column Name</label>
+        <input type="text" id="columnName" name="columnName" placeholder="Enter column name" required />
+      </div>
+      <div class="form-group">
+        <label for="columnFormula">Custom Formula</label>
+        <input type="text" id="columnFormula" name="columnFormula" placeholder="e.g. =A+B" />
+        <small>Available columns: <%= availableCols %></small>
+      </div>
+      <div class="form-group">
+        <strong>Sample Output:</strong>
+        <ul id="sampleOutput" style="list-style-type: none; padding-left: 0;"></ul>
+      </div>
+      <div class="modal-footer">
+        <button type="submit" class="action-btn save-btn">Submit</button>
+        <button type="button" id="cancelAddColBtn" class="action-btn no-print">Cancel</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<script>
+let sheetDataMap = {}; // { "Sheet1": [...], "Sheet2": [...] }
+let residentData = [];
+let filteredData = [];
+let currentPage = 1;
+let pageSize = 10;
+const visibleColumns = ['No.'];
+const optionalColumns = [];
+let sortColumn = null;
+let sortDirection = 'asc';
+let fixedSecondColumn = '';
+let lastAddedColumnIndex = 1;
+let isEditing = false;
+let idColumn = 'ID'; // Will be set dynamically
+// For Delete Functionality
+let selectedRowForDelete = null;
+let selectedRowIndex = -1;
+let editedCells = {}; // <-- Add this
+
+
+document.getElementById('addRowBtn').addEventListener('click', () => {
+  openAddRowModal();
+});
+
+function openAddRowModal() {
+  const currentSheet = document.getElementById('sheetSelector').value;
+  const sampleRow = sheetDataMap[currentSheet][0] || {};
+  const colNames = Object.keys(sampleRow).filter(k => k !== 'Row Number');
+  const modal = document.getElementById('addRowModal');
+  const form = document.getElementById('addRowForm');
+  form.innerHTML = ''; // Clear previous content
+
+  if (!colNames.length) {
+    alert("No column structure found.");
+    return;
+  }
+
+  colNames.forEach(col => {
+    const group = document.createElement('div');
+    group.className = 'form-group';
+    const label = document.createElement('label');
+    label.textContent = col;
+    const input = document.createElement('input');
+    input.type = 'text';
+    input.name = col;
+    input.placeholder = `Enter ${col}`;
+    input.required = col === idColumn ? true : false;
+    group.appendChild(label);
+    group.appendChild(input);
+    form.appendChild(group);
+  });
+
+  modal.style.display = 'block';
+}
+
+document.querySelector('.modal-close')?.addEventListener('click', () => {
+  document.getElementById('addRowModal').style.display = 'none';
+});
+
+document.getElementById('addRowForm')?.addEventListener('submit', function(e) {
+  e.preventDefault();
+  const currentSheet = document.getElementById('sheetSelector').value;
+  const sampleRow = sheetDataMap[currentSheet][0] || {};
+  
+  // Only get real columns from current sheet
+  const colNames = Object.keys(sampleRow).filter(k => k !== 'Row Number');
+  
+  const formData = {};
+  const inputs = this.querySelectorAll('input');
+
+  inputs.forEach(input => {
+    const col = input.name;
+    if (colNames.includes(col)) { // Only add if column exists in current sheet
+      formData[col] = input.value.trim();
+    }
+  });
+
+  const existingIds = new Set([
+    ...residentData.map(r => r[idColumn]),
+    ...filteredData.map(r => r[idColumn])
+  ]);
+
+  if (existingIds.has(formData[idColumn])) {
+    alert("A row with this ID already exists!");
+    return;
+  }
+
+  // Evaluate formula columns only for current sheet
+  const sheetFormulas = window.sheetFormulas?.[currentSheet] || {};
+  Object.keys(sheetFormulas).forEach(colName => {
+    const formula = sheetFormulas[colName];
+    try {
+      formData[colName] = evaluateFormula(formula, formData);
+    } catch (e) {
+      formData[colName] = 'Error';
+    }
+  });
+
+  residentData.push(formData);
+  filteredData.push(formData);
+  sheetDataMap[currentSheet].push(formData);
+
+  document.getElementById('addRowModal').style.display = 'none';
+  renderTable();
+  saveToLocalStorage();
+  alert('New row added successfully.');
+});
+
+function initTable() {
+  const headerRow = document.getElementById('headerRow');
+  const filterRow = document.getElementById('filterRow');
+  headerRow.innerHTML = '';
+  filterRow.innerHTML = '';
+
+  visibleColumns.forEach((col, index) => {
+    const th = createHeaderCell(col);
+    headerRow.appendChild(th);
+    const ft = createFilterCell(col);
+    filterRow.appendChild(ft);
+  });
+
+  const addTh = document.createElement('th');
+  const addButton = document.createElement('button');
+  addButton.textContent = '+';
+  addButton.className = 'add-col-btn no-print';
+  addButton.onclick = () => showAddColumnInput(addTh);
+  addTh.appendChild(addButton);
+  headerRow.appendChild(addTh);
+
+  const ft = document.createElement('th');
+  filterRow.appendChild(ft);
+
+  enableColumnReordering();
+
+  document.getElementById('editBtn').onclick = () => {
+    document.getElementById('editBtn').classList.add('hidden');
+    enableEditing();
+  };
+  document.getElementById('saveBtn').onclick = saveEditedData;
+
+  document.querySelector('#residentTable tbody').addEventListener('click', function (e) {
+    const clickedRow = e.target.closest('tr');
+    if (!clickedRow) return;
+    document.querySelectorAll('#residentTable tbody tr').forEach(row => row.classList.remove('row-selected'));
+    clickedRow.classList.add('row-selected');
+  });
+
+  renderTable();
+}
+
+function createHeaderCell(col) {
+  const th = document.createElement('th');
+  if (col === 'No.') {
+    th.innerHTML = `<div class="th-content"><span>No.</span></div>`;
+    return th;
+  }
+  const div = document.createElement('div');
+  div.className = 'th-content';
+  if (!['No.', idColumn, fixedSecondColumn].includes(col)) {
+    const removeBtn = document.createElement('button');
+    removeBtn.textContent = '×';
+    removeBtn.className = 'remove-col-btn no-print';
+    removeBtn.title = 'Remove Column';
+    removeBtn.onclick = () => removeColumn(col);
+    div.appendChild(removeBtn);
+  }
+  const span = document.createElement('span');
+  span.textContent = col;
+  const indicator = document.createElement('span');
+  indicator.className = 'sort-indicator';
+  indicator.id = `indicator-${col}`;
+  div.appendChild(span);
+  div.appendChild(indicator);
+  th.appendChild(div);
+  th.onclick = () => sortTable(col);
+  return th;
+}
+
+function createFilterCell(col) {
+  const th = document.createElement('th');
+  if (col === 'No.') {
+    th.innerHTML = `<div class="th-content"><span></span></div>`;
+    return th;
+  }
+  const input = document.createElement('input');
+  input.type = 'text';
+  input.className = 'filter-input no-print';
+  input.dataset.column = col;
+  input.placeholder = 'Search';
+  input.oninput = () => {
+    if (isEditing) disableEditing();
+    setupFilters();
+  };
+  th.appendChild(input);
+  return th;
+}
+
+function removeColumn(column) {
+  if ([idColumn, fixedSecondColumn].includes(column)) return;
+  const idx = visibleColumns.indexOf(column);
+  if (idx > -1) {
+    visibleColumns.splice(idx, 1);
+    const fixedIndex = visibleColumns.indexOf(fixedSecondColumn);
+    if (fixedIndex !== -1 && fixedIndex < visibleColumns.length - 1) {
+      lastAddedColumnIndex = visibleColumns.length - 1;
+    } else {
+      lastAddedColumnIndex = fixedIndex;
+    }
+    initTable();
+  }
+}
+
+function showAddColumnInput(cell) {
+  cell.innerHTML = '';
+  const container = document.createElement('div');
+  container.style.display = 'flex';
+  container.style.alignItems = 'center';
+  container.style.gap = '8px';
+  const select = document.createElement('select');
+  const remaining = optionalColumns.filter(c => !visibleColumns.includes(c) && c !== idColumn && c !== fixedSecondColumn);
+  remaining.forEach(col => {
+    const option = document.createElement('option');
+    option.value = col;
+    option.textContent = col;
+    select.appendChild(option);
+  });
+  const addBtn = document.createElement('button');
+  addBtn.textContent = 'Add';
+  addBtn.className = 'add-col-btn';
+  addBtn.onclick = () => {
+    if (isEditing) disableEditing();
+    const selectedCol = select.value;
+    if (!visibleColumns.includes(selectedCol)) {
+      const fixedIndex = visibleColumns.indexOf(fixedSecondColumn);
+      const insertAfterIndex = lastAddedColumnIndex === 1 ? fixedIndex : lastAddedColumnIndex;
+      visibleColumns.splice(insertAfterIndex + 1, 0, selectedCol);
+      lastAddedColumnIndex = insertAfterIndex + 1;
+      initTable();
+    }
+  };
+  container.appendChild(select);
+  container.appendChild(addBtn);
+  cell.appendChild(container);
+}
+
+function sortTable(column) {
+  if (isEditing) disableEditing();
+  if (column === 'No.') return;
+
+  // Toggle sort direction
+  if (sortColumn === column) {
+    sortDirection = sortDirection === 'asc' ? 'desc' : 'asc';
+  } else {
+    sortColumn = column;
+    sortDirection = 'asc';
+  }
+
+  // Update UI indicators
+  updateSortIndicators();
+
+  // Determine type of sorting: numeric or string
+  const isNumericColumn = filteredData.every(row => {
+    const value = row[column] || '';
+    // Remove common non-numeric characters and check if it's a number
+    const cleaned = value.toString().replace(/[^0-9.-]/g, '');
+    return cleaned === '' || !isNaN(parseFloat(cleaned)) && isFinite(cleaned);
+  });
+
+  // Perform sort based on detected type
+  filteredData.sort((a, b) => {
+    let valA = a[column] || '';
+    let valB = b[column] || '';
+
+    if (isNumericColumn) {
+      // Numeric sort
+      valA = parseFloat(valA.toString().replace(/[^0-9.-]/g, ''));
+      valB = parseFloat(valB.toString().replace(/[^0-9.-]/g, ''));
+      if (isNaN(valA)) valA = -Infinity;
+      if (isNaN(valB)) valB = -Infinity;
+      return sortDirection === 'asc' ? valA - valB : valB - valA;
+    } else {
+      // String sort
+      valA = valA.toString().toLowerCase();
+      valB = valB.toString().toLowerCase();
+      if (valA < valB) return sortDirection === 'asc' ? -1 : 1;
+      if (valA > valB) return sortDirection === 'asc' ? 1 : -1;
+      return 0;
+    }
+  });
+
+  currentPage = 1;
+  renderTable();
+}
+
+function updateSortIndicators() {
+  document.querySelectorAll('.sort-indicator').forEach(el => el.textContent = '');
+  const indicator = document.getElementById(`indicator-${sortColumn}`);
+  if (indicator) {
+    indicator.textContent = sortDirection === 'asc' ? ' ↑' : ' ↓';
+  }
+}
+
+function renderTable() {
+  const tbody = document.querySelector('#residentTable tbody');
+  const entryInfo = document.getElementById('entryInfo');
+  const prevBtn = document.getElementById('prevBtn');
+  const nextBtn = document.getElementById('nextBtn');
+  tbody.innerHTML = '';
+  const start = (currentPage - 1) * pageSize;
+  const pageData = filteredData.slice(start, start + pageSize);
+  pageData.forEach((item, index) => {
+    const row = document.createElement('tr');
+    let html = `<td>${start + index + 1}</td>`;
+    visibleColumns.slice(1).forEach(col => {
+      html += `<td>${item[col] || ''}</td>`;
+    });
+    row.innerHTML = html;
+    let longPressTimer;
+    row.addEventListener('contextmenu', (e) => {
+      e.preventDefault();
+      showDeleteMenu(e, item[idColumn], index);
+    });
+    row.addEventListener('touchstart', (e) => {
+      longPressTimer = setTimeout(() => {
+        e.preventDefault();
+        showDeleteMenu(e, item[idColumn], index);
+      }, 800);
+    });
+    row.addEventListener('touchend', () => clearTimeout(longPressTimer));
+    tbody.appendChild(row);
+  });
+  const end = Math.min(start + pageSize, filteredData.length);
+  entryInfo.textContent = `Showing ${start + 1} to ${end} of ${filteredData.length} entries`;
+  const totalPages = Math.ceil(filteredData.length / pageSize);
+  prevBtn.disabled = currentPage === 1;
+  nextBtn.disabled = currentPage === totalPages;
+}
+
+function goToPage(page) {
+  if (isEditing) disableEditing();
+  const totalPages = Math.ceil(filteredData.length / pageSize);
+  if (page < 1 || page > totalPages) return;
+  currentPage = page;
+  renderTable();
+}
+
+function setupFilters() {
+  const inputs = document.querySelectorAll('.filter-input');
+  const filters = {};
+  inputs.forEach(i => {
+    const col = i.getAttribute('data-column');
+    const val = i.value.toLowerCase().trim();
+    if (val) filters[col] = val;
+  });
+  filteredData = residentData.filter(item => {
+    return Object.entries(filters).every(([col, val]) => {
+      let cellText = item[col]?.toString().toLowerCase() || '';
+      return cellText.includes(val.toLowerCase());
+    });
+  });
+  currentPage = 1;
+  sortColumn = null;
+  sortDirection = 'asc';
+  renderTable();
+}
+
+function enableColumnReordering() {
+  const table = document.getElementById('residentTable');
+  const headers = table.querySelectorAll('thead th');
+  let draggingIndex = -1;
+  let dragTimer = null;
+
+  headers.forEach((header, index) => {
+    if (index === 0 || index === 1) return;
+
+    header.setAttribute('draggable', true);
+
+    // DESKTOP DRAG EVENTS
+    header.addEventListener('dragstart', e => {
+      draggingIndex = header.cellIndex;
+      header.classList.add('dragging');
+      e.dataTransfer.setData('text/plain', header.cellIndex);
+    });
+
+    header.addEventListener('dragover', e => e.preventDefault());
+
+    header.addEventListener('drop', e => {
+      e.preventDefault();
+      if (isEditing) disableEditing(true);
+      const fromIndex = parseInt(e.dataTransfer.getData('text/plain'));
+      const toIndex = header.cellIndex;
+      if (fromIndex !== toIndex) moveColumn(fromIndex, toIndex);
+      header.classList.remove('dragging');
+      draggingIndex = -1;
+    });
+
+    header.addEventListener('dragend', () => {
+      header.classList.remove('dragging');
+    });
+
+    // MOBILE TOUCH EVENTS - LONG PRESS LOGIC
+    header.addEventListener('touchstart', (e) => {
+      if (draggingIndex !== -1) return; // Already dragging
+
+      dragTimer = setTimeout(() => {
+        draggingIndex = index;
+        header.classList.add('dragging');
+
+        // Manually trigger drop logic after "drag"
+        const onTouchMove = (eMove) => {
+          const target = document.elementFromPoint(
+            eMove.touches[0].clientX,
+            eMove.touches[0].clientY
+          );
+          const targetHeader = target.closest('th');
+          if (targetHeader && targetHeader !== header) {
+            const toIndex = targetHeader.cellIndex;
+            if (toIndex !== draggingIndex) {
+              moveColumn(draggingIndex, toIndex);
+              draggingIndex = toIndex;
+            }
+          }
+        };
+
+        window.addEventListener('touchmove', onTouchMove);
+
+        const onTouchEnd = () => {
+          clearTimeout(dragTimer);
+          header.classList.remove('dragging');
+          window.removeEventListener('touchmove', onTouchMove);
+          window.removeEventListener('touchend', onTouchEnd);
+          draggingIndex = -1;
+        };
+
+        window.addEventListener('touchend', onTouchEnd);
+      }, 800); // Long press duration
+    });
+
+    header.addEventListener('touchmove', () => {
+      clearTimeout(dragTimer);
+    });
+
+    header.addEventListener('touchend', () => {
+      clearTimeout(dragTimer);
+    });
+  });
+}
+
+function moveColumn(fromIndex, toIndex) {
+  const rows = document.querySelectorAll('tr');
+  rows.forEach(row => {
+    const cells = Array.from(row.children);
+    const movedCell = cells.splice(fromIndex, 1)[0];
+    cells.splice(toIndex, 0, movedCell);
+    row.innerHTML = '';
+    cells.forEach(cell => row.appendChild(cell));
+  });
+  const newHeaders = Array.from(document.querySelectorAll('thead th')).map(th => {
+    const span = th.querySelector('span');
+    return span ? span.textContent.trim() : '';
+  });
+  const reorderedVisible = newHeaders.filter(h => h !== '');
+  visibleColumns.length = 0;
+  visibleColumns.push(...reorderedVisible);
+  lastAddedColumnIndex = visibleColumns.length - 1;
+  if (isEditing) {
+    disableEditing(true);
+    document.getElementById('saveBtn').disabled = true;
+    alert("Column reordered. Editing has been canceled.");
+    document.getElementById('editBtn').classList.remove('hidden');
+  }
+  renderTable();
+}
+
+function enableEditing() {
+  isEditing = true;
+  const numericColumns = ['Age','Zone Number','January', 'JANUARY', 'February', 'FEBRUARY', 'March', 'MARCH', 'April', 'APRIL', 'May', 'MAY', 'June', 'JUNE', 'July', 'JULY', 'August', 'AUGUST', 'September', 'SEPTEMBER', 'October', 'OCTOBER', 'November', 'NOVEMBER', 'December', 'DECEMBER'];
+  const rows = document.querySelectorAll('#residentTable tbody tr');
+  rows.forEach(row => {
+    const cells = row.querySelectorAll('td');
+    cells.forEach((cell, index) => {
+      if (index === 0 || index === 1) return;
+      const colName = visibleColumns.slice(1)[index - 1];
+      const isDateColumn = /date/i.test(colName); // Check if column name contains "date"
+      cell.contentEditable = 'false'; // Reset
+      if (isDateColumn) {
+        // Create date input
+        const dateInput = document.createElement('input');
+        dateInput.type = 'date';
+        dateInput.className = 'date-input';
+        dateInput.value = cell.innerText.trim();
+        // Clear cell and append date input
+        cell.innerHTML = '';
+        cell.appendChild(dateInput);
+        // Add change listener
+        dateInput.addEventListener('change', () => {
+          if (!cell.classList.contains('edited-cell')) {
+            cell.classList.add('edited-cell');
+          }
+          document.getElementById('saveBtn').disabled = false;
+        });
+      } else if (numericColumns.includes(colName)) {
+        // Handle numeric columns as before
+        cell.innerHTML = `
+          <div style="display:flex;align-items:center;justify-content:space-between;">
+            <button class="minus-btn">-</button>
+            <span contenteditable="true" class="editable-number">${cell.innerText}</span>
+            <button class="plus-btn">+</button>
+          </div>
+        `;
+        cell.querySelector('.minus-btn').addEventListener('click', () => {
+          let val = parseInt(cell.querySelector('.editable-number').innerText);
+          if (!isNaN(val)) val--;
+          cell.querySelector('.editable-number').innerText = val;
+          if (!cell.classList.contains('edited-cell')) {
+            cell.classList.add('edited-cell');
+          }
+          document.getElementById('saveBtn').disabled = false;
+        });
+        cell.querySelector('.plus-btn').addEventListener('click', () => {
+          let val = parseInt(cell.querySelector('.editable-number').innerText);
+          if (!isNaN(val)) val++;
+          cell.querySelector('.editable-number').innerText = val;
+          if (!cell.classList.contains('edited-cell')) {
+            cell.classList.add('edited-cell');
+          }
+          document.getElementById('saveBtn').disabled = false;
+        });
+        cell.querySelector('.editable-number').addEventListener('input', () => {
+          if (!cell.classList.contains('edited-cell')) {
+            cell.classList.add('edited-cell');
+          }
+          document.getElementById('saveBtn').disabled = false;
+        });
+      } else {
+        // Regular text editing
+        cell.contentEditable = 'true';
+        cell.onbeforeinput = (e) => {
+          if (numericColumns.includes(colName)) {
+            const allowedInput = /^[\d\b]+$/.test(e.data || '');
+            if (!allowedInput && e.data !== null) {
+              e.preventDefault();
+            }
+          }
+        };
+        cell.addEventListener('input', () => {
+          if (!cell.classList.contains('edited-cell')) {
+            cell.classList.add('edited-cell');
+          }
+          document.getElementById('saveBtn').disabled = false;
+        });
+      }
+    });
+  });
+  // Add styles dynamically for buttons
+  const style = document.createElement('style');
+  style.textContent = `
+    .minus-btn {
+      background-color: red;
+      color: white;
+      border: none;
+      padding: 4px 8px;
+      margin-right: 4px;
+      cursor: pointer;
+      border-radius: 4px;
+    }
+    .plus-btn {
+      background-color: blue;
+      color: white;
+      border: none;
+      padding: 4px 8px;
+      margin-left: 4px;
+      cursor: pointer;
+      border-radius: 4px;
+    }
+  `;
+  document.head.appendChild(style);
+}
+
+function disableEditing(resetOnly = false) {
+  const rows = document.querySelectorAll('#residentTable tbody tr');
+  rows.forEach(row => {
+    const cells = row.querySelectorAll('td');
+    cells.forEach((cell, index) => {
+      if (index === 0 || index === 1) return;
+      const editableSpan = cell.querySelector('.editable-number');
+      if (editableSpan) {
+        const value = editableSpan.innerText;
+        cell.innerHTML = value;
+      } else {
+        cell.contentEditable = 'false';
+      }
+    });
+  });
+  if (!resetOnly) {
+    document.getElementById('saveBtn').disabled = true;
+    isEditing = false;
+    document.getElementById('editBtn').classList.remove('hidden');
+  }
+}
+
+function saveEditedData() {
+  const updatedRows = [];
+  const rows = document.querySelectorAll('#residentTable tbody tr');
+  rows.forEach((row, i) => {
+    const dataIndex = (currentPage - 1) * pageSize + i;
+    const originalRow = { ...filteredData[dataIndex] };
+    const updatedRow = {};
+    visibleColumns.slice(1).forEach((col, j) => {
+      let newValue = '';
+      const editableSpan = row.querySelector(`td:nth-child(${j + 2}) .editable-number`);
+      const dateInput = row.querySelector(`td:nth-child(${j + 2}) input[type="date"]`);
+      if (editableSpan) {
+        newValue = editableSpan.innerText.trim();
+      } else if (dateInput) {
+        newValue = dateInput.value;
+      } else {
+        newValue = row.querySelector(`td:nth-child(${j + 2})`).innerText.trim();
+      }
+      const originalValue = (originalRow[col] || '').toString().trim();
+      if (newValue !== originalValue) {
+        updatedRow[col] = newValue;
+      }
+    });
+    if (Object.keys(updatedRow).length > 0) {
+      const id = originalRow[idColumn];
+      updatedRow[idColumn] = id;
+      updatedRows.push(updatedRow);
+    }
+  });
+
+  if (updatedRows.length === 0) {
+    alert("No changes to save.");
+    return;
+  }
+
+  const currentSheet = document.getElementById('sheetSelector').value;
+
+  updatedRows.forEach(rowUpdate => {
+    const id = rowUpdate[idColumn];
+    const filteredIndex = filteredData.findIndex(r => r[idColumn] === id);
+    const residentIndex = residentData.findIndex(r => r[idColumn] === id);
+    const sheetIndex = sheetDataMap[currentSheet].findIndex(r => r[idColumn] === id);
+
+    // Save manual edit in `editedCells`
+    Object.entries(rowUpdate).forEach(([col, val]) => {
+      if (!editedCells[id]) editedCells[id] = {};
+      editedCells[id][col] = val;
+    });
+
+    if (filteredIndex !== -1) {
+      Object.assign(filteredData[filteredIndex], rowUpdate);
+    }
+    if (residentIndex !== -1) {
+      Object.assign(residentData[residentIndex], rowUpdate);
+    }
+    if (sheetIndex !== -1) {
+      Object.assign(sheetDataMap[currentSheet][sheetIndex], rowUpdate);
+    }
+  });
+
+  document.querySelectorAll('.edited-cell').forEach(cell => {
+    cell.classList.remove('edited-cell');
+  });
+
+  saveToLocalStorage();
+  alert('All changes saved locally.');
+  disableEditing();
+}
+
+window.addEventListener('DOMContentLoaded', () => {
+  document.getElementById('fileInput').addEventListener('change', handleFileSelect);
+  document.getElementById('pageSize').addEventListener('change', e => {
+    if (isEditing) disableEditing();
+    pageSize = parseInt(e.target.value);
+    currentPage = 1;
+    renderTable();
+  });
+
+  // File Input
+  if (localStorage.getItem('residentData')) {
+    loadFromLocalStorage();
+  } else {
+    document.getElementById('fileInput').addEventListener('change', handleFileSelect);
+  }
+
+  // Download Button
+  document.getElementById('downloadBtn').addEventListener('click', () => {
+  const wb = XLSX.utils.book_new();
+
+  for (const sheetName in sheetDataMap) {
+    const ws = XLSX.utils.json_to_sheet(sheetDataMap[sheetName]);
+    XLSX.utils.book_append_sheet(wb, ws, sheetName);
+  }
+
+  XLSX.writeFile(wb, "ResidentData_Modified.xlsx");
+});
+
+  // Modal close handlers
+  document.querySelector('.modal-close')?.addEventListener('click', () => {
+    document.getElementById('addRowModal').style.display = 'none';
+  });
+  document.getElementById('cancelDeleteBtn')?.addEventListener('click', () => {
+    document.getElementById('deleteModal').style.display = 'none';
+  });
+  document.getElementById('confirmDeleteBtn')?.addEventListener('click', () => {
+  const currentSheet = document.getElementById('sheetSelector').value;
+
+  if (selectedRowIndex >= 0) {
+    residentData.splice(selectedRowIndex, 1);
+    filteredData.splice(selectedRowIndex, 1);
+    sheetDataMap[currentSheet] = sheetDataMap[currentSheet].filter((_, i) => i !== selectedRowIndex);
+    renderTable();
+    alert("Row deleted locally.");
+  }
+  saveToLocalStorage();
+
+  document.getElementById('deleteModal').style.display = 'none';
+  selectedRowForDelete = null;
+  selectedRowIndex = -1;
+});
+});
+
+function printSection() {
+  window.print();
+}
+
+function showDeleteMenu(event, id, index) {
+  event.preventDefault();
+  const currentSheet = document.getElementById('sheetSelector').value;
+  const originalSheetData = sheetDataMap[currentSheet];
+  const pageIndex = (currentPage - 1) * pageSize + index;
+  const idInOriginal = filteredData[pageIndex]?.[idColumn];
+
+  selectedRowForDelete = { [idColumn]: idInOriginal };
+  selectedRowIndex = originalSheetData.findIndex(r => r[idColumn] === idInOriginal);
+
+  const modal = document.getElementById('deleteModal');
+  modal.style.display = 'block';
+}
+
+function handleFileSelect(e) {
+  const reader = new FileReader();
+  const file = e.target.files[0];
+  if (!file) return;
+
+  document.getElementById('residentTable').style.display = 'none';
+  document.getElementById('loading').style.display = 'block';
+
+  reader.onload = function (e) {
+    const data = new Uint8Array(e.target.result);
+    const workbook = XLSX.read(data, { type: 'array' });
+
+    // Clear localStorage before saving new data
+    localStorage.removeItem('residentData');
+    localStorage.removeItem('sheetDataMap');
+    localStorage.removeItem('currentSheet');
+
+    // Store all sheets in memory
+    sheetDataMap = {};
+    workbook.SheetNames.forEach(sheetName => {
+      const worksheet = workbook.Sheets[sheetName];
+      const json = XLSX.utils.sheet_to_json(worksheet, { raw: false });
+      sheetDataMap[sheetName] = json;
+    });
+
+    // Save new data to localStorage
+    localStorage.setItem('sheetDataMap', JSON.stringify(sheetDataMap));
+
+    // Load first sheet by default
+    loadSheetData(workbook.SheetNames[0]);
+
+    // Populate sheet selector dropdown
+    const sheetSelector = document.getElementById('sheetSelector');
+    sheetSelector.innerHTML = '';
+    workbook.SheetNames.forEach(sheetName => {
+      const option = document.createElement('option');
+      option.value = sheetName;
+      option.textContent = sheetName;
+      sheetSelector.appendChild(option);
+    });
+    sheetSelector.style.display = 'inline-block';
+
+    // Handle sheet change
+    sheetSelector.onchange = () => {
+      loadSheetData(sheetSelector.value);
+    };
+
+    saveToLocalStorage();
+    document.getElementById('loading').style.display = 'none';
+    document.getElementById('residentTable').style.display = 'table';
+  };
+  reader.readAsArrayBuffer(file);
+}
+
+  function loadSheetData(sheetName) {
+  residentData = sheetDataMap[sheetName].map((item, idx) => {
+    const { Row_Number, row_number, ...rest } = item;
+    rest.ID = rest.ID || `temp-${idx}`;
+    return rest;
+  });
+
+  const sampleRow = residentData[0];
+  if (!sampleRow) return;
+
+  const allKeys = Object.keys(sampleRow).filter(k => k !== 'Row Number');
+  idColumn = allKeys.length > 0 ? allKeys[0] : 'ID';
+
+  const otherKeys = allKeys.filter(k => k !== idColumn);
+  visibleColumns.length = 0;
+  visibleColumns.push('No.', idColumn);
+
+  if (otherKeys.length > 0) {
+    visibleColumns.push(otherKeys[0]);
+    fixedSecondColumn = otherKeys[0];
+  }
+
+  optionalColumns.length = 0;
+  optionalColumns.push(...otherKeys.filter(k => k !== fixedSecondColumn));
+
+  filteredData = [...residentData];
+  initTable(); // Re-initialize table
+  document.getElementById('loading').style.display = 'none';
+  document.getElementById('residentTable').style.display = 'table';
+}
+
+  function saveToLocalStorage() {
+  const currentSheet = document.getElementById('sheetSelector').value;
+  localStorage.setItem('residentData', JSON.stringify(residentData));
+  localStorage.setItem('sheetDataMap', JSON.stringify(sheetDataMap));
+  localStorage.setItem('currentSheet', currentSheet);
+  localStorage.setItem('sheetFormulas', JSON.stringify(window.sheetFormulas));
+  localStorage.setItem('editedCells', JSON.stringify(editedCells)); // <-- New line
+}
+
+  function loadFromLocalStorage() {
+  const residentDataStr = localStorage.getItem('residentData');
+  const sheetDataMapStr = localStorage.getItem('sheetDataMap');
+  const currentSheet = localStorage.getItem('currentSheet');
+
+  if (residentDataStr && sheetDataMapStr) {
+    residentData = JSON.parse(residentDataStr);
+    sheetDataMap = JSON.parse(sheetDataMapStr);
+    filteredData = [...residentData];
+
+    const sheetNames = Object.keys(sheetDataMap);
+    let defaultSheet = currentSheet;
+
+    if (!defaultSheet) {
+      defaultSheet = sheetNames.length > 1 ? sheetNames[1] : sheetNames[0];
+    }
+
+    // Load editedCells
+    const savedEdits = localStorage.getItem('editedCells');
+    if (savedEdits) {
+      editedCells = JSON.parse(savedEdits);
+      // Apply manual edits before formulas
+      Object.entries(editedCells).forEach(([id, changes]) => {
+        residentData.forEach(row => {
+          if (row[idColumn] === id) Object.assign(row, changes);
+        });
+        sheetDataMap[defaultSheet].forEach(row => {
+          if (row[idColumn] === id) Object.assign(row, changes);
+        });
+        filteredData.forEach(row => {
+          if (row[idColumn] === id) Object.assign(row, changes);
+        });
+      });
+    }
+    const savedFormulas = localStorage.getItem('sheetFormulas');
+    if (savedFormulas) {
+      window.sheetFormulas = JSON.parse(savedFormulas);
+      updateFormulaColumns();
+    }
+
+    loadSheetData(defaultSheet);
+
+    const sheetSelector = document.getElementById('sheetSelector');
+    sheetSelector.innerHTML = '';
+    sheetNames.forEach(sheetName => {
+      const option = document.createElement('option');
+      option.value = sheetName;
+      option.textContent = sheetName;
+      sheetSelector.appendChild(option);
+    });
+    sheetSelector.style.display = 'inline-block';
+    sheetSelector.value = defaultSheet;
+    sheetSelector.onchange = () => {
+      loadSheetData(sheetSelector.value);
+    };
+
+    document.getElementById('loading').style.display = 'none';
+    document.getElementById('residentTable').style.display = 'table';
+  }
+
+  const savedFormulas = localStorage.getItem('formulaColumns');
+  if (savedFormulas) {
+    formulaColumns = JSON.parse(savedFormulas);
+    updateFormulaColumns();
+  }
+}
+
+  function exportToCSV() {
+  const csvRows = [];
+  
+  // Header Row
+  const headers = visibleColumns.slice(1); // skip 'No.'
+  csvRows.push(headers.join(','));
+
+  // Data Rows
+  filteredData.forEach(row => {
+    const values = headers.map(col => `"${row[col] || ''}"`);
+    csvRows.push(values.join(','));
+  });
+
+  const csvString = csvRows.join('\n');
+  const blob = new Blob([csvString], { type: 'text/csv' });
+  const url = URL.createObjectURL(blob);
+
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = 'ResidentData.csv';
+  a.click();
+  URL.revokeObjectURL(url);
+}
+
+  document.getElementById('exportCsvBtn').addEventListener('click', exportToCSV); 
+
+  document.getElementById('clearLocalStorageBtn').addEventListener('click', () => {
+  if (confirm("Are you sure you want to delete all saved data from this browser?")) {
+    localStorage.removeItem('residentData');
+    localStorage.removeItem('sheetDataMap');
+    localStorage.removeItem('currentSheet');
+    alert("Saved data cleared from local storage.");
+    location.reload(); // Reload the page to reset everything
+  }
+});
+
+document.getElementById('addColumnFormulaBtn').addEventListener('click', () => {
+  openAddColumnModal();
+});
+
+function openAddColumnModal() {
+  const currentSheet = document.getElementById('sheetSelector').value;
+  const sampleRow = sheetDataMap[currentSheet][0] || {};
+  const colNames = Object.keys(sampleRow).filter(k => k !== 'Row Number');
+
+  // Populate column names into help text
+  const formulaInput = document.getElementById('columnFormula');
+  formulaInput.placeholder = `e.g. ${colNames[0]} + ${colNames[1]}`;
+  document.querySelector('#addColumnForm small').textContent =
+    'Available columns: ' + colNames.join(', ');
+
+  document.getElementById('columnName').value = '';
+  document.getElementById('columnFormula').value = '';
+  document.getElementById('sampleOutput').innerHTML = '';
+
+  document.getElementById('addColumnModal').style.display = 'block';
+
+  renderFormulaSamples(); // Initial empty samples
+}
+
+function renderFormulaSamples() {
+  const formula = document.getElementById('columnFormula').value.trim();
+  const ul = document.getElementById('sampleOutput');
+  ul.innerHTML = '';
+  if (!formula) return;
+
+  const sampleRows = filteredData.slice(0, 10);
+  sampleRows.forEach((row, index) => {
+    try {
+      const result = evaluateFormula(formula, row);
+      ul.innerHTML += `<li><strong>Row ${index + 1}:</strong> ${result}</li>`;
+    } catch (e) {
+      ul.innerHTML += `<li><strong>Row ${index + 1}:</strong> Invalid formula</li>`;
+    }
+  });
+}
+
+function evaluateFormula(formula, rowData) {
+  // Replace column names in formula with their values
+  let expr = formula.replace(/([a-zA-Z_][a-zA-Z0-9_]*)/g, match => {
+    const val = rowData[match];
+    return isNaN(val) ? `"${val}"` : parseFloat(val);
+  });
+
+  if (expr.startsWith('=')) expr = expr.substring(1);
+
+  // Use eval safely in restricted context
+  try {
+    return eval(expr);
+  } catch (e) {
+    throw new Error("Invalid formula");
+  }
+}
+
+document.getElementById('addColumnForm').addEventListener('submit', function(e) {
+  e.preventDefault();
+  const colName = document.getElementById('columnName').value.trim();
+  const formula = document.getElementById('columnFormula').value.trim();
+  const currentSheet = document.getElementById('sheetSelector').value;
+
+  if (!colName) {
+    alert("Please enter a column name.");
+    return;
+  }
+  if (visibleColumns.includes(colName)) {
+    alert("This column already exists!");
+    return;
+  }
+
+  // Add column only to visible columns for current rendering
+  visibleColumns.splice(visibleColumns.length - 1, 0, colName);
+  optionalColumns.push(colName);
+
+  // Store formula per sheet
+  if (!window.sheetFormulas) window.sheetFormulas = {};
+  window.sheetFormulas[currentSheet] = window.sheetFormulas[currentSheet] || {};
+  window.sheetFormulas[currentSheet][colName] = formula;
+
+  // Recalculate all rows only for current sheet
+  updateFormulaColumns();
+
+  initTable(); // Rebuild table UI
+  saveToLocalStorage(); // Save updated state
+  document.getElementById('addColumnModal').style.display = 'none';
+  alert(`New column "${colName}" added to current sheet.`);
+});
+
+function updateFormulaColumns() {
+  const currentSheet = document.getElementById('sheetSelector').value;
+  if (!window.sheetFormulas || !window.sheetFormulas[currentSheet]) return;
+
+  const formulas = window.sheetFormulas[currentSheet];
+
+  Object.keys(formulas).forEach(colName => {
+    const formula = formulas[colName];
+    filteredData.forEach(row => {
+      const id = row[idColumn];
+      if (editedCells && editedCells[id] && editedCells[id][colName] !== undefined) {
+        row[colName] = editedCells[id][colName];
+      } else {
+        try {
+          row[colName] = evaluateFormula(formula, row);
+        } catch (e) {
+          row[colName] = 'Error';
+        }
+      }
+    });
+    residentData.forEach(row => {
+      const id = row[idColumn];
+      if (editedCells && editedCells[id] && editedCells[id][colName] !== undefined) {
+        row[colName] = editedCells[id][colName];
+      } else {
+        try {
+          row[colName] = evaluateFormula(formula, row);
+        } catch (e) {
+          row[colName] = 'Error';
+        }
+      }
+    });
+    if (sheetDataMap[currentSheet]) {
+      sheetDataMap[currentSheet].forEach(row => {
+        const id = row[idColumn];
+        if (editedCells && editedCells[id] && editedCells[id][colName] !== undefined) {
+          row[colName] = editedCells[id][colName];
+        } else {
+          try {
+            row[colName] = evaluateFormula(formula, row);
+          } catch (e) {
+            row[colName] = 'Error';
+          }
+        }
+      });
+    }
+  });
+}
+
+document.getElementById('cancelAddColBtn').addEventListener('click', () => {
+  document.getElementById('addColumnModal').style.display = 'none';
+});
+
+document.querySelectorAll('#addColumnModal .modal-close').forEach(el => {
+  el.addEventListener('click', () => {
+    document.getElementById('addColumnModal').style.display = 'none';
+  });
+});
+
+document.getElementById('columnFormula').addEventListener('input', renderFormulaSamples);
+</script>
+
+  
+
+<script>
+  document.addEventListener('keydown', function(e) {
+    // Ctrl + U, S, Shift + I, etc.
+    if ((e.ctrlKey || e.metaKey) && (e.key === 'u' || e.key === 's' || e.key === 'i')) {
+      e.preventDefault();
+    }
+    // F12 key
+    if (e.keyCode === 123) {
+      e.preventDefault();
+    }
+  });
+</script>
+
+<script>
+  // Disable right-click
+  document.addEventListener('contextmenu', function(e) {
+   e.preventDefault();
+  });
+</script>
+</body>
+</html>
