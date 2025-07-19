@@ -1619,6 +1619,15 @@ window.addEventListener('DOMContentLoaded', () => {
     document.getElementById('fileInput').addEventListener('change', handleFileSelect);
   }
 
+  document.addEventListener('click', function(e) {
+  if (e.target.classList.contains('modal-close')) {
+    const modal = e.target.closest('.modal');
+    if (modal) {
+      modal.style.display = 'none';
+    }
+  }
+});
+
   // Download Button
   document.getElementById('downloadBtn').addEventListener('click', () => {
   const wb = XLSX.utils.book_new();
