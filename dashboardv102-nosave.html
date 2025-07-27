@@ -1103,71 +1103,99 @@ function showAddColumnInput(cell) {
 }
 
 function sortTable(column) {
-    if (isEditing) disableEditing();
-    if (column === 'No.') return;
+  if (isEditing) disableEditing();
+  if (column === 'No.') return;
 
-    // Toggle sort direction if clicking the same column
-    if (sortColumn === column) {
-        sortDirection = sortDirection === 'asc' ? 'desc' : 'asc';
-    } else {
-        sortColumn = column;
-        sortDirection = 'asc';
+  // Toggle sort direction
+  if (sortColumn === column) {
+    sortDirection = sortDirection === 'asc' ? 'desc' : 'asc';
+  } else {
+    sortColumn = column;
+    sortDirection = 'asc';
+  }
+
+  updateSortIndicators();
+
+  const sampleValues = filteredData.map(row => row[column]);
+
+  // Determine if the column is numeric, string, or mixed
+  const isNumeric = sampleValues.every(val => {
+    const strVal = String(val).trim();
+    return strVal === '' || !isNaN(strVal);
+  });
+
+  const isString = sampleValues.every(val => {
+    const strVal = String(val).trim();
+    return isNaN(strVal);
+  });
+
+  let sortType = 'mixed';
+  if (isNumeric) sortType = 'numeric';
+  else if (isString) sortType = 'string';
+
+  // Sort based on detected type
+  filteredData.sort((a, b) => {
+    let rawA = a[column];
+    let rawB = b[column];
+
+    // Check if it's a date column
+    if (isDateColumn(column)) {
+      const dateA = parseDate(rawA, column);
+      const dateB = parseDate(rawB, column);
+
+      if (dateA && dateB) {
+        return sortDirection === 'asc' ? dateA - dateB : dateB - dateA;
+      } else if (dateA) {
+        return sortDirection === 'asc' ? -1 : 1;
+      } else if (dateB) {
+        return sortDirection === 'asc' ? 1 : -1;
+      }
     }
 
-    // Show loading indicator if sorting might take time
-    document.getElementById('loading').style.display = 'block';
-    document.getElementById('residentTable').style.display = 'none';
-
-    // Terminate any existing sort worker to prevent conflicts (optional but good practice)
-    if (sortFilterWorker) {
-        sortFilterWorker.terminate();
-    }
-
-    // Create a new Web Worker instance for sorting
-    sortFilterWorker = new Worker('sortFilterWorker.js'); // Adjust path if needed
-
-    // Listen for messages from the sort worker
-    sortFilterWorker.onmessage = function(e) {
-        const result = e.data;
-        document.getElementById('loading').style.display = 'none'; // Hide loading
-        document.getElementById('residentTable').style.display = 'table'; // Show table
-
-        if (result.status === 'success' && result.action === 'sort') {
-            console.log("Sorting completed in worker.");
-            // Use the sorted data from the worker
-            filteredData = result.sortedData;
-            currentPage = 1; // Reset to first page after sort
-            updateSortIndicators(); // Update UI indicators
-            renderTable(); // Re-render the table with sorted data
-        } else if (result.status === 'error') {
-            console.error("Error sorting data in worker:", result.message);
-            alert(`Failed to sort data: ${result.message}`);
-            renderTable(); // Re-render original data or handle error state
+    // Check if it's a time-only column
+    if (isTimeColumn(column)) {
+      // For pure time (e.g., "10:30", "2:45 PM"), convert to minutes since midnight
+      const timeToMinutes = (timeStr) => {
+        if (!timeStr) return NaN;
+        const match = timeStr.trim().match(/(\d{1,2}):(\d{2})(?::\d{2})?\s*([AP]M)?/i);
+        if (!match) return NaN;
+        let [_, hours, minutes, period] = match;
+        hours = parseInt(hours, 10);
+        minutes = parseInt(minutes, 10);
+        if (period) {
+          if (period.toUpperCase() === 'PM' && hours < 12) hours += 12;
+          if (period.toUpperCase() === 'AM' && hours === 12) hours = 0;
         }
+        return hours * 60 + minutes;
+      };
 
-        // Clean up worker reference (optional)
-        // sortFilterWorker = null;
-    };
+      const minA = timeToMinutes(rawA);
+      const minB = timeToMinutes(rawB);
 
-    sortFilterWorker.onerror = function(error) {
-        console.error("Sort Web Worker error:", error);
-        document.getElementById('loading').style.display = 'none';
-        document.getElementById('residentTable').style.display = 'table';
-        alert("An error occurred while sorting the data in the background.");
-        // sortFilterWorker = null;
-    };
+      if (!isNaN(minA) && !isNaN(minB)) {
+        return sortDirection === 'asc' ? minA - minB : minB - minA;
+      } else if (!isNaN(minA)) return sortDirection === 'asc' ? -1 : 1;
+      else if (!isNaN(minB)) return sortDirection === 'asc' ? 1 : -1;
+    }
 
-    // Send data and sorting parameters to the worker
-    // Pass a COPY of filteredData to avoid potential issues if data changes elsewhere
-    // Consider passing only necessary data if memory is a concern for very large sets
-    sortFilterWorker.postMessage({
-        action: 'sort',
-        data: [...filteredData], // Send a copy
-        column: sortColumn,
-        direction: sortDirection
-    });
+    // Fallback: Try numeric parsing using formatted number (for numbers, currency, %)
+    const numA = parseFormattedNumber(rawA);
+    const numB = parseFormattedNumber(rawB);
+
+    if (!isNaN(numA) && !isNaN(numB)) {
+      return sortDirection === 'asc' ? numA - numB : numB - numA;
+    }
+
+    // Final fallback: string comparison
+    const strA = String(rawA).toLowerCase().trim();
+    const strB = String(rawB).toLowerCase().trim();
+    return sortDirection === 'asc'
+      ? strA.localeCompare(strB)
+      : strB.localeCompare(strA);
+  });
+  currentPage = 1;
+  renderTable();
 }
-
 
 function updateSortIndicators() {
   document.querySelectorAll('.sort-indicator').forEach(el => el.textContent = '');
@@ -1273,66 +1301,24 @@ function goToPage(page) {
   renderTable();
 }
 
-
 function setupFilters() {
-    const inputs = document.querySelectorAll('.filter-input');
-    const filters = {};
-    inputs.forEach(i => {
-        const col = i.getAttribute('data-column');
-        const val = i.value.toLowerCase().trim();
-        if (val) filters[col] = val;
+  const inputs = document.querySelectorAll('.filter-input');
+  const filters = {};
+  inputs.forEach(i => {
+    const col = i.getAttribute('data-column');
+    const val = i.value.toLowerCase().trim();
+    if (val) filters[col] = val;
+  });
+  filteredData = residentData.filter(item => {
+    return Object.entries(filters).every(([col, val]) => {
+      let cellText = item[col]?.toString().toLowerCase() || '';
+      return cellText.includes(val.toLowerCase());
     });
-
-    // Show loading indicator
-    document.getElementById('loading').style.display = 'block';
-    document.getElementById('residentTable').style.display = 'none';
-
-    // Terminate any existing sort worker
-    if (sortFilterWorker) {
-        sortFilterWorker.terminate();
-    }
-
-    // Create a new Web Worker instance for filtering
-    sortFilterWorker = new Worker('sortFilterWorker.js'); // Adjust path if needed
-
-    // Listen for messages from the filter worker
-    sortFilterWorker.onmessage = function(e) {
-        const result = e.data;
-        document.getElementById('loading').style.display = 'none';
-        document.getElementById('residentTable').style.display = 'table';
-
-        if (result.status === 'success' && result.action === 'filter') {
-            console.log("Filtering completed in worker.");
-            // Use the filtered data from the worker
-            filteredData = result.filteredData;
-            currentPage = 1; // Reset to first page after filter
-            sortColumn = null; // Reset sort
-            sortDirection = 'asc';
-            updateSortIndicators(); // Clear sort indicators
-            renderTable(); // Re-render the table with filtered data
-        } else if (result.status === 'error') {
-            console.error("Error filtering data in worker:", result.message);
-            alert(`Failed to filter data: ${result.message}`);
-            renderTable();
-        }
-        // sortFilterWorker = null;
-    };
-
-    sortFilterWorker.onerror = function(error) {
-        console.error("Filter Web Worker error:", error);
-        document.getElementById('loading').style.display = 'none';
-        document.getElementById('residentTable').style.display = 'table';
-        alert("An error occurred while filtering the data in the background.");
-        // sortFilterWorker = null;
-    };
-
-    // Send data and filter parameters to the worker
-     // Pass a COPY of residentData to filter against
-    sortFilterWorker.postMessage({
-        action: 'filter',
-        data: [...residentData], // Filter against original data
-        filters: filters // Send the filters object
-    });
+  });
+  currentPage = 1;
+  sortColumn = null;
+  sortDirection = 'asc';
+  renderTable();
 }
 
 
@@ -2205,18 +2191,13 @@ function showDeleteMenu(event, id, index) {
 }
 
 
-
-
-// --- Inside your main script (e.g., where handleFileSelect is defined) ---
-
-let fileProcessorWorker = null; // Reference to the worker instance
-let sortFilterWorker = null;   // Reference to the sorting/filtering worker instance
-
 async function handleFileSelect(e) {
+    const reader = new FileReader();
     const file = e.target.files[0];
     if (!file) return;
 
     // --- CLEAR LOCAL STORAGE FOR NEW FILE UPLOAD ---
+    // This ensures previous file data is removed whenever a new file is selected.
     await localforage.removeItem('residentData');
     await localforage.removeItem('sheetDataMap');
     await localforage.removeItem('currentSheet');
@@ -2224,138 +2205,103 @@ async function handleFileSelect(e) {
     await localforage.removeItem('editedCells');
     await localforage.removeItem('conditionalFormatting');
     await localforage.removeItem('dropdownColumns');
+    // -----------------------------------------------
 
     document.getElementById('residentTable').style.display = 'none';
     document.getElementById('loading').style.display = 'block';
 
-    // Terminate any existing worker to prevent conflicts
-    if (fileProcessorWorker) {
-        fileProcessorWorker.terminate();
-    }
-
-    // Create a new Web Worker instance
-    fileProcessorWorker = new Worker('fileProcessorWorker2.js'); // Adjust path if needed
-
-    // Listen for messages from the worker
-    fileProcessorWorker.onmessage = async function(e) {
-        const result = e.data;
-        document.getElementById('loading').style.display = 'none'; // Hide loading regardless of outcome
-
-        if (result.status === 'success') {
-             console.log("File processed successfully in worker.");
-             // --- Replicate logic from original reader.onload success ---
-             sheetDataMap = result.sheetDataMap;
-             // Populate sheet selector
-             const sheetSelector = document.getElementById('sheetSelector');
-             sheetSelector.innerHTML = '';
-             Object.keys(sheetDataMap).forEach(name => {
-                 const option = document.createElement('option');
-                 option.value = name;
-                 option.textContent = name;
-                 sheetSelector.appendChild(option);
-             });
-             sheetSelector.style.display = 'inline-block';
-
-             // Handle sheet change
-             sheetSelector.onchange = () => {
-                 loadSheetData(sheetSelector.value);
-             };
-
-             // Load the first sheet by default
-             const firstSheetName = Object.keys(sheetDataMap)[0];
-             if (firstSheetName) {
-                 loadSheetData(firstSheetName);
-             }
-
-             await saveToLocalStorage();
-             document.getElementById('residentTable').style.display = 'table';
-
-        } else if (result.status === 'error') {
-             console.error("Error processing file in worker:", result.message);
-             alert(`Failed to process file: ${result.message}`);
-             document.getElementById('residentTable').style.display = 'table'; // Show table even on error
-        }
-
-        // Clean up worker reference (optional)
-        // fileProcessorWorker = null;
-    };
-
-    fileProcessorWorker.onerror = function(error) {
-         console.error("Web Worker error:", error);
-         document.getElementById('loading').style.display = 'none';
-         alert("An error occurred while processing the file in the background.");
-         document.getElementById('residentTable').style.display = 'table';
-         // fileProcessorWorker = null;
-    };
-
-    // --- Read file and send to worker ---
-    const reader = new FileReader();
-    reader.onload = async function (e) {
-        try {
-            const data = e.target.result; // This is text for CSV, ArrayBuffer for XLSX/XLS
-
-            let fileTypeToSend = '';
-            if (file.name.endsWith('.csv')) {
-                fileTypeToSend = 'csv';
-            } else if (file.name.endsWith('.xlsx')) {
-                fileTypeToSend = 'xlsx';
-            } else if (file.name.endsWith('.xls')) {
-                fileTypeToSend = 'xls';
-            }
-
-            if (fileTypeToSend) {
-                // Send data to the worker
-                // For CSV: data is a string (from readAsText)
-                // For XLSX/XLS: data is an ArrayBuffer (from readAsArrayBuffer)
-                fileProcessorWorker.postMessage({
-                    fileData: data, // Send string for CSV, ArrayBuffer for XLSX/XLS
-                    fileType: fileTypeToSend,
-                    fileName: file.name
-                });
-            } else {
-                 throw new Error("Unsupported file type for worker processing.");
-            }
-
-        } catch (error) {
-            console.error("Error preparing data for worker:", error);
-            document.getElementById('loading').style.display = 'none';
-            alert("Failed to prepare file for processing.");
-            document.getElementById('residentTable').style.display = 'table';
-            if (fileProcessorWorker) {
-                 fileProcessorWorker.terminate();
-                 // fileProcessorWorker = null;
-            }
-        }
-    };
-
-    // Read the file appropriately for the worker
+    // Check if the file is a CSV
     if (file.name.endsWith('.csv')) {
-        reader.readAsText(file); // Read as text for CSV - Worker expects string
+        reader.onload = async function (e) {
+            try {
+                // No need to clear again here, done at the start
+                const csvData = e.target.result;
+                const parsedData = parseCSV(csvData);
+                
+                // Assuming a single sheet for CSV, named 'Sheet1'
+                const sheetName = 'Sheet1';
+                sheetDataMap = { [sheetName]: parsedData };
+                residentData = ensureUniqueID(parsedData.map((item, idx) => {
+                    const { Row_Number, row_number, ...rest } = item;
+                    rest.ID = rest.ID || `temp-${idx}`;
+                    return rest;
+                }));
+
+                // Update sheet selector
+                const sheetSelector = document.getElementById('sheetSelector');
+                sheetSelector.innerHTML = `<option value="${sheetName}">${sheetName}</option>`;
+                sheetSelector.style.display = 'inline-block';
+                sheetSelector.onchange = () => {
+                    loadSheetData(sheetSelector.value);
+                };
+
+                loadSheetData(sheetName); // Load the CSV data as if it's the first sheet
+                await saveToLocalStorage();
+                document.getElementById('loading').style.display = 'none';
+                document.getElementById('residentTable').style.display = 'table';
+            } catch (error) {
+                console.error("Error parsing CSV file:", error);
+                alert("Failed to parse CSV file. Please check the format.");
+                document.getElementById('loading').style.display = 'none';
+                 // Re-show table in case of error, state might be inconsistent
+                document.getElementById('residentTable').style.display = 'table'; 
+            }
+        };
+        reader.readAsText(file); // Read CSV as text
     } else {
-        reader.readAsArrayBuffer(file); // Read as ArrayBuffer for XLSX/XLS - Worker expects ArrayBuffer
+        // Existing XLSX handling logic
+        reader.onload = async function (e) {
+            try {
+                // No need to clear again here, done at the start
+                const data = new Uint8Array(e.target.result);
+                const workbook = XLSX.read(data, { type: 'array' });
+
+                sheetDataMap = {};
+                workbook.SheetNames.forEach(name => {
+                    const sheet = workbook.Sheets[name];
+                    // Convert sheet to JSON, including all cells
+                    sheetDataMap[name] = XLSX.utils.sheet_to_json(sheet, { defval: '' }); 
+                     // Add Row Number for reference if needed later
+                     sheetDataMap[name].forEach((row, idx) => {
+                        row['Row Number'] = idx + 1;
+                    });
+                });
+
+                // Populate sheet selector
+                const sheetSelector = document.getElementById('sheetSelector');
+                sheetSelector.innerHTML = '';
+                workbook.SheetNames.forEach(name => {
+                    const option = document.createElement('option');
+                    option.value = name;
+                    option.textContent = name;
+                    sheetSelector.appendChild(option);
+                });
+                sheetSelector.style.display = 'inline-block';
+
+                // Handle sheet change
+                sheetSelector.onchange = () => {
+                    loadSheetData(sheetSelector.value);
+                };
+
+                // Load the first sheet by default
+                if (workbook.SheetNames.length > 0) {
+                    loadSheetData(workbook.SheetNames[0]);
+                }
+
+                await saveToLocalStorage();
+                document.getElementById('loading').style.display = 'none';
+                document.getElementById('residentTable').style.display = 'table';
+            } catch (error) {
+                console.error("Error reading Excel file:", error);
+                alert("Failed to read Excel file.");
+                document.getElementById('loading').style.display = 'none';
+                // Re-show table in case of error, state might be inconsistent
+                document.getElementById('residentTable').style.display = 'table'; 
+            }
+        };
+        reader.readAsArrayBuffer(file); // Read Excel as ArrayBuffer
     }
 }
-// - Ensure cleanup -
-window.addEventListener('beforeunload', function (e) {
-    // Terminate file processor worker
-    if (fileProcessorWorker) {
-        fileProcessorWorker.postMessage({ action: 'terminate' }); // Optional message
-        fileProcessorWorker.terminate();
-        fileProcessorWorker = null;
-    }
-    // Terminate sort/filter worker
-    if (sortFilterWorker) {
-         sortFilterWorker.postMessage({ action: 'terminate' }); // Optional message
-        sortFilterWorker.terminate();
-        sortFilterWorker = null;
-    }
-    // ... other beforeunload logic ...
-});
-
-// --- Update existing file input listener ---
-// Make sure the file input listener calls the modified handleFileSelect
-document.getElementById('fileInput').addEventListener('change', handleFileSelect);
-
 
 // Helper function to parse CSV (basic implementation)
 // Consider using a more robust library like PapaParse for complex CSVs
@@ -2581,6 +2527,7 @@ function renderFormulaSamples() {
   });
 }
 
+
 function evaluateFormula(formula, rowData) {
   try {
     let expr = formula.trim();
@@ -2702,6 +2649,90 @@ function evaluateFormula(formula, rowData) {
     console.error("Error in evaluateFormula:", formula, rowData, e);
     return "Error";
   }
+}
+
+
+// Helper function to evaluate simple conditions within IF statements
+function evaluateSimpleExpression(expr, rowData) {
+    // Convert logical operators
+    expr = expr.replace(/\bAND\b/g, '&&').replace(/\bOR\b/g, '||');
+
+    // Replace column references (including those with spaces) and literals
+    const safeExpr = expr.replace(/"([^"]*)"|([a-zA-Z_][a-zA-Z0-9_]*(?:\s+[a-zA-Z0-9_]+)*)|(\d+(?:\.\d+)?%?)|(\$[\d,]+\.?\d*)/g, (match, quotedContent, columnName, numberLiteral, currencyLiteral) => {
+        // Handle quoted strings (potential column names with spaces)
+        if (quotedContent !== undefined) {
+            if (rowData.hasOwnProperty(quotedContent)) {
+                const val = rowData[quotedContent];
+                const num = parseFormattedNumber(val);
+                return isNaN(num) ? JSON.stringify(val) : num;
+            }
+            // If not a column name, treat as a string literal
+            return JSON.stringify(quotedContent);
+        }
+
+        // Handle unquoted column names
+        if (columnName !== undefined) {
+            if (rowData.hasOwnProperty(columnName)) {
+                const val = rowData[columnName];
+                const num = parseFormattedNumber(val);
+                return isNaN(num) ? JSON.stringify(val) : num;
+            }
+            // If it looks like a column name but isn't found, treat as string literal
+            return JSON.stringify(columnName);
+        }
+
+        // Handle numeric literals (with potential % or $)
+        if (numberLiteral !== undefined || currencyLiteral !== undefined) {
+            const literal = numberLiteral !== undefined ? numberLiteral : currencyLiteral;
+            const num = parseFormattedNumber(literal);
+            if (!isNaN(num)) {
+                return num;
+            }
+            // If parsing fails, treat as string literal
+            return JSON.stringify(literal);
+        }
+
+        // Fallback (shouldn't reach here with the regex)
+        return JSON.stringify(match);
+    });
+
+    try {
+        // Use Function constructor for better performance and scope control
+        return Function('"use strict"; return (' + safeExpr + ');')();
+    } catch (e) {
+        console.error("Error evaluating condition:", safeExpr, e);
+        throw new Error("Invalid expression syntax.");
+    }
+}
+
+// Helper function to parse formatted numbers (handles commas, %, $)
+function parseFormattedNumber(str) {
+    if (!str || typeof str !== 'string') return NaN;
+    const trimmed = str.trim();
+
+    // Handle empty or non-string cases
+    if (trimmed === '') return NaN;
+
+    // Handle percentage
+    if (trimmed.endsWith('%')) {
+        const num = parseFloat(trimmed.replace(/%/g, '').replace(/,/g, ''));
+        return isNaN(num) ? NaN : num / 100; // Return as decimal (e.g., 25% → 0.25)
+    }
+
+    // Handle currency (remove $ and commas)
+    let cleaned = trimmed.replace(/[$,]/g, '');
+
+    // Remove all non-numeric characters except decimal point, minus sign, and 'e' for scientific notation
+    // But preserve negative signs at start and decimal points
+    cleaned = cleaned.replace(/[^0-9.\-e]/g, '');
+
+    // Avoid false positives from things like ".." or "--"
+    if ((cleaned.match(/\./g) || []).length > 1) return NaN;
+    if ((cleaned.match(/-/g) || []).length > 1) return NaN;
+    if (cleaned.indexOf('-') > 0) return NaN; // Negative sign not at the start
+
+    const num = parseFloat(cleaned);
+    return isNaN(num) ? NaN : num;
 }
 
 
@@ -3175,42 +3206,61 @@ window.addEventListener('click', (event) => {
 
 //------------------------advance search--------------------
 
+
+// Enhanced advance search filter function that handles column names with spaces
 function evaluateCondition(expr, row) {
-  // Convert logical operators
-  expr = expr.replace(/\bAND\b/g, '&&').replace(/\bOR\b/g, '||');
+    // Convert logical operators
+    expr = expr.replace(/\bAND\b/g, '&&').replace(/\bOR\b/g, '||');
 
-  // Replace column references with their evaluated numeric or string values
-  const safeExpr = expr.replace(/([a-zA-Z_][a-zA-Z0-9_]*)|(\$?[\d,]+\.?\d*)%?/g, match => {
-    // If it's a column name (exists in row), process it
-    if (row.hasOwnProperty(match)) {
-      const val = row[match];
-      const num = parseFormattedNumber(val);
-      return isNaN(num) ? JSON.stringify(val) : num; // Use number if possible, else stringify
+    // Replace column references (including those with spaces) and literals
+    const safeExpr = expr.replace(/"([^"]*)"|([a-zA-Z_][a-zA-Z0-9_]*(?:\s+[a-zA-Z0-9_]+)*)|(\$?[\d,]+\.?\d*)%?/g, (match, quotedContent, columnName, literal) => {
+        // Handle quoted strings (potential column names with spaces)
+        if (quotedContent !== undefined) {
+            // Check if the quoted content matches a column name
+            if (row.hasOwnProperty(quotedContent)) {
+                const val = row[quotedContent];
+                const num = parseFormattedNumber(val);
+                return isNaN(num) ? JSON.stringify(val) : num;
+            }
+            // If not a column name, treat as a string literal
+            return JSON.stringify(quotedContent);
+        }
+
+        // Handle unquoted column names (original logic for standard column names)
+        if (columnName !== undefined) {
+            if (row.hasOwnProperty(columnName)) {
+                const val = row[columnName];
+                const num = parseFormattedNumber(val);
+                return isNaN(num) ? JSON.stringify(val) : num;
+            }
+            // If it looks like a column name but isn't found, treat as string literal
+            return JSON.stringify(columnName);
+        }
+
+        // Handle numeric literals (with potential % or $)
+        if (literal !== undefined) {
+            const num = parseFormattedNumber(literal);
+            if (!isNaN(num)) {
+                return num;
+            }
+            // If parsing fails, treat as string literal
+            return JSON.stringify(literal);
+        }
+
+        // Fallback (shouldn't reach here with the regex)
+        return JSON.stringify(match);
+    });
+
+    try {
+        // Use Function constructor for better performance and scope control
+        return Function('"use strict"; return (' + safeExpr + ');')();
+    } catch (e) {
+        console.error("Error evaluating condition:", safeExpr, e);
+        throw new Error("Invalid expression syntax.");
     }
-
-    // Otherwise, it's a literal in the expression (like $50,000 or 15%)
-    const num = parseFormattedNumber(match);
-    if (!isNaN(num)) {
-      return num;
-    }
-
-    // If not a number, treat as string literal (wrap in quotes)
-    return JSON.stringify(match);
-  });
-
-  try {
-    return Function('"use strict"; return (' + safeExpr + ');')();
-  } catch (e) {
-    console.error("Error evaluating condition:", safeExpr, e);
-    throw new Error("Invalid expression syntax.");
-  }
 }
 
-
-
- // document.getElementById('advancedSearchBtn').addEventListener('click', function () {
-
-// Inside your DOMContentLoaded or relevant event listener setup
+// Update the event listener to use the enhanced function
 document.getElementById('advancedSearchBtn').addEventListener('click', function () {
     if (isEditing) disableEditing();
     const expr = document.getElementById('advancedFilterInput').value.trim();
@@ -3218,61 +3268,22 @@ document.getElementById('advancedSearchBtn').addEventListener('click', function 
         alert("Please enter a valid condition.");
         return;
     }
-
-    // Show loading indicator
-    document.getElementById('loading').style.display = 'block';
-    document.getElementById('residentTable').style.display = 'none';
-
-    // Terminate any existing sort worker
-    if (sortFilterWorker) {
-        sortFilterWorker.terminate();
+    try {
+        // Apply filter using the enhanced evaluator
+        filteredData = residentData.filter(row => {
+            try {
+                return evaluateCondition(expr, row);
+            } catch (e) {
+                console.error("Error evaluating row:", e);
+                return false; // Exclude row if evaluation fails
+            }
+        });
+        currentPage = 1;
+        renderTable();
+    } catch (e) {
+        alert("Invalid expression: " + e.message);
     }
-
-    // Create a new Web Worker instance for filtering
-    sortFilterWorker = new Worker('sortFilterWorker.js'); // Adjust path if needed
-
-    // Listen for messages from the filter worker
-    sortFilterWorker.onmessage = function(e) {
-        const result = e.data;
-        document.getElementById('loading').style.display = 'none';
-        document.getElementById('residentTable').style.display = 'table';
-
-        if (result.status === 'success' && result.action === 'filter') {
-            console.log("Advanced filtering completed in worker.");
-            filteredData = result.filteredData;
-            currentPage = 1;
-            sortColumn = null; // Reset sort
-            sortDirection = 'asc';
-            updateSortIndicators(); // Clear sort indicators
-            renderTable();
-        } else if (result.status === 'error') {
-            console.error("Error advanced filtering data in worker:", result.message);
-            // Provide user feedback about the specific error if possible
-            alert(`Invalid expression or error occurred: ${result.message}`);
-            // Optionally, re-render with current data or clear filter
-            // renderTable();
-        }
-        // sortFilterWorker = null;
-    };
-
-    sortFilterWorker.onerror = function(error) {
-        console.error("Advanced Filter Web Worker error:", error);
-        document.getElementById('loading').style.display = 'none';
-        document.getElementById('residentTable').style.display = 'table';
-        alert("An error occurred while applying the advanced filter in the background.");
-        // sortFilterWorker = null;
-    };
-
-    // Send data and advanced filter expression to the worker
-    // Pass a COPY of residentData to filter against
-    sortFilterWorker.postMessage({
-        action: 'filter', // The worker's filter action handles expressions
-        data: [...residentData],
-        filterExpr: expr // Send the expression string
-    });
 });
-
-
 
 
 document.getElementById('resetAdvancedFilterBtn').addEventListener('click', function () {
