@@ -681,7 +681,7 @@
                     fileDataSection.workbook = null; // Will be parsed on demand
 
                     // Read workbook structure to get sheet names
-                    const tempWorkbook = XLSX.read(arrayBuffer, { type: 'array', bookSheets: true , cellDates: false });
+                    const tempWorkbook = XLSX.read(arrayBuffer, { type: 'array', bookSheets: true , cellDates: true });
                     const sheetNames = tempWorkbook.SheetNames;
 
                     if (sheetNames.length === 0) {
