@@ -431,33 +431,6 @@
 .pagination-controls button:hover:not(:disabled) {
     background: rgba(79, 172, 254, 0.5);
 }
-
-.edited-cell {
-    background-color: #ffeb3b !important;
-    color: #000 !important;
-    font-weight: 600;
-}
-
-.edit-input-container {
-    display: flex;
-    align-items: center;
-    gap: 4px;
-}
-
-.edit-input-container input[type="number"] {
-    width: 60px;
-}
-
-.edit-input-container button {
-    padding: 2px 6px;
-    font-size: 0.8rem;
-}
-
-.edit-input-container input[type="date"],
-.edit-input-container input[type="time"] {
-    padding: 4px;
-    font-size: 0.9rem;
-}
     </style>
 </head>
 <body>
@@ -520,17 +493,13 @@
                     </div>
                     <div class="no-data">No data available for this file.</div>
                     <div class="table-stats" style="margin-top: 15px; font-size: 0.9rem; opacity: 0.9; display: flex; justify-content: space-between; flex-wrap: wrap;">
-                    <div class="row-count">Rows: 0</div>
-                    <div class="edit-controls">
-                        <button class="edit-btn" style="background: rgba(79, 172, 254, 0.3); color: white; border: 1px solid rgba(255, 255, 255, 0.3); padding: 6px 12px; border-radius: 5px; cursor: pointer; margin-right: 10px;">Edit</button>
-                        <button class="save-btn" style="background: #4facfe; color: white; border: none; padding: 6px 12px; border-radius: 5px; cursor: pointer; margin-right: 10px; display: none;">Save</button>
+                        <div class="row-count">Rows: 0</div>
+                        <div class="pagination-controls">
+                            <button class="prev-page" disabled>◀ Previous</button>
+                            <span class="page-info">Page 1</span>
+                            <button class="next-page">Next ▶</button>
+                        </div>
                     </div>
-                    <div class="pagination-controls">
-                        <button class="prev-page" disabled>◀ Previous</button>
-                        <span class="page-info">Page 1</span>
-                        <button class="next-page">Next ▶</button>
-                    </div>
-                </div>
                 </div>
             </section>
         </template>
@@ -560,9 +529,6 @@
     
     // Track sorting state for each column
     let sortingState = {};
-
-    // Track edited values per file -> sheet -> row index -> column index
-    let changes = {};
     
     // --- NEW: Reusable Date/Time Detection Function ---
     async function detectDateTimeFormats(file) {
@@ -634,228 +600,7 @@
             showStatus(`Data for "${fileName}" deleted.`, 'success');
         }
     }
-    // --- ENTER EDIT MODE ---
-function enableEditMode(fileDataSection, sheetName, tableHeader, tableBody) {
-    const editBtn = fileDataSection.querySelector('.edit-btn');
-    const saveBtn = fileDataSection.querySelector('.save-btn');
-    const headers = Array.from(tableHeader.querySelectorAll('th'));
-    const bodyRows = Array.from(tableBody.querySelectorAll('tr'));
-    const fileName = fileDataSection.fileName;
-
-    // Initialize change tracker for this file/sheet
-    if (!changes[fileName]) changes[fileName] = {};
-    if (!changes[fileName][sheetName]) changes[fileName][sheetName] = {};
-
-    // Get all data (including hidden) for full context
-    const allRows = Array.from(tableBody.parentNode.querySelectorAll('tr')); // All rows in DOM
-    const sheetData = fileDataSection.workbook.Sheets[sheetName];
-    const range = XLSX.utils.decode_range(sheetData['!ref']);
-
-    // Get column types
-    const dateTimeInfo = fileDataSection.dateTimeInfo?.[sheetName];
-    const dateCols = new Set(dateTimeInfo?.dateColumns || []);
-    const timeCols = new Set(dateTimeInfo?.timeColumns || []);
-
-    // Analyze categorical columns (≤5 unique values)
-    const categoricalColumns = new Map();
-    headers.forEach((th, colIndex) => {
-        const colValues = new Set();
-        allRows.slice(1).forEach(row => {
-            const cell = row.cells[colIndex];
-            if (cell) colValues.add(cell.textContent.trim());
-        });
-        if (colValues.size <= 5 && colValues.size > 0) {
-            categoricalColumns.set(colIndex, Array.from(colValues).sort());
-        }
-    });
-
-    // Replace cell content with inputs
-    bodyRows.forEach((row, rowIndex) => {
-        headers.forEach((th, colIndex) => {
-            const cell = row.cells[colIndex];
-            if (!cell) return;
-
-            const originalText = cell.textContent.trim();
-            const isDate = dateCols.has(colIndex);
-            const isTime = timeCols.has(colIndex);
-            const isCategorical = categoricalColumns.has(colIndex);
-
-            // Preserve original style
-            const isEdited = changes[fileName][sheetName][rowIndex]?.[colIndex] !== undefined;
-            cell.classList.toggle('edited-cell', isEdited);
-
-            // Create input container
-            const inputContainer = document.createElement('div');
-            inputContainer.className = 'edit-input-container';
-
-            let inputElement;
-
-            if (isCategorical) {
-                const select = document.createElement('select');
-                categoricalColumns.get(colIndex).forEach(val => {
-                    const opt = document.createElement('option');
-                    opt.value = val;
-                    opt.textContent = val;
-                    if (val === originalText) opt.selected = true;
-                    select.appendChild(opt);
-                });
-                inputElement = select;
-            } else if (isDate) {
-                const input = document.createElement('input');
-                input.type = 'date';
-                const date = parseDate(originalText);
-                if (date) input.value = date.toISOString().split('T')[0];
-                inputElement = input;
-            } else if (isTime) {
-                const input = document.createElement('input');
-                input.type = 'time';
-                const timeMatch = originalText.match(/(\d{1,2}):(\d{2})(?::(\d{2}))?\s*(AM|PM|am|pm)?/);
-                if (timeMatch) {
-                    let [_, h, m, s = '00', ap = ''] = timeMatch;
-                    h = parseInt(h);
-                    if (ap && ap.toLowerCase() === 'pm' && h < 12) h += 12;
-                    if (ap && ap.toLowerCase() === 'am' && h === 12) h = 0;
-                    input.value = `${h.toString().padStart(2, '0')}:${m}:${s}`;
-                }
-                inputElement = input;
-            } else if (!isNaN(parseFloat(originalText)) && isFinite(originalText)) {
-                const container = document.createElement('div');
-                container.className = 'edit-input-container';
-
-                const minusBtn = document.createElement('button');
-                minusBtn.textContent = '−';
-                minusBtn.onclick = () => {
-                    const newVal = (parseFloat(input.value) || 0) - 1;
-                    input.value = newVal;
-                    onCellValueChange(cell, newVal, fileName, sheetName, rowIndex, colIndex, fileDataSection);
-                };
-
-                const input = document.createElement('input');
-                input.type = 'number';
-                input.value = originalText;
-                input.addEventListener('input', () => {
-                    onCellValueChange(cell, input.value, fileName, sheetName, rowIndex, colIndex, fileDataSection);
-                });
-
-                const plusBtn = document.createElement('button');
-                plusBtn.textContent = '+';
-                plusBtn.onclick = () => {
-                    const newVal = (parseFloat(input.value) || 0) + 1;
-                    input.value = newVal;
-                    onCellValueChange(cell, newVal, fileName, sheetName, rowIndex, colIndex, fileDataSection);
-                };
-
-                container.appendChild(minusBtn);
-                container.appendChild(input);
-                container.appendChild(plusBtn);
-                cell.innerHTML = '';
-                cell.appendChild(container);
-                return;
-            } else {
-                const input = document.createElement('input');
-                input.type = 'text';
-                input.value = originalText;
-                input.addEventListener('input', () => {
-                    onCellValueChange(cell, input.value, fileName, sheetName, rowIndex, colIndex, fileDataSection);
-                });
-                inputElement = input;
-            }
-
-            inputElement.addEventListener('input', () => {
-                onCellValueChange(cell, inputElement.value, fileName, sheetName, rowIndex, colIndex, fileDataSection);
-            });
-
-            inputContainer.appendChild(inputElement);
-            cell.innerHTML = '';
-            cell.appendChild(inputContainer);
-        });
-    });
-
-    editBtn.style.display = 'none';
-    saveBtn.style.display = 'inline-block';
-}
-
-// --- HANDLE CELL VALUE CHANGE ---
-function onCellValueChange(cell, newValue, fileName, sheetName, rowIndex, colIndex, fileDataSection) {
-    if (!changes[fileName]) changes[fileName] = {};
-    if (!changes[fileName][sheetName]) changes[fileName][sheetName] = {};
-    if (!changes[fileName][sheetName][rowIndex]) changes[fileName][sheetName][rowIndex] = {};
-
-    const oldValue = cell.parentNode.textContent.trim();
-    changes[fileName][sheetName][rowIndex][colIndex] = newValue;
-
-    // Highlight cell
-    cell.classList.add('edited-cell');
-}
-
-// --- SAVE CHANGES BACK TO WORKBOOK ---
-function saveChanges(fileDataSection, sheetName) {
-    const tableHeader = fileDataSection.querySelector('thead');
-    const tableBody = fileDataSection.querySelector('tbody');
-    const headers = Array.from(tableHeader.querySelectorAll('th')).map(th => th.textContent.split('\n')[0]);
-    const fileName = fileDataSection.fileName;
-    const sheetData = fileDataSection.workbook.Sheets[sheetName];
-
-    const changesForSheet = changes[fileName]?.[sheetName];
-    if (!changesForSheet) {
-        showStatus(`No changes to save for ${fileName} - ${sheetName}`, 'success');
-        const saveBtn = fileDataSection.querySelector('.save-btn');
-        const editBtn = fileDataSection.querySelector('.edit-btn');
-        saveBtn.style.display = 'none';
-        editBtn.style.display = 'inline-block';
-        return;
-    }
-
-    // Apply changes to workbook
-    Object.keys(changesForSheet).forEach(rowIndex => {
-        Object.keys(changesForSheet[rowIndex]).forEach(colIndex => {
-            const newVal = changesForSheet[rowIndex][colIndex];
-            const r = parseInt(rowIndex) + 1; // +1 because row 0 is header
-            const c = parseInt(colIndex);
-            const cellAddress = XLSX.utils.encode_cell({ r, c });
-
-            // Update workbook cell
-            const cell = sheetData[cellAddress] || { t: 's' };
-            const header = headers[c];
-
-            // Try to infer type
-            if (!isNaN(parseFloat(newVal)) && isFinite(newVal)) {
-                cell.t = 'n';
-                cell.v = parseFloat(newVal);
-                cell.w = newVal;
-            } else if (parseDate(newVal)) {
-                cell.t = 'd';
-                cell.v = parseDate(newVal);
-                cell.w = newVal;
-            } else {
-                cell.t = 's';
-                cell.v = newVal;
-                cell.w = newVal;
-            }
-            sheetData[cellAddress] = cell;
-        });
-    });
-
-    // ✅ Clear changes after save
-    delete changes[fileName]?.[sheetName];
-
-    // ✅ Exit edit mode: re-render the sheet to revert inputs to plain text
-    const activeTab = fileDataSection.querySelector('.sheet-tab.active');
-    const sheetTabsContainer = fileDataSection.querySelector('.sheet-tabs');
-    const columnControls = fileDataSection.querySelector('.column-controls');
-
-    // Re-render the current sheet (this will re-populate with updated values)
-    loadSheetData(sheetName, fileDataSection, sheetTabsContainer, tableHeader, tableBody, columnControls, fileName);
-
-    // ✅ Ensure buttons are reset
-    const saveBtn = fileDataSection.querySelector('.save-btn');
-    const editBtn = fileDataSection.querySelector('.edit-btn');
-    saveBtn.style.display = 'none';
-    editBtn.style.display = 'inline-block';
-
-    showStatus(`✅ Changes saved for ${fileName} - ${sheetName}`, 'success');
-}
-
+    
     // Initialize the application
     function init() {
         setupEventListeners();
@@ -1743,20 +1488,9 @@ if (fileDataSection && typeof fileDataSection.currentFilterCallback === 'functio
         prevBtn.disabled = currentPage === 1;
         nextBtn.disabled = currentPage === totalPages || totalPages === 0;
     }
-
-    // --- EDIT/SAVE BUTTONS ---
-const editBtn = fileDataSection.querySelector('.edit-btn');
-const saveBtn = fileDataSection.querySelector('.save-btn');
-
-editBtn.onclick = () => {
-    enableEditMode(fileDataSection, sheetName, tableHeader, tableBody);
-};
-
-saveBtn.onclick = () => {
-    saveChanges(fileDataSection, sheetName);
-    saveBtn.style.display = 'none';
-    editBtn.style.display = 'inline-block';
-};
+    if (!fileDataSection.querySelector('.export-controls')) {
+            addExportControls(fileDataSection);
+        }
     // Show current page
     function renderPage() {
         allRows.forEach(row => (row.style.display = 'none'));
@@ -1768,10 +1502,11 @@ saveBtn.onclick = () => {
 
     // Reset to page 1 when filtering
     function onFilterChange(filteredVisibleRows) {
-        filteredRows = filteredVisibleRows;
-        currentPage = 1;
-        renderPage();
-    }
+    filteredRows = filteredVisibleRows;
+    fileDataSection.filteredRows = filteredVisibleRows; // ✅ Store for export
+    currentPage = 1;
+    renderPage();
+}
 
     // Attach to window for external access
     fileDataSection.currentFilterCallback = onFilterChange;
@@ -1918,8 +1653,204 @@ saveBtn.onclick = () => {
         statusDiv.textContent = message;
         statusDiv.className = `status ${type}`;
     }
+
+    function addExportControls(fileDataSection) {
+        // Create export controls container
+        const exportControls = document.createElement('div');
+        exportControls.className = 'export-controls';
+        exportControls.style.cssText = `
+            display: flex;
+            gap: 10px;
+            margin: 15px 0;
+            flex-wrap: wrap;
+        `;
+        
+        // Export full file button
+        const exportFullBtn = document.createElement('button');
+        exportFullBtn.className = 'export-btn full-data';
+        exportFullBtn.textContent = 'Export Full File';
+        exportFullBtn.style.cssText = `
+            background: linear-gradient(to right, #4facfe, #00f2fe);
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 0.9rem;
+        `;
+        
+        // Export visible data button
+        const exportVisibleBtn = document.createElement('button');
+        exportVisibleBtn.className = 'export-btn visible-data';
+        exportVisibleBtn.textContent = 'Export Visible Data as CSV';
+        exportVisibleBtn.style.cssText = `
+            background: rgba(79, 172, 254, 0.3);
+            color: white;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            padding: 8px 16px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 0.9rem;
+        `;
+        
+        // Add buttons to container
+        exportControls.appendChild(exportFullBtn);
+        exportControls.appendChild(exportVisibleBtn);
+        
+        // Add event listeners
+        exportFullBtn.addEventListener('click', () => {
+            exportFileData(fileDataSection, 'full');
+        });
+        
+        exportVisibleBtn.addEventListener('click', () => {
+            exportFileData(fileDataSection, 'visible');
+        });
+        
+        // Add export controls to the file data section
+        const sheetData = fileDataSection.querySelector('.sheet-data');
+        sheetData.parentNode.insertBefore(exportControls, sheetData);
+        
+        return exportControls;
+    }
     
+    function exportFileData(fileDataSection, exportType) {
+        const fileName = fileDataSection.fileName;
+        const activeTab = fileDataSection.querySelector('.sheet-tab.active');
+        if (!activeTab) return;
+        
+        const sheetName = activeTab.textContent;
+        
+        try {
+            // Get the workbook
+            if (!fileDataSection.workbook) {
+                showStatus('Loading workbook data...', 'success');
+                fileDataSection.workbook = XLSX.read(fileDataSection.fileDataArrayBuffer, { 
+                    type: 'array', 
+                    cellDates: true,
+                    cellNF: true,
+                    cellText: true
+                });
+            }
+            
+            const workbook = fileDataSection.workbook;
+            const worksheet = workbook.Sheets[sheetName];
+            
+            if (!worksheet) {
+                showStatus('Could not find worksheet data.', 'error');
+                return;
+            }
+            
+            if (exportType === 'visible') {
+                // Export only visible data (filtered and paginated)
+                exportVisibleDataAsCSV(fileDataSection, sheetName, fileName);
+            } else {
+                // Export the full original file
+                exportFullFile(workbook, fileName);
+            }
+        } catch (error) {
+            console.error('Export error:', error);
+            showStatus(`Export failed: ${error.message}`, 'error');
+        }
+    }
+
+    function exportVisibleDataAsCSV(fileDataSection, sheetName, originalFileName) {
+    const tableBody = fileDataSection.querySelector('tbody');
+    const tableHeader = fileDataSection.querySelector('thead');
+
+    // Get headers (only non-hidden columns)
+    const headers = Array.from(tableHeader.querySelectorAll('th'))
+        .filter(th => !th.classList.contains('hidden-column'))
+        .map(th => {
+            const text = th.textContent.split('\n')[0]; // Remove search input line
+            return text.trim();
+        });
+
+    // ✅ Use the full filteredRows list instead of DOM visibility
+    let filteredRows = Array.from(tableBody.querySelectorAll('tr'));
+    
+    // Check if pagination system has a filtered list
+    if (fileDataSection.filteredRows && Array.isArray(fileDataSection.filteredRows)) {
+        filteredRows = fileDataSection.filteredRows;
+    } else {
+        // Fallback: use all rows (unfiltered)
+        console.warn("No filteredRows found, exporting all data.");
+    }
+
+    // Extract data from all filtered rows
+    const csvData = [];
+    csvData.push(headers); // Header row
+
+    filteredRows.forEach(row => {
+        const rowData = [];
+        const cells = row.querySelectorAll('td');
+        Array.from(tableHeader.querySelectorAll('th')).forEach((th, index) => {
+            if (!th.classList.contains('hidden-column') && cells[index]) {
+                rowData.push(cells[index].textContent.trim());
+            }
+        });
+        csvData.push(rowData);
+    });
+
+    // Convert to CSV string
+    const csvString = csvData.map(row =>
+        row.map(cell => {
+            // Escape quotes and wrap if needed
+            const escaped = String(cell).replace(/"/g, '""');
+            return /[",\r\n]/.test(escaped) ? `"${escaped}"` : escaped;
+        }).join(',')
+    ).join('\n');
+
+    // Create download
+    const blob = new Blob([csvString], { type: 'text/csv;charset=utf-8;' });
+    const link = document.createElement('a');
+    const url = URL.createObjectURL(blob);
+    const baseName = originalFileName.replace(/\.[^/.]+$/, "");
+    link.setAttribute('href', url);
+    link.setAttribute('download', `${baseName}_${sheetName}_filtered_data.csv`);
+    link.style.visibility = 'hidden';
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    URL.revokeObjectURL(url);
+
+    showStatus(`Exported ${filteredRows.length} filtered/sorted rows as CSV`, 'success');
+}
+
+    function exportFullFile(workbook, originalFileName) {
+        try {
+            // Use SheetJS to write the workbook
+            const wbout = XLSX.write(workbook, { 
+                bookType: 'xlsx', 
+                type: 'array',
+                cellDates: true 
+            });
+            
+            // Create blob and download
+            const blob = new Blob([wbout], { 
+                type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' 
+            });
+            const link = document.createElement('a');
+            const url = URL.createObjectURL(blob);
+            
+            link.setAttribute('href', url);
+            link.setAttribute('download', originalFileName);
+            link.style.visibility = 'hidden';
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            URL.revokeObjectURL(url);
+            
+            showStatus('Full file exported successfully', 'success');
+        } catch (error) {
+            console.error('Full file export error:', error);
+            showStatus('Failed to export full file', 'error');
+        }
+    }
+
     window.addEventListener('DOMContentLoaded', init);
     </script>
 </body>
 </html>
+
+
+
