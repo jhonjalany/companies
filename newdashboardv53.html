@@ -1258,7 +1258,7 @@ function cleanHeaderName(header) {
     function init() {
         setupEventListeners();
         setupUrlEventListener(); // Add this line
-
+        
         // Global undo/redo
         document.addEventListener('keydown', (e) => {
             if (e.ctrlKey || e.metaKey) {
@@ -1351,6 +1351,7 @@ function cleanHeaderName(header) {
         showStatus('Processing files...', 'success');
         uploadBtn.disabled = true;
         processFileBatch(Array.from(files), 0);
+        
     }
     
     async function processFileBatch(files, index) {
@@ -1432,6 +1433,7 @@ function cleanHeaderName(header) {
                     
                     dataSectionContainer.appendChild(fileDataSection);
                     processFileBatch(files, index + 1);
+                    addFormattingControls(fileDataSection);
                 } catch (err) {
                     console.error('Error parsing file:', err);
                     showStatus(`Error processing ${file.name}.`, 'error');
@@ -1448,6 +1450,7 @@ function cleanHeaderName(header) {
             showStatus(`Error analyzing ${file.name}. Skipping.`, 'error');
             processFileBatch(files, index + 1);
         }
+      
     }
     
     function resetAdvancedFilter(fileDataSection) {
@@ -2072,7 +2075,7 @@ if (fileDataSection && typeof fileDataSection.currentFilterCallback === 'functio
 
     // 7. Setup Advanced Search (rebind or create)
     setupAdvancedSearch(fileDataSection, headers);
-    setupConditionalFormattingPanel(fileDataSection);
+
     // 8. Add Export Controls (if not already present)
     if (!fileDataSection.querySelector('.export-controls')) {
         addExportControls(fileDataSection);
@@ -2091,7 +2094,6 @@ if (fileDataSection && typeof fileDataSection.currentFilterCallback === 'functio
         setupPivotAnalyzer(fileDataSection, headers, tableBody);
     }
 
-    
 
     
 }
@@ -3538,6 +3540,7 @@ async function processSingleUrlFile(arrayBuffer, fileName) {
             loadSheetData(sheetNames[0], fileDataSection, sheetTabsContainer, tableHeader, tableBody, columnControls, fileName);
         }
         dataSectionContainer.appendChild(fileDataSection);
+        addFormattingControls(fileDataSection);
     } catch (err) {
         console.error('Error processing file from URL:', err);
         showStatus(`Error processing ${fileName}.`, 'error');
@@ -3811,373 +3814,300 @@ function setupChangeLogPanel(fileDataSection) {
     updateChangeLog(logPanel);
 }
 
-// Track conditional formatting rules per file and sheet
-let conditionalFormattingRules = {}; // { fileName: { sheetName: [rules] } }
-
-function setupConditionalFormattingPanel(fileDataSection) {
-    const fileName = fileDataSection.fileName;
+// Add new function to create formatting controls
+function addFormattingControls(fileDataSection) {
     const sheetData = fileDataSection.querySelector('.sheet-data');
-    const table = fileDataSection.querySelector('table');
-    const tableHeader = table.querySelector('thead');
-    const tableBody = table.querySelector('tbody');
-    const sheetTabsContainer = fileDataSection.querySelector('.sheet-tabs');
-
-    // Initialize rule storage for this file if not exists
-    if (!conditionalFormattingRules[fileName]) {
-        conditionalFormattingRules[fileName] = {};
-    }
-
-    // Check if panel already exists; if so, update it on tab change
-    let cfPanel = fileDataSection.cfPanel;
-    let toggleCfBtn = fileDataSection.toggleCfBtn;
-
-    if (!cfPanel) {
-        // Create toggle button
-        toggleCfBtn = document.createElement('button');
-        toggleCfBtn.className = 'toggle-cf-btn';
-        toggleCfBtn.textContent = '🎨 Conditional Formatting';
-        toggleCfBtn.style.cssText = `
-            background: rgba(255, 192, 203, 0.3);
+    
+    // Create format button
+    const formatBtn = document.createElement('button');
+    formatBtn.className = 'format-btn';
+    formatBtn.textContent = '🎨 Format Rows';
+    formatBtn.style.cssText = `
+        background: rgba(79, 172, 254, 0.3);
+        color: white;
+        border: 1px solid rgba(255, 255, 255, 0.3);
+        padding: 8px 16px;
+        border-radius: 5px;
+        cursor: pointer;
+        margin-bottom: 10px;
+        font-size: 0.9rem;
+    `;
+    
+    // Create modal container
+    const modal = document.createElement('div');
+    modal.className = 'format-modal';
+    modal.style.cssText = `
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.7);
+        z-index: 1000;
+        justify-content: center;
+        align-items: center;
+    `;
+    
+    modal.innerHTML = `
+        <div class="format-modal-content" style="
+            background: #2c3e50;
+            padding: 20px;
+            border-radius: 10px;
+            width: 90%;
+            max-width: 500px;
+            max-height: 90vh;
+            overflow-y: auto;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
             color: white;
-            border: 1px solid rgba(255, 255, 255, 0.3);
-            padding: 8px 12px;
-            border-radius: 5px;
-            cursor: pointer;
-            margin-top: 10px;
-            font-size: 0.9rem;
-        `;
-        toggleCfBtn.addEventListener('click', () => {
-            cfPanel.style.display = cfPanel.style.display === 'none' ? 'block' : 'none';
-            if (cfPanel.style.display === 'block') {
-                refreshFormattingUI();
-            }
-        });
-
-        // Create panel
-        cfPanel = document.createElement('div');
-        cfPanel.className = 'conditional-formatting-panel';
-        cfPanel.style.cssText = `
-            margin-top: 15px;
-            padding: 15px;
-            background: rgba(0, 0, 0, 0.3);
-            border-radius: 8px;
-            display: none;
-            font-family: sans-serif;
-        `;
-        cfPanel.innerHTML = `
-            <div style="font-weight: bold; color: #00f2fe; margin-bottom: 10px;">Conditional Formatting</div>
-            <div id="cf-rules-container"></div>
-            <button class="add-cf-rule-btn" style="margin-top: 10px; padding: 6px 10px; background: #00aaff; color: white; border: none; border-radius: 4px; cursor: pointer;">+ Add Rule</button>
-        `;
-
-        // Store references
-        fileDataSection.cfPanel = cfPanel;
-        fileDataSection.toggleCfBtn = toggleCfBtn;
-
-        // Insert into DOM
-        sheetData.parentNode.insertBefore(toggleCfBtn, sheetData.nextSibling);
-        sheetData.parentNode.insertBefore(cfPanel, sheetData.nextSibling);
-
-        // Add event for "Add Rule"
-        cfPanel.querySelector('.add-cf-rule-btn').addEventListener('click', addRuleRow);
-    }
-
-    // Debounced reapply function
-    let debounceTimer;
-    const reapplyDebounced = () => {
-        clearTimeout(debounceTimer);
-        debounceTimer = setTimeout(() => {
-            applyConditionalFormatting(fileDataSection);
-        }, 100);
-    };
-
-    // Refresh UI when tab changes
-    if (sheetTabsContainer) {
-        sheetTabsContainer.addEventListener('click', (e) => {
-            if (e.target.classList.contains('sheet-tab')) {
-                setTimeout(() => {
-                    const activeSheet = e.target.textContent;
-                    conditionalFormattingRules[fileName][activeSheet] = conditionalFormattingRules[fileName][activeSheet] || [];
-                    refreshFormattingUI();
-                    reapplyDebounced();
-                }, 100);
-            }
-        });
-    }
-
-    // Refresh UI when columns are toggled
-    const columnControls = fileDataSection.querySelector('.column-controls');
-    if (columnControls) {
-        columnControls.addEventListener('click', (e) => {
-            if (e.target.classList.contains('column-control-btn')) {
-                setTimeout(refreshFormattingUI, 50);
-                setTimeout(reapplyDebounced, 100);
-            }
-        });
-    }
-
-    // === HELPERS ===
-    function refreshFormattingUI() {
-        const rulesContainer = cfPanel.querySelector('#cf-rules-container');
-        rulesContainer.innerHTML = '';
-        const activeSheet = getActiveSheet(sheetTabsContainer);
-        const rules = conditionalFormattingRules[fileName][activeSheet] || [];
-
-        if (rules.length === 0) {
-            rulesContainer.innerHTML = '<div style="font-size:0.9em; color:#aaa;">No rules defined.</div>';
-        } else {
-            rules.forEach((rule, index) => {
-                renderRuleRow(rulesContainer, rule, index);
-            });
-        }
-    }
-
-    function addRuleRow() {
-        const activeSheet = getActiveSheet(sheetTabsContainer);
-        const headers = Array.from(tableHeader.querySelectorAll('th'))
-            .map(th => th.textContent.trim())
-            .filter((_, idx) => !isColumnHidden(idx)); // Only visible
-
-        if (headers.length === 0) return;
-
-        const newRule = {
-            column: headers[0],
-            ruleType: 'text',
-            condition: 'contains',
-            value1: '',
-            value2: '', // for ranges
-            bgColor: '#ffff00',
-            textColor: '#000000',
-            bold: false,
-            italic: false,
-            applyToHidden: false
-        };
-
-        conditionalFormattingRules[fileName][activeSheet] = conditionalFormattingRules[fileName][activeSheet] || [];
-        conditionalFormattingRules[fileName][activeSheet].push(newRule);
-
-        refreshFormattingUI();
-        reapplyDebounced();
-    }
-
-    function renderRuleRow(container, rule, index) {
-        const headerOptions = Array.from(tableHeader.querySelectorAll('th'))
-            .map(th => th.textContent.trim())
-            .filter((_, idx) => !isColumnHidden(idx));
-
-        const row = document.createElement('div');
-        row.className = 'cf-rule-row';
-        row.style.cssText = 'margin-bottom: 10px; padding: 10px; background: rgba(255,255,255,0.1); border-radius: 5px; position: relative;';
-
-        row.innerHTML = `
-            <div style="display: grid; grid-template-columns: 1fr 1fr 1fr 1fr auto; gap: 8px; margin-bottom: 8px;">
-                <select class="cf-column-select" style="padding: 5px; border-radius: 4px; background: #222; color: white;">
-                    ${headerOptions.map(h => `<option value="${h}" ${h === rule.column ? 'selected' : ''}>${h}</option>`).join('')}
-                </select>
-                <select class="cf-condition-select" style="padding: 5px; border-radius: 4px; background: #222; color: white;">
-                    <optgroup label="Text">
-                        <option value="contains" ${rule.condition === 'contains' ? 'selected' : ''}>contains</option>
-                        <option value="starts" ${rule.condition === 'starts' ? 'selected' : ''}>starts with</option>
-                        <option value="ends" ${rule.condition === 'ends' ? 'selected' : ''}>ends with</option>
-                        <option value="empty" ${rule.condition === 'empty' ? 'selected' : ''}>is empty</option>
-                        <option value="notempty" ${rule.condition === 'notempty' ? 'selected' : ''}>is not empty</option>
-                    </optgroup>
-                    <optgroup label="Number/Date">
-                        <option value="eq" ${rule.condition === 'eq' ? 'selected' : ''}>=</option>
-                        <option value="ne" ${rule.condition === 'ne' ? 'selected' : ''}>&#8800;</option>
-                        <option value="gt" ${rule.condition === 'gt' ? 'selected' : ''}>></option>
-                        <option value="lt" ${rule.condition === 'lt' ? 'selected' : ''}><</option>
-                        <option value="gte" ${rule.condition === 'gte' ? 'selected' : ''}>&ge;</option>
-                        <option value="lte" ${rule.condition === 'lte' ? 'selected' : ''}>&le;</option>
-                        <option value="between" ${rule.condition === 'between' ? 'selected' : ''}>between</option>
-                    </optgroup>
-                </select>
-                <input type="text" class="cf-value1" placeholder="Value" value="${rule.value1}" style="padding: 5px; border-radius: 4px; background: #222; color: white; display: ${rule.condition === 'between' || rule.condition === 'empty' || rule.condition === 'notempty' ? 'none' : 'block'};">
-                <input type="text" class="cf-value2" placeholder="and" value="${rule.value2}" style="padding: 5px; border-radius: 4px; background: #222; color: white; display: ${rule.condition === 'between' ? 'block' : 'none'};">
-                <button class="remove-cf-rule" style="background: #ff4444; color: white; border: none; padding: 2px 6px; border-radius: 4px; cursor: pointer;">✕</button>
+        ">
+            <h3 style="margin-top: 0; color: #4facfe;">Format Rows</h3>
+            
+            <div style="margin-bottom: 15px;">
+                <label style="display: block; margin-bottom: 5px;">Select Column:</label>
+                <select class="format-column-select" style="
+                    width: 100%;
+                    padding: 8px;
+                    border-radius: 4px;
+                    border: 1px solid rgba(255, 255, 255, 0.3);
+                    background-color: rgba(255, 255, 255, 0.1);
+                    color: white;
+                "></select>
             </div>
-            <div style="display: grid; grid-template-columns: 1fr 1fr auto auto; gap: 10px; font-size: 0.9em;">
-                <input type="color" class="cf-bg-color" value="${rule.bgColor}" title="Background Color">
-                <input type="color" class="cf-text-color" value="${rule.textColor}" title="Text Color">
-                <label><input type="checkbox" class="cf-bold" ${rule.bold ? 'checked' : ''}> Bold</label>
-                <label><input type="checkbox" class="cf-italic" ${rule.italic ? 'checked' : ''}> Italic</label>
+            
+            <div style="margin-bottom: 15px;">
+                <label style="display: block; margin-bottom: 5px;">Text Color:</label>
+                <input type="color" class="text-color-picker" value="#ffffff" style="width: 60px; height: 40px;">
             </div>
-            <label style="margin-top: 5px; display: block; font-size: 0.85em;">
-                <input type="checkbox" class="cf-apply-hidden" ${rule.applyToHidden ? 'checked' : ''}> Apply to hidden cells
-            </label>
-        `;
+            
+            <div style="margin-bottom: 15px;">
+                <label style="display: block; margin-bottom: 5px;">Background Color:</label>
+                <input type="color" class="bg-color-picker" value="#000000" style="width: 60px; height: 40px;">
+            </div>
+            
+            <div style="margin-bottom: 15px;">
+                <label style="display: block; margin-bottom: 5px;">Font Weight:</label>
+                <select class="font-weight-select" style="
+                    width: 100%;
+                    padding: 8px;
+                    border-radius: 4px;
+                    border: 1px solid rgba(255, 255, 255, 0.3);
+                    background-color: rgba(255, 255, 255, 0.1);
+                    color: white;
+                ">
+                    <option value="normal">Normal</option>
+                    <option value="bold">Bold</option>
+                    <option value="bolder">Bolder</option>
+                    <option value="lighter">Lighter</option>
+                </select>
+            </div>
+            
+            <div style="margin-bottom: 15px;">
+                <label style="display: block; margin-bottom: 5px;">Font Style:</label>
+                <select class="font-style-select" style="
+                    width: 100%;
+                    padding: 8px;
+                    border-radius: 4px;
+                    border: 1px solid rgba(255, 255, 255, 0.3);
+                    background-color: rgba(255, 255, 255, 0.1);
+                    color: white;
+                ">
+                    <option value="normal">Normal</option>
+                    <option value="italic">Italic</option>
+                    <option value="oblique">Oblique</option>
+                </select>
+            </div>
+            
+            <div style="margin-bottom: 15px;">
+                <label style="display: block; margin-bottom: 5px;">Text Decoration:</label>
+                <select class="text-decoration-select" style="
+                    width: 100%;
+                    padding: 8px;
+                    border-radius: 4px;
+                    border: 1px solid rgba(255, 255, 255, 0.3);
+                    background-color: rgba(255, 255, 255, 0.1);
+                    color: white;
+                ">
+                    <option value="none">None</option>
+                    <option value="underline">Underline</option>
+                    <option value="overline">Overline</option>
+                    <option value="line-through">Line Through</option>
+                </select>
+            </div>
+            
+            <div style="margin-bottom: 15px;">
+                <label style="display: block; margin-bottom: 5px;">Apply to:</label>
+                <div style="display: flex; gap: 15px;">
+                    <label><input type="radio" name="apply-to" value="all" checked> All Rows</label>
+                    <label><input type="radio" name="apply-to" value="filtered"> Filtered Rows Only</label>
+                </div>
+            </div>
+            
+            <div style="display: flex; gap: 10px; justify-content: flex-end; margin-top: 20px;">
+                <button class="clear-all-format" style="
+                    background: rgba(255, 165, 0, 0.3);
+                    color: white;
+                    border: none;
+                    padding: 8px 16px;
+                    border-radius: 4px;
+                    cursor: pointer;
+                ">Clear All Format</button>
+                <button class="cancel-format" style="
+                    background: rgba(255, 0, 0, 0.3);
+                    color: white;
+                    border: none;
+                    padding: 8px 16px;
+                    border-radius: 4px;
+                    cursor: pointer;
+                ">Cancel</button>
+                <button class="apply-format" style="
+                    background: linear-gradient(to right, #4facfe, #00f2fe);
+                    color: white;
+                    border: none;
+                    padding: 8px 16px;
+                    border-radius: 4px;
+                    cursor: pointer;
+                ">Apply Format</button>
+            </div>
+        </div>
+    `;
+    
+    modal.querySelector('.clear-all-format').addEventListener('click', () => {
+        if (!confirm('Are you sure you want to clear all formatting from this table?')) return;
 
-        // Update rule on change
-        const updateRule = () => {
-            const activeSheet = getActiveSheet(sheetTabsContainer);
-            const columnIndex = Array.from(tableHeader.querySelectorAll('th')).findIndex(th => th.textContent.trim() === row.querySelector('.cf-column-select').value);
-            const dataType = detectColumnType(columnIndex);
-
-            conditionalFormattingRules[fileName][activeSheet][index] = {
-                column: row.querySelector('.cf-column-select').value,
-                ruleType: dataType,
-                condition: row.querySelector('.cf-condition-select').value,
-                value1: row.querySelector('.cf-value1').value.trim(),
-                value2: row.querySelector('.cf-value2').value.trim(),
-                bgColor: row.querySelector('.cf-bg-color').value,
-                textColor: row.querySelector('.cf-text-color').value,
-                bold: row.querySelector('.cf-bold').checked,
-                italic: row.querySelector('.cf-italic').checked,
-                applyToHidden: row.querySelector('.cf-apply-hidden').checked
-            };
-            reapplyDebounced();
-        };
-
-        row.querySelector('.cf-column-select').addEventListener('change', updateRule);
-        row.querySelector('.cf-condition-select').addEventListener('change', (e) => {
-            const v1 = row.querySelector('.cf-value1');
-            const v2 = row.querySelector('.cf-value2');
-            v1.style.display = ['between', 'empty', 'notempty'].includes(e.target.value) ? 'none' : 'block';
-            v2.style.display = e.target.value === 'between' ? 'block' : 'none';
-            updateRule();
-        });
-        row.querySelectorAll('input').forEach(input => {
-            input.addEventListener('input', updateRule);
-        });
-
-        row.querySelector('.remove-cf-rule').addEventListener('click', () => {
-            conditionalFormattingRules[fileName][getActiveSheet(sheetTabsContainer)].splice(index, 1);
-            refreshFormattingUI();
-            reapplyDebounced();
-        });
-
-        container.appendChild(row);
-    }
-
-    function getActiveSheet(tabsContainer) {
-        const activeTab = tabsContainer.querySelector('.sheet-tab.active');
-        return activeTab ? activeTab.textContent : null;
-    }
-
-    function isColumnHidden(index) {
-        const th = tableHeader.querySelectorAll('th')[index];
-        const headerName = th.textContent.trim();
-        return th?.classList.contains('hidden-column') || 
-               (hidden[fileName]?.[getActiveSheet(sheetTabsContainer)] || []).includes(headerName);
-    }
-
-    function detectColumnType(colIndex) {
-        const cells = Array.from(tableBody.querySelectorAll(`tr td:nth-child(${colIndex + 1})`))
-            .map(td => td.textContent.trim())
-            .filter(v => v);
-
-        for (const val of cells) {
-            if (parseFormattedNumber(val) !== null) return 'number';
-            if (parseDate(val)) return 'date';
-            if (/%$/.test(val)) return 'percent';
+        const tableBody = fileDataSection.querySelector('tbody');
+        if (!tableBody) {
+            showStatus('No table data found to clear.', 'error');
+            return;
         }
-        return 'text';
-    }
 
-    // === MAIN APPLY FUNCTION ===
-    function applyConditionalFormatting(section) {
-        const fileName = section.fileName;
-        const sheetName = getActiveSheet(sheetTabsContainer);
-        const rules = conditionalFormattingRules[fileName][sheetName] || [];
-        const headers = Array.from(tableHeader.querySelectorAll('th')).map(th => th.textContent.trim());
-
-        // Clear previous formatting
-        Array.from(tableBody.querySelectorAll('td')).forEach(td => {
-            td.style.backgroundColor = '';
-            td.style.color = '';
-            td.style.fontWeight = '';
-            td.style.fontStyle = '';
+        tableBody.querySelectorAll('td').forEach(cell => {
+            cell.style.removeProperty('color');
+            cell.style.removeProperty('background-color');
+            cell.style.removeProperty('font-weight');
+            cell.style.removeProperty('font-style');
+            cell.style.removeProperty('text-decoration');
         });
 
-        if (rules.length === 0) return;
+        fileDataSection.rowFormatting = [];
+        modal.style.display = 'none';
+        showStatus('All formatting cleared.', 'success');
+        });
 
-        const bodyRows = Array.from(tableBody.querySelectorAll('tr'));
-
-        bodyRows.forEach(row => {
-            const cells = row.querySelectorAll('td');
-            cells.forEach((cell, idx) => {
-                const header = headers[idx];
-                const cellText = cell.textContent.trim();
-
-                // Skip hidden cells unless rule allows
-                const isHidden = cell.classList.contains('hidden-column');
-                if (isHidden) {
-                    const applicableRule = rules.find(r => r.column === header && r.applyToHidden);
-                    if (!applicableRule) return;
-                }
-
-                for (const rule of rules) {
-                    if (rule.column !== header) continue;
-
-                    if (meetsCondition(cellText, rule)) {
-                        cell.style.backgroundColor = rule.bgColor;
-                        cell.style.color = rule.textColor;
-                        cell.style.fontWeight = rule.bold ? 'bold' : '';
-                        cell.style.fontStyle = rule.italic ? 'italic' : '';
-                        break; // First rule wins
-                    }
-                }
-            });
+    // Add elements to DOM
+    sheetData.parentNode.insertBefore(formatBtn, sheetData);
+    document.body.appendChild(modal);
+    
+    // Populate column dropdown
+    function populateColumnSelect() {
+        const select = modal.querySelector('.format-column-select');
+        select.innerHTML = '';
+        
+        const thead = fileDataSection.querySelector('thead');
+        if (!thead) return;
+        
+        const headers = thead.querySelectorAll('th');
+        headers.forEach((th, index) => {
+            if (th.style.display !== 'none') {  // Skip hidden columns
+                const headerText = th.textContent.split('▲')[0].split('▼')[0].trim();
+                const option = document.createElement('option');
+                option.value = index;
+                option.textContent = headerText;
+                select.appendChild(option);
+            }
         });
     }
-
-    function meetsCondition(value, rule) {
-        const v1 = rule.value1;
-        const v2 = rule.value2;
-
-        if (rule.condition === 'empty') return value === '';
-        if (rule.condition === 'notempty') return value !== '';
-
-        // Coerce value based on type
-        let parsedValue, parsedV1, parsedV2;
-
-        if (rule.ruleType === 'number') {
-            parsedValue = parseFormattedNumber(value);
-            if (parsedValue === null) return false;
-            parsedV1 = parseFormattedNumber(v1);
-            parsedV2 = parseFormattedNumber(v2);
-        } else if (rule.ruleType === 'date') {
-            parsedValue = parseDate(value);
-            if (!parsedValue) return false;
-            parsedV1 = parseDate(v1);
-            parsedV2 = parseDate(v2);
-            if (!parsedV1) return false;
-        } else if (rule.ruleType === 'percent') {
-            parsedValue = parseFloat(value) / 100;
-            parsedV1 = parseFloat(v1) / 100;
-            parsedV2 = parseFloat(v2) / 100;
+    
+    // Event listeners
+    formatBtn.addEventListener('click', () => {
+        populateColumnSelect();
+        modal.style.display = 'flex';
+    });
+    
+    modal.querySelector('.cancel-format').addEventListener('click', () => {
+        modal.style.display = 'none';
+    });
+    
+    // Close modal when clicking outside
+    modal.addEventListener('click', (e) => {
+        if (e.target === modal) {
+            modal.style.display = 'none';
+        }
+    });
+    
+    // Apply format button
+    modal.querySelector('.apply-format').addEventListener('click', () => {
+        const columnSelect = modal.querySelector('.format-column-select');
+        const textColor = modal.querySelector('.text-color-picker').value;
+        const bgColor = modal.querySelector('.bg-color-picker').value;
+        const fontWeight = modal.querySelector('.font-weight-select').value;
+        const fontStyle = modal.querySelector('.font-style-select').value;
+        const textDecoration = modal.querySelector('.text-decoration-select').value;
+        const applyTo = modal.querySelector('input[name="apply-to"]:checked').value;
+        
+        const columnIndex = parseInt(columnSelect.value);
+        const tableBody = fileDataSection.querySelector('tbody');
+        
+        if (!tableBody || isNaN(columnIndex)) {
+            showStatus('Please select a valid column', 'error');
+            return;
+        }
+        
+        // Get rows to format
+        let rowsToFormat = [];
+        if (applyTo === 'filtered') {
+            // Use filtered rows if available
+            if (fileDataSection.filteredRows && fileDataSection.filteredRows.length > 0) {
+                rowsToFormat = fileDataSection.filteredRows;
+            } else {
+                // Fall back to visible rows
+                rowsToFormat = Array.from(tableBody.querySelectorAll('tr')).filter(row => 
+                    row.style.display !== 'none'
+                );
+            }
         } else {
-            parsedValue = value.toLowerCase();
-            parsedV1 = v1.toLowerCase();
+            // Apply to all rows
+            rowsToFormat = Array.from(tableBody.querySelectorAll('tr'));
         }
-
-        switch (rule.condition) {
-            case 'contains': return parsedValue.includes(parsedV1);
-            case 'starts': return parsedValue.startsWith(parsedV1);
-            case 'ends': return parsedValue.endsWith(parsedV1);
-            case 'eq': return parsedValue === parsedV1;
-            case 'ne': return parsedValue !== parsedV1;
-            case 'gt': return parsedValue > parsedV1;
-            case 'lt': return parsedValue < parsedV1;
-            case 'gte': return parsedValue >= parsedV1;
-            case 'lte': return parsedValue <= parsedV1;
-            case 'between': return parsedValue >= parsedV1 && parsedValue <= parsedV2;
+        
+        // Apply formatting to selected column cells
+        rowsToFormat.forEach(row => {
+            const cell = row.cells[columnIndex];
+            if (cell) {
+                cell.style.color = textColor;
+                cell.style.backgroundColor = bgColor;
+                cell.style.fontWeight = fontWeight;
+                cell.style.fontStyle = fontStyle;
+                cell.style.textDecoration = textDecoration;
+            }
+        });
+        
+        // Store formatting in a data attribute for persistence
+        if (!fileDataSection.rowFormatting) {
+            fileDataSection.rowFormatting = [];
         }
-        return false;
-    }
-
-    // Initial setup
-    const activeSheet = getActiveSheet(sheetTabsContainer);
-    conditionalFormattingRules[fileName][activeSheet] = conditionalFormattingRules[fileName][activeSheet] || [];
-    refreshFormattingUI();
-    applyConditionalFormatting(fileDataSection);
-
-    // Ensure panel is reinitialized on sheet load
-    if (typeof setupConditionalFormattingPanel.initialized === 'undefined') {
-        setupConditionalFormattingPanel.initialized = true;
-        console.log('setupConditionalFormattingPanel loaded.');
-    }
+        
+        // Save this formatting rule
+        const formatRule = {
+            column: columnIndex,
+            textColor,
+            bgColor,
+            fontWeight,
+            fontStyle,
+            textDecoration,
+            applyTo
+        };
+        
+        fileDataSection.rowFormatting.push(formatRule);
+        
+        modal.style.display = 'none';
+        showStatus(`Formatted ${rowsToFormat.length} rows`, 'success');
+    });
 }
+
+// Add this function call to the init process or where other controls are added
+// For example, in the tab click event handler after loading sheet data:
+// addFormattingControls(fileDataSection);
 
 window.addEventListener('DOMContentLoaded', init);
     </script>
