@@ -3229,9 +3229,7 @@ function computeColumnStats(fileDataSection, headers, dataRows, sheetName) {
     if (!statsGrid) return;
 
     statsGrid.innerHTML = '';
-    const currentSheetName = sheetName; // Assuming 'sheetName' is the variable holding the current sheet's name
-    const dateColumnIndices = new Set((dateTimeInfo[currentSheetName]?.dateColumns || []).map(Number));
-    const isLikelyDateColumn = dateColumnIndices.has(colIndex); 
+
     // Add sheet header
     const sheetHeader = document.createElement('div');
     sheetHeader.style.cssText = 'grid-column: 1 / -1; font-weight: bold; color: #00f2fe; margin-bottom: 10px; padding-bottom: 5px; border-bottom: 1px solid rgba(255,255,255,0.3);';
@@ -3271,92 +3269,28 @@ function computeColumnStats(fileDataSection, headers, dataRows, sheetName) {
         statItem.className = 'stat-item';
         statItem.innerHTML = `<div class="stat-label">${header}</div>`;
 
-        if (isLikelyDateColumn) {
-    // --- Use the robust parseDate function for statistics ---
-    const dates = cellValues
-        .map(value => {
-            // The parseDate function handles various formats and ambiguities
-            // It could potentially use the stored format hint from detection if enhanced
-            const parsedDate = parseDate(value); // Use the existing, robust parsing function
-            return parsedDate;
-        })
-        .filter(dateObj => dateObj instanceof Date && !isNaN(dateObj.getTime())); // Filter out invalid dates
-
+        if (isDateCol) {
+    const dates = cellValues.map(parseDate).filter(d => d);
     if (dates.length > 0) {
-        try {
-            // Calculate statistics using the parsed Date objects
-            const minDate = new Date(Math.min.apply(null, dates)); // Handle potential large argument lists
-            const maxDate = new Date(Math.max.apply(null, dates));
+        const minDate = new Date(Math.min(...dates));
+        const maxDate = new Date(Math.max(...dates));
+        const avgTime = dates.reduce((sum, d) => sum + d.getTime(), 0) / dates.length;
+        const avgDate = new Date(avgTime);
 
-            // Calculate average date
-            // Summing milliseconds can be large, so accumulate safely
-            let totalMillis = 0;
-            dates.forEach(d => totalMillis += d.getTime());
-            const avgTime = totalMillis / dates.length;
-            const avgDate = new Date(avgTime);
-
-            // Calculate span in days
-            const spanMillis = maxDate.getTime() - minDate.getTime();
-            const spanDays = Math.ceil(spanMillis / (24 * 60 * 60 * 1000));
-
-            // Populate statItem with date statistics
-            statItem.innerHTML += `
-                <div class="stat-value">Min: ${minDate.toLocaleDateString(undefined, { year: 'numeric', month: 'short', day: 'numeric' })}</div>
-                <div class="stat-value">Max: ${maxDate.toLocaleDateString(undefined, { year: 'numeric', month: 'short', day: 'numeric' })}</div>
-             <div class="stat-value">Avg: ${avgDate.toLocaleDateString(undefined, { year: 'numeric', month: 'short', day: 'numeric' })}</div>
-            <div class="stat-value">Range: ${minDate.toLocaleDateString(undefined, { year: 'numeric', month: 'short', day: 'numeric' })} → ${maxDate.toLocaleDateString(undefined, { year: 'numeric', month: 'short', day: 'numeric' })}</div>
-                <div class="stat-value">Count: ${dates.length}</div>
-                <div class="stat-value">Span: ${spanDays} days</div>
-            `;
-        } catch (err) {
-            console.error("Error calculating date statistics for column:", header, err);
-             statItem.innerHTML += `<div class="stat-value">Error calculating date stats</div>`;
-        }
+        statItem.innerHTML += `
+            <div class="stat-value">Min: ${minDate.toLocaleDateString()}</div>
+            <div class="stat-value">Max: ${maxDate.toLocaleDateString()}</div>
+            <div class="stat-value">Avg: ${avgDate.toLocaleDateString()}</div>
+            <div class="stat-value">Range: ${minDate.toLocaleDateString()} → ${maxDate.toLocaleDateString()}</div>
+            <div class="stat-value">Count: ${dates.length}</div>
+            <div class="stat-value">Span: ${Math.ceil((maxDate - minDate) / (24 * 60 * 60 * 1000))} days</div>
+        `;
     } else {
         statItem.innerHTML += `<div class="stat-value">No valid dates</div>`;
     }
-} else {
-    // --- Handle Non-Date Columns (Numbers/Text) ---
-    const parsedNumbers = cellValues
-        .map(v => parseFormattedNumber(v)) // Use existing number parser
-        .filter(n => n !== null && !isNaN(n));
 
-    if (parsedNumbers.length > 0) {
-        // --- Number Statistics (existing logic, assumed correct) ---
-        const sum = parsedNumbers.reduce((a, b) => a + b, 0);
-        const avg = sum / parsedNumbers.length;
-        const sorted = [...parsedNumbers].sort((a, b) => a - b);
-        const median = sorted.length % 2 === 0 ?
-            (sorted[sorted.length / 2 - 1] + sorted[sorted.length / 2]) / 2 :
-            sorted[Math.floor(sorted.length / 2)];
-        const min = sorted[0];
-        const max = sorted[sorted.length - 1];
-        const uniqueValues = new Set(parsedNumbers);
-
-        statItem.innerHTML += `
-            <div class="stat-value">Sum: ${sum.toLocaleString()}</div>
-            <div class="stat-value">Avg: ${avg.toLocaleString()}</div>
-            <div class="stat-value">Med: ${median.toLocaleString()}</div>
-            <div class="stat-value">Min: ${min.toLocaleString()}</div>
-            <div class="stat-value">Max: ${max.toLocaleString()}</div>
-            <div class="stat-value">Unique: ${uniqueValues.size}</div>
-            <div class="stat-value">Count: ${parsedNumbers.length}</div>
-        `;
-    } else {
-        // --- Text/General Statistics ---
-        // Filter out empty strings for count/unique if desired, or count them
-        const nonEmptyValues = cellValues.filter(v => v !== null && v !== undefined && v.toString().trim() !== '');
-        const uniqueValues = new Set(nonEmptyValues);
-
-        statItem.innerHTML += `
-            <div class="stat-value">Unique: ${uniqueValues.size}</div>
-            <div class="stat-value">Total: ${cellValues.length}</div> <!-- Or nonEmptyValues.length -->
-            <div class="stat-value">Non-Empty: ${nonEmptyValues.length}</div>
-        `;
-         // Optionally add mode, length stats, etc. for text
-    }
-}
-        const parsedNumbers = cellValues
+        } else {
+            const parsedNumbers = cellValues
                 .map(v => parseFormattedNumber(v))
                 .filter(n => n !== null && !isNaN(n));
 
@@ -4095,8 +4029,8 @@ function addCleaningControls(fileDataSection) {
     dateFormatSelect.innerHTML = `
         <option value="">-- Date Format --</option>
         <option value="yyyy-mm-dd">yyyy-mm-dd</option>
-        <option value="dd/mm/yyyy">dd/mm/yyyy</option>
-        <option value="dd-mm-yyyy">dd-mm-yyyy</option>
+        <option value="mm/dd/yyyy">mm/dd/yyyy</option>
+        <option value="mm-dd-yyyy">mm-dd-yyyy</option>
         <!-- Add more formats as needed -->
     `;
     dateFormatSelect.style.marginLeft = '10px';
@@ -4534,16 +4468,6 @@ function cleanDateFormat(value, format) {
 
     return formatted;
 }
-
-
-
-
-
-
-// --- End of enhanced block ---
-
-
-
 
 
 window.addEventListener('DOMContentLoaded', init);
