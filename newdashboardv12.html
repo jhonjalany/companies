@@ -3,9 +3,17 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Multi-File Excel Uploader - Enhanced with Column Hiding</title>
-    <script src="https://cdn.sheetjs.com/xlsx-0.20.2/package/dist/xlsx.full.min.js"></script>
+    <title>ANHS-SH 2025 Yearbook</title>
     <style>
+        :root {
+            --primary-color: #3a506b;
+            --secondary-color: #5bc0be;
+            --accent-color: #ffb997;
+            --text-color: #1c2541;
+            --bg-color: #f8f9fa;
+            --card-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            --transition: all 0.3s ease;
+        }
         * {
             margin: 0;
             padding: 0;
@@ -13,1253 +21,1186 @@
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
         }
         body {
-            background: linear-gradient(135deg, #1a2a6c, #b21f1f, #1a2a6c);
-            color: #fff;
-            min-height: 100vh;
-            padding: 20px;
-        }
-        .container {
-            max-width: 90%;
-            margin: 0 auto;
-            padding: 20px;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            line-height: 1.6;
         }
         header {
-            text-align: center;
-            margin-bottom: 30px;
-            padding: 20px;
-            background: rgba(0, 0, 0, 0.3);
-            border-radius: 15px;
-            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
-        }
-        h1 {
-            font-size: 2.8rem;
-            margin-bottom: 10px;
-            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
-        }
-        .subtitle {
-            font-size: 1.2rem;
-            opacity: 0.9;
-            max-width: 700px;
-            margin: 0 auto;
-        }
-        .upload-section {
-            background: rgba(255, 255, 255, 0.1);
-            backdrop-filter: blur(10px);
-            border-radius: 15px;
-            padding: 30px;
-            margin-bottom: 30px;
-            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-        }
-        .upload-container {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 20px;
-        }
-        .file-input-wrapper {
-            position: relative;
-            width: 100%;
-            max-width: 500px;
-        }
-        .file-input {
-            width: 100%;
-            padding: 15px;
-            background: rgba(0, 0, 0, 0.3);
-            border: 2px dashed rgba(255, 255, 255, 0.3);
-            border-radius: 10px;
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
             color: white;
-            font-size: 1.1rem;
-            text-align: center;
-            cursor: pointer;
-            transition: all 0.3s ease;
+            padding: 1rem 2rem;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: var(--card-shadow);
         }
-        .file-input:hover {
-            background: rgba(0, 0, 0, 0.4);
-            border-color: rgba(255, 255, 255, 0.5);
-        }
-        .file-input input {
-            display: none;
-        }
-        .upload-btn {
-            background: linear-gradient(to right, #4facfe, #00f2fe);
-            color: white;
-            border: none;
-            padding: 15px 40px;
-            font-size: 1.2rem;
-            border-radius: 50px;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
-        }
-        .upload-btn:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
-        }
-        .upload-btn:active {
-            transform: translateY(1px);
-        }
-        .upload-btn:disabled {
-            background: #6c757d;
-            cursor: not-allowed;
-            transform: none;
-            box-shadow: none;
-        }
-        .status {
-            margin-top: 15px;
-            font-size: 1.1rem;
-            min-height: 25px;
-        }
-        .success {
-            color: #7fff00;
-        }
-        .error {
-            color: #ff4d4d;
-        }
-        .file-list {
-            width: 100%;
-            max-width: 600px;
-            background: rgba(0, 0, 0, 0.2);
-            border-radius: 10px;
-            padding: 15px;
-            margin-top: 15px;
-            max-height: 200px;
-            overflow-y: auto;
-        }
-        .file-item {
+        .header-container {
             display: flex;
             justify-content: space-between;
-            padding: 10px;
-            background: rgba(255, 255, 255, 0.05);
-            border-radius: 5px;
-            margin-bottom: 8px;
             align-items: center;
+            max-width: 1400px;
+            margin: 0 auto;
         }
-        .file-item:last-child {
-            margin-bottom: 0;
+        .logo-container {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
         }
-        .file-name {
-            flex: 1;
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-            padding-right: 10px;
+        .logo {
+            height: 60px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 3px solid white;
         }
-        .remove-file {
-            background: rgba(255, 0, 0, 0.3);
+        .title {
+            font-size: 1.8rem;
+            font-weight: 700;
+            letter-spacing: 1px;
+        }
+        .search-container {
+            position: relative;
+            width: 300px;
+        }
+        .search-input {
+            width: 100%;
+            padding: 0.8rem 1rem;
+            border-radius: 30px;
             border: none;
+            outline: none;
+            font-size: 1rem;
+            box-shadow: var(--card-shadow);
+        }
+        .search-icon {
+            position: absolute;
+            right: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--primary-color);
+        }
+        nav {
+            background-color: white;
+            padding: 1rem 2rem;
+            box-shadow: var(--card-shadow);
+        }
+        .nav-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: center;
+            gap: 2rem;
+        }
+        .nav-link {
+            text-decoration: none;
+            color: var(--text-color);
+            font-weight: 600;
+            padding: 0.5rem 1rem;
+            border-radius: 25px;
+            transition: var(--transition);
+            position: relative;
+        }
+        .nav-link:hover, .nav-link.active {
+            background-color: var(--secondary-color);
             color: white;
-            width: 25px;
-            height: 25px;
+        }
+        .nav-link::after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 0;
+            height: 3px;
+            background-color: var(--accent-color);
+            transition: var(--transition);
+        }
+        .nav-link:hover::after, .nav-link.active::after {
+            width: 80%;
+        }
+        main {
+            max-width: 1400px;
+            margin: 2rem auto;
+            padding: 0 2rem;
+        }
+        .section-title {
+            font-size: 2rem;
+            margin-bottom: 1.5rem;
+            color: var(--primary-color);
+            text-align: center;
+            position: relative;
+            padding-bottom: 0.5rem;
+        }
+        .section-title::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 100px;
+            height: 3px;
+            background: linear-gradient(to right, var(--primary-color), var(--secondary-color));
+        }
+        .section-title.highlight {
+            background-color: var(--accent-color);
+            color: var(--primary-color);
+            border-radius: 8px;
+            padding: 0.5rem 1rem;
+            animation: pulse 1.5s infinite;
+        }
+        @keyframes pulse {
+            0% { box-shadow: 0 0 0 0 rgba(255, 185, 151, 0.7); }
+            70% { box-shadow: 0 0 0 10px rgba(255, 185, 151, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(255, 185, 151, 0); }
+        }
+        .students-grid, .teachers-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 2rem;
+            margin-bottom: 3rem;
+        }
+        .student-card, .teacher-card {
+            background: white;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: var(--card-shadow);
+            transition: var(--transition);
+            cursor: pointer;
+            position: relative;
+        }
+        .student-card:hover, .teacher-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.15);
+        }
+        .student-img, .teacher-img {
+            width: 100%;
+            height: 350px;
+            object-fit: cover;
+            object-position: top;
+            transition: var(--transition);
+            background: linear-gradient(45deg, #f0f0f0, #e0e0e0);
+        }
+        .student-card:hover .student-img,
+        .teacher-card:hover .teacher-img {
+            transform: scale(1.05);
+        }
+        .student-info, .teacher-info {
+            padding: 1.5rem;
+            text-align: center;
+        }
+        .student-name, .teacher-name {
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: var(--primary-color);
+            margin-bottom: 0.5rem;
+            transition: var(--transition);
+        }
+        .student-card:hover .student-name,
+        .teacher-card:hover .teacher-name {
+            color: var(--secondary-color);
+        }
+        .teacher-section {
+            font-size: 0.9rem;
+            color: var(--secondary-color);
+        }
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.7);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+            padding: 1rem;
+        }
+        .modal-content {
+            background: white;
+            border-radius: 20px;
+            max-width: 800px;
+            max-height: 90vh;
+            overflow-y: auto;
+            position: relative;
+            animation: modalFadeIn 0.3s ease;
+        }
+        @keyframes modalFadeIn {
+            from { opacity: 0; transform: scale(0.9); }
+            to { opacity: 1; transform: scale(1); }
+        }
+        .close-modal {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            font-size: 1.5rem;
+            background: none;
+            border: none;
+            cursor: pointer;
+            color: var(--text-color);
+            transition: var(--transition);
+        }
+        .close-modal:hover {
+            color: var(--primary-color);
+            transform: rotate(90deg);
+        }
+        .modal-header {
+            padding: 2rem;
+            text-align: center;
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            color: white;
+            border-radius: 20px 20px 0 0;
+        }
+        .modal-img {
+            width: 180px;
+            height: 180px;
+            border-radius: 50%;
+            object-fit: cover;
+            object-position: top;
+            border: 5px solid white;
+            margin-bottom: 1rem;
+            background: linear-gradient(45deg, #f0f0f0, #e0e0e0);
+        }
+        .modal-name {
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+        .modal-section {
+            padding: 2rem;
+        }
+        .modal-section h3 {
+            font-size: 1.5rem;
+            color: var(--primary-color);
+            margin-bottom: 1rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 2px solid var(--secondary-color);
+        }
+        .awards-list {
+            list-style: none;
+        }
+        .awards-list li {
+            padding: 0.8rem;
+            margin-bottom: 0.5rem;
+            background-color: var(--bg-color);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            transition: var(--transition);
+        }
+        .awards-list li:hover {
+            background-color: var(--secondary-color);
+            color: white;
+            transform: translateX(5px);
+        }
+        .award-icon {
+            margin-right: 10px;
+            color: var(--accent-color);
+            font-weight: bold;
+        }
+        .view-full-btn {
+            display: block;
+            margin-top: 1rem;
+            padding: 0.6rem 1.2rem;
+            background: var(--secondary-color);
+            color: white;
+            border: none;
+            border-radius: 25px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: var(--transition);
+        }
+        .view-full-btn:hover {
+            background: var(--primary-color);
+            transform: translateY(-2px);
+        }
+        .speeches-section, .memories-section {
+            margin: 3rem 0;
+        }
+        .speech-card {
+            background: white;
+            border-radius: 15px;
+            padding: 2rem;
+            box-shadow: var(--card-shadow);
+            margin-bottom: 2rem;
+            display: flex;
+            flex-direction: column;
+            transition: var(--transition);
+        }
+        .speech-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+        .speech-img {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            object-fit: cover;
+            object-position: top;
+            margin-right: 1.5rem;
+            border: 3px solid var(--secondary-color);
+            background: linear-gradient(45deg, #f0f0f0, #e0e0e0);
+        }
+        .speech-info h3 {
+            font-size: 1.5rem;
+            color: var(--primary-color);
+        }
+        .speech-info p {
+            color: var(--secondary-color);
+            font-weight: 600;
+        }
+        .speech-content {
+            line-height: 1.8;
+            font-style: italic;
+            padding: 1rem;
+            background-color: var(--bg-color);
+            border-radius: 10px;
+            margin-top: 1rem;
+        }
+        .memories-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 1.5rem;
+        }
+        .memory-img {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+            border-radius: 15px;
+            cursor: pointer;
+            transition: var(--transition);
+            box-shadow: var(--card-shadow);
+            background: linear-gradient(45deg, #f0f0f0, #e0e0e0);
+        }
+        .memory-img:hover {
+            transform: scale(1.05);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.15);
+        }
+
+        .lyrics-content {
+            background: white;
+            padding: 2rem;
+            border-radius: 15px;
+            box-shadow: var(--card-shadow);
+            line-height: 1.8;
+            font-family: 'Georgia', serif;
+            font-size: 1.1rem;
+            text-align: center;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        .lyrics-text {
+            white-space: pre-line;
+            color: var(--text-color);
+        }
+        .other-awards-section {
+            margin: 3rem 0;
+        }
+        .award-category {
+            margin-bottom: 2rem;
+        }
+        .award-title {
+            font-size: 1.5rem;
+            color: var(--primary-color);
+            margin-bottom: 1rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 2px solid var(--secondary-color);
+        }
+        .award-recipients {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+        .recipient {
+            background-color: var(--secondary-color);
+            color: white;
+            padding: 0.8rem 1.5rem;
+            border-radius: 25px;
+            font-weight: 600;
+            
+            cursor: pointer;
+            transition: var(--transition);
+        }
+        .recipient:hover {
+            background-color: var(--primary-color);
+            transform: translateY(-3px);
+        }
+        footer {
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            color: white;
+            text-align: center;
+            padding: 2rem;
+            margin-top: 3rem;
+        }
+        .footer-content {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+        .footer-logo-container {
+            display: flex;
+            justify-content: center;
+            gap: 2rem;
+            margin-bottom: 2rem;
+        }
+        .footer-logo {
+            height: 80px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 3px solid white;
+        }
+        .copyright {
+            font-size: 0.9rem;
+            opacity: 0.8;
+        }
+        #scrollToTopBtn {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            width: 50px;
+            height: 50px;
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            color: white;
+            border: none;
             border-radius: 50%;
             cursor: pointer;
             display: flex;
-            align-items: center;
             justify-content: center;
-        }
-        .remove-file:hover {
-            background: rgba(255, 0, 0, 0.5);
-        }
-        .info-section {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 20px;
-            margin-bottom: 30px;
-        }
-        .info-card {
-            background: rgba(255, 255, 255, 0.1);
-            backdrop-filter: blur(10px);
-            border-radius: 15px;
-            padding: 25px;
-            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-        }
-        .info-card h2 {
-            margin-bottom: 15px;
-            font-size: 1.5rem;
-            color: #4facfe;
-        }
-        .info-card ul {
-            padding-left: 20px;
-        }
-        .info-card li {
-            margin-bottom: 10px;
-            line-height: 1.5;
-        }
-        /* Container for all file data sections */
-        .data-section-container {
-            display: flex;
-            flex-direction: column;
-            gap: 30px; /* Space between file sections */
-        }
-        /* Individual file data section */
-        .file-data-section {
-            background: rgba(255, 255, 255, 0.1);
-            backdrop-filter: blur(10px);
-            border-radius: 15px;
-            padding: 30px;
-            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            position: relative; /* Needed for absolute positioning of delete button */
-        }
-        .file-data-section h2 {
-            margin-bottom: 20px;
-            font-size: 1.8rem;
-            color: #00f2fe;
-            word-break: break-all; /* Handle long filenames */
-            padding-right: 40px; /* Make space for the delete button */
-        }
-        /* --- Add Delete Button Styles --- */
-        .delete-section-btn {
-            position: absolute;
-            top: 20px;
-            right: 20px;
-            background: rgba(255, 0, 0, 0.3);
-            color: white;
-            border: none;
-            padding: 8px 12px;
-            border-radius: 5px;
-            cursor: pointer;
-            font-size: 0.9rem;
-            transition: background 0.3s ease;
-        }
-        .delete-section-btn:hover {
-            background: rgba(255, 0, 0, 0.5);
-        }
-        /* --- End Delete Button Styles --- */
-        .sheet-tabs {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 10px;
-            margin-bottom: 20px;
-        }
-        .sheet-tab {
-            background: rgba(0, 0, 0, 0.3);
-            padding: 10px 20px;
-            border-radius: 30px;
-            cursor: pointer;
+            align-items: center;
+            font-size: 20px;
+            box-shadow: var(--card-shadow);
+            opacity: 0;
+            visibility: hidden;
             transition: all 0.3s ease;
+            z-index: 99;
         }
-        .sheet-tab.active {
-            background: linear-gradient(to right, #4facfe, #00f2fe);
-            color: white;
+        #scrollToTopBtn.show {
+            opacity: 1;
+            visibility: visible;
         }
-        .sheet-tab:hover:not(.active) {
-            background: rgba(0, 0, 0, 0.5);
-        }
-        .sheet-data {
-            overflow-x: auto;
-            max-height: 100vh;
-            background: rgba(0, 0, 0, 0.2);
-            border-radius: 10px;
-            padding: 15px;
-            display: flex;
-            flex-direction: column;
-        }
-        .table-container {
-            overflow-y: auto;
-            max-height: 600px;
-            flex-grow: 1;
-        }
-        .table-container table {
-            width: 100%;
-            border-collapse: collapse;
-            min-width: 600px;
-        }
-        .table-container thead th {
-            position: sticky;
-            top: 0;
-            background: rgba(31, 27, 27, 0.911);
-            z-index: 1;
-            font-weight: 600;
-            padding: 12px 15px;
-            text-align: left;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-            cursor: pointer;
-        }
-        /*
-        .table-container thead th:hover {
-            background: rgba(255, 255, 255, 0.2);
-        }*/
-        .table-container tbody td {
-            padding: 12px 15px;
-            text-align: left;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-        }
-        .table-container tr:nth-child(even) {
-            background: rgba(255, 255, 255, 0.05);
-        }
-        .table-container tr:hover {
-            background: rgba(255, 255, 255, 0.1);
-        }
-        /* Hidden column class */
-        .hidden-column {
-            display: none;
-        }
-        /* Column visibility controls */
-        .column-controls {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 10px;
-            margin-bottom: 15px;
-            padding: 10px;
-            background: rgba(0, 0, 0, 0.2);
-            border-radius: 8px;
-        }
-        .column-control-btn {
-            background: rgba(255, 255, 255, 0.1);
-            border: 1px solid rgba(255, 255, 255, 0.3);
-            color: white;
-            padding: 6px 12px;
-            border-radius: 5px;
-            cursor: pointer;
-            font-size: 0.9rem;
-            transition: all 0.3s ease;
-        }
-        .column-control-btn:hover {
-            background: rgba(255, 255, 255, 0.2);
-        }
-        .column-control-btn.hidden {
-            background: rgba(255, 0, 0, 0.3);
-            border-color: rgba(255, 0, 0, 0.5);
-        }
-        .column-control-btn.hidden::after {
-            content: " (Hidden)";
-            font-size: 0.8em;
-            opacity: 0.8;
-        }
-        .controls {
-            display: flex;
-            gap: 15px;
-            margin-top: 20px;
-            flex-wrap: wrap;
-        }
-        .clear-btn {
-            background: rgba(255, 0, 0, 0.3);
-            color: white;
-            border: none;
-            padding: 12px 25px;
-            border-radius: 30px;
-            cursor: pointer;
-            transition: all 0.3s ease;
-        }
-        .clear-btn:hover {
-            background: rgba(255, 0, 0, 0.5);
-        }
-        footer {
-            text-align: center;
-            margin-top: 30px;
-            padding: 20px;
-            font-size: 0.9rem;
-            opacity: 0.8;
+        #scrollToTopBtn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
         }
         @media (max-width: 768px) {
-            h1 {
-                font-size: 2.2rem;
+            .header-container {
+                flex-direction: column;
+                gap: 1rem;
             }
-            .upload-section, .info-card, .file-data-section {
-                padding: 20px;
+            .search-container {
+                width: 100%;
             }
-            .info-section {
+            .nav-container {
+                flex-wrap: wrap;
+                gap: 0.5rem;
+            }
+            .students-grid, .teachers-grid {
+                grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+                gap: 1rem;
+            }
+            .student-img, .teacher-img {
+                height: 300px;
+            }
+            .modal-img {
+                width: 150px;
+                height: 150px;
+            }
+            .speech-header {
+                flex-direction: column;
+                text-align: center;
+            }
+            .speech-img {
+                margin-bottom: 1rem;
+            }
+            .memories-grid {
+                grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+            }
+            .memory-img {
+                height: 150px;
+            }
+            #scrollToTopBtn {
+                bottom: 20px;
+                right: 20px;
+                width: 45px;
+                height: 45px;
+            }
+            .recipient {
+                font-size: 10px;
+            }
+        }
+        @media (max-width: 480px) {
+            .students-grid, .teachers-grid {
                 grid-template-columns: 1fr;
             }
-            .controls {
-                flex-direction: column;
+            .memories-grid {
+                grid-template-columns: 1fr;
             }
-            /* --- Responsive Delete Button --- */
-            .file-data-section h2 {
-                 padding-right: 0;
+            .nav-link {
+                padding: 0.5rem 0.8rem;
+                font-size: 0.9rem;
             }
-            .delete-section-btn {
-                position: relative;
-                top: auto;
-                right: auto;
-                margin-top: 10px;
-                align-self: flex-end;
-            }
-            /* --- End Responsive Delete Button --- */
         }
-        /* Search input styling */
-.table-container thead th input {
-    width: 100%;
-    padding: 5px;
-    margin-top: 5px;
-    border-radius: 4px;
-    border: 1px solid rgba(255, 255, 255, 0.3);
-    background-color: rgba(255, 255, 255, 0.1);
-    color: white;
-}
-
-.table-container thead th input::placeholder {
-    color: rgba(255, 255, 255, 0.5);
-}
-
-.table-container thead th input:focus {
-    outline: none;
-    border-color: #4facfe;
-    background-color: rgba(255, 255, 255, 0.2);
-}
+        .loading {
+            display: none;
+            text-align: center;
+            padding: 2rem;
+            font-size: 1.2rem;
+            color: var(--primary-color);
+        }
+        .spinner {
+            border: 4px solid rgba(0, 0, 0, 0.1);
+            border-left: 4px solid var(--secondary-color);
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 1rem;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        .fade-in {
+            animation: fadeIn 0.5s ease-in;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .scroll-loader {
+            text-align: center;
+            padding: 2rem;
+            display: none;
+        }
+        .scroll-loader.show {
+            display: block;
+        }
+        .img-loading {
+            opacity: 0.5;
+        }
+        .img-loaded {
+            opacity: 1;
+        }
+        /* Full image modal */
+        #fullImageModal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.9);
+            z-index: 2000;
+            justify-content: center;
+            align-items: center;
+        }
+        #fullImageModal img {
+            max-width: 90%;
+            max-height: 90%;
+            border: 3px solid white;
+            border-radius: 10px;
+        }
+        #closeFullImage {
+            position: absolute;
+            top: 20px;
+            right: 30px;
+            color: white;
+            font-size: 2rem;
+            cursor: pointer;
+        }
     </style>
 </head>
 <body>
-    <div class="container">
-        <header>
-            <h1>Multi-File Excel Uploader</h1>
-            <p class="subtitle">Upload multiple Excel, CSV, or spreadsheet files to view and manage sheet data in real-time</p>
-        </header>
-        <section class="upload-section">
-            <div class="upload-container">
-                <div class="file-input-wrapper">
-                    <div class="file-input" id="dropZone">
-                        <span id="fileText">Drag & drop files here or click to browse</span>
-                        <input type="file" id="fileInput" accept=".xlsx,.xls,.csv" multiple>
-                    </div>
-                </div>
-                <button class="upload-btn" id="uploadBtn" disabled>Process Files</button>
-                <div class="status" id="status"></div>
-                <div class="file-list" id="fileList"></div>
+    <header>
+        <div class="header-container">
+            <div class="logo-container">
+                <img src="anhs-school.jpg" alt="School Logo" class="logo" loading="lazy">
+                <h1 class="title">ANHS-SH 2025 Yearbook</h1>
             </div>
-        </section>
-        <section class="info-section">
-            <div class="info-card">
-                <h2>Supported File Types</h2>
-                <ul>
-                    <li>Excel files (.xlsx, .xls)</li>
-                    <li>CSV files (.csv)</li>
-                    <li>OpenDocument spreadsheets (.ods)</li>
-                    <li>Tab-separated values (.tsv)</li>
-                </ul>
+            <div class="search-container">
+                <input type="text" class="search-input" id="searchInput" placeholder="Search for a student, teacher, or section...">
+                <span class="search-icon">🔍</span>
             </div>
-            <div class="info-card">
-                <h2>Features</h2>
-                <ul>
-                    <li>Upload multiple files at once</li>
-                    <li>Handles large files efficiently</li>
-                    <li>Clears previous data when needed</li>
-                    <li>Displays data from all sheets</li>
-                    <li>Responsive design for all devices</li>
-                    <li><strong>Preserves original date/time formatting</strong></li>
-                    <li><strong>Hide and unhide columns for each sheet individually</strong></li>
-                </ul>
-            </div>
-        </section>
-        <!-- Template for individual file data sections -->
-        <template id="fileDataSectionTemplate">
-            <section class="file-data-section">
-                <h2 class="file-title"></h2>
-                <button class="delete-section-btn">Delete File Data</button>
-                <div class="sheet-tabs"></div>
-                <div class="sheet-data">
-                    <div class="column-controls" id="columnControls"></div>
-                    <div class="table-container">
-                        <table>
-                            <thead></thead>
-                            <tbody></tbody>
-                        </table>
-                    </div>
-                    <div class="no-data">No data available for this file.</div>
-                </div>
-            </section>
-        </template>
-        <!-- Container for dynamically created file data sections -->
-        <div class="data-section-container" id="dataSectionContainer"></div>
-        <div class="controls">
-            <button class="clear-btn" id="clearAllBtn">Clear All Data</button>
         </div>
-        <footer>
-            <p>Multi-File Excel Uploader &copy; 2023 | All data is processed locally in your browser</p>
-        </footer>
+    </header>
+    <nav>
+        <div class="nav-container">
+            <a href="#" class="nav-link active" data-section="students">Students</a>
+            <a href="#" class="nav-link" data-section="teachers">Teachers</a>
+            <a href="#" class="nav-link" data-section="achievements">Achievements</a>
+            <a href="#" class="nav-link" data-section="speeches">Speeches</a>
+            <a href="#" class="nav-link" data-section="memories">Memories</a>
+            <a href="#" class="nav-link" data-section="lyrics">Lyrics</a>
+        </div>
+    </nav>
+    <main>
+        <div id="loading" class="loading">
+            <div class="spinner"></div>
+            <p>Loading content...</p>
+        </div>
+
+        <!-- Students Section -->
+        <section id="students-section" class="section">
+            <h2 class="section-title" id="aquarius-title">Aquarius Section</h2>
+            <div class="students-grid" id="aquarius-students"></div>
+            <h2 class="section-title" id="capricorn-title">Capricorn Section</h2>
+            <div class="students-grid" id="capricorn-students"></div>
+            <div class="scroll-loader" id="scrollLoader">
+                <div class="spinner"></div>
+                <p>Loading more students...</p>
+            </div>
+        </section>
+
+        <!-- Teachers Section -->
+        <section id="teachers-section" class="section" style="display: none;">
+            <h2 class="section-title">Our Teachers</h2>
+            <div class="teachers-grid" id="teachers-grid"></div>
+        </section>
+
+        <!-- Achievements Section -->
+        <section id="achievements-section" class="section" style="display: none;">
+            <h2 class="section-title">Individual Achievements</h2>
+            <div id="individual-achievements"></div>
+            <h2 class="section-title">Award Categories</h2>
+            <div class="other-awards-section" id="other-awards"></div>
+        </section>
+
+        <!-- Speeches Section -->
+        <section id="speeches-section" class="section" style="display: none;">
+            <h2 class="section-title">Special Speeches</h2>
+            <div id="speeches-container"></div>
+        </section>
+
+        <!-- Memories Section -->
+        <section id="memories-section" class="section" style="display: none;">
+            <h2 class="section-title">School Memories</h2>
+            <div class="memories-grid" id="memories-grid"></div>
+        </section>
+
+        <!-- Graduation Song Lyrics Section -->
+        <section id="lyrics-section" class="section" style="display: none;">
+            <h2 class="section-title">Graduation Song Lyrics</h2>
+            <div class="lyrics-content" id="lyrics-content">
+                <p class="lyrics-text">
+                    <!-- Lyrics will be inserted here via JS or hardcoded -->
+                </p>
+            </div>
+        </section>
+    </main>
+
+    <!-- Student/Teacher Profile Modal -->
+    <div id="studentModal" class="modal">
+        <div class="modal-content">
+            <button class="close-modal" id="closeModal">&times;</button>
+            <div class="modal-header">
+                <img src="" alt="Profile" class="modal-img" id="modalImg" loading="lazy">
+                <h2 class="modal-name" id="modalName"></h2>
+            </div>
+            <div class="modal-section" id="modalAwardsSection">
+                <h3>Achievements & Awards</h3>
+                <ul class="awards-list" id="modalAwards"></ul>
+                <button class="view-full-btn" id="viewFullBtn">View Full Image</button>
+            </div>
+        </div>
     </div>
-    <script>
-    // DOM elements
-    const fileInput = document.getElementById('fileInput');
-    const dropZone = document.getElementById('dropZone');
-    const fileText = document.getElementById('fileText');
-    const uploadBtn = document.getElementById('uploadBtn');
-    const statusDiv = document.getElementById('status');
-    const fileList = document.getElementById('fileList');
-    const dataSectionContainer = document.getElementById('dataSectionContainer');
-    const clearAllBtn = document.getElementById('clearAllBtn');
-    const fileDataSectionTemplate = document.getElementById('fileDataSectionTemplate');
 
-    // Track hidden columns for each file and sheet
-    let hidden = {};
+    <!-- Full Image Modal -->
+    <div id="fullImageModal" class="modal">
+        <span id="closeFullImage">&times;</span>
+        <img id="fullImage" src="" alt="Full Image">
+    </div>
 
-    // --- NEW: Reusable Date/Time Detection Function ---
-    async function detectDateTimeFormats(file) {
-        return new Promise((resolve, reject) => {
-            const reader = new FileReader();
-            reader.onload = function (e) {
-                try {
-                    const data = new Uint8Array(e.target.result);
-                    const workbook = XLSX.read(data, { type: 'array', cellDates: false, cellNF: true });
-                    const dateTimeInfo = {};
-                    workbook.SheetNames.forEach(sheetName => {
-                        const worksheet = workbook.Sheets[sheetName];
-                        const dateColumns = new Set();
-                        const timeColumns = new Set();
-                        const range = XLSX.utils.decode_range(worksheet['!ref']);
-                        for (let R = range.s.r; R <= range.e.r; ++R) {
-                            for (let C = range.s.c; C <= range.e.c; ++C) {
-                                const cellAddress = XLSX.utils.encode_cell({ r: R, c: C });
-                                const cell = worksheet[cellAddress];
-                                if (cell && cell.t === 'n' && typeof cell.z === 'string') {
-                                    const format = cell.z.toLowerCase();
-                                    if (
-                                        format.includes('yy') || format.includes('yyyy') ||
-                                        format.includes('mm') || format.includes('mmm') ||
-                                        format.includes('dd') || format.includes('d') ||
-                                        format.includes('date') ||
-                                        /\[(h|m|s)\]/.test(format) ||
-                                        (format.includes(':') && (format.includes('h') || format.includes('m') || format.includes('s')))
-                                    ) {
-                                        if (format.includes(':') || /\[(h|m|s)\]/.test(format)) {
-                                            timeColumns.add(C);
-                                        } else {
-                                            dateColumns.add(C);
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                        dateTimeInfo[sheetName] = {
-                            dateColumns: Array.from(dateColumns),
-                            timeColumns: Array.from(timeColumns)
-                        };
-                    });
-                    resolve(dateTimeInfo);
-                } catch (error) {
-                    reject(error);
-                }
-            };
-            reader.onerror = () => reject(new Error("Failed to read file"));
-            reader.readAsArrayBuffer(file);
-        });
-    }
+    <!-- Scroll to Top Button -->
+    <button id="scrollToTopBtn" title="Scroll to Top">↑</button>
 
-    // --- NEW: Reusable Delete Function ---
-    function deleteFileSection(sectionElement) {
-        const sectionToDelete = sectionElement || this.closest('.file-data-section');
-        if (!sectionToDelete) return;
-
-        const fileTitleElement = sectionToDelete.querySelector('.file-title');
-        const fileName = fileTitleElement ? fileTitleElement.textContent.replace('Data from: ', '') : 'this file';
-
-        const userConfirmed = confirm(`Are you sure you want to delete the data for "${fileName}"?`);
-        if (userConfirmed) {
-            if (sectionToDelete.fileName) delete hidden[sectionToDelete.fileName];
-            sectionToDelete.fileDataArrayBuffer = null;
-            sectionToDelete.dateTimeInfo = null;
-            sectionToDelete.remove();
-            showStatus(`Data for "${fileName}" deleted.`, 'success');
-        }
-    }
-
-    // Initialize the application
-    function init() {
-        setupEventListeners();
-    }
-
-    function setupEventListeners() {
-        fileInput.addEventListener('change', handleFileSelect);
-        dropZone.addEventListener('dragover', (e) => {
-            e.preventDefault();
-            dropZone.style.borderColor = '#4facfe';
-            dropZone.style.backgroundColor = 'rgba(0, 0, 0, 0.4)';
-        });
-        dropZone.addEventListener('dragleave', () => {
-            dropZone.style.borderColor = 'rgba(255, 255, 255, 0.3)';
-            dropZone.style.backgroundColor = 'rgba(0, 0, 0, 0.3)';
-        });
-        dropZone.addEventListener('drop', (e) => {
-            e.preventDefault();
-            dropZone.style.borderColor = 'rgba(255, 255, 255, 0.3)';
-            dropZone.style.backgroundColor = 'rgba(0, 0, 0, 0.3)';
-            if (e.dataTransfer.files.length) {
-                fileInput.files = e.dataTransfer.files;
-                handleFileSelect();
-            }
-        });
-        uploadBtn.addEventListener('click', processFiles);
-        clearAllBtn.addEventListener('click', clearAllData);
-    }
-
-    function handleFileSelect() {
-        const files = fileInput.files;
-        if (files.length > 0) {
-            fileText.textContent = `${files.length} file(s) selected`;
-            uploadBtn.disabled = false;
-            statusDiv.textContent = '';
-            statusDiv.className = 'status';
-            updateFileList();
-        } else {
-            fileText.textContent = 'Drag & drop files here or click to browse';
-            uploadBtn.disabled = true;
-            fileList.innerHTML = '';
-        }
-    }
-
-    function updateFileList() {
-        fileList.innerHTML = '';
-        Array.from(fileInput.files).forEach((file, index) => {
-            const fileItem = document.createElement('div');
-            fileItem.className = 'file-item';
-            const fileName = document.createElement('div');
-            fileName.className = 'file-name';
-            fileName.textContent = file.name;
-            const removeBtn = document.createElement('button');
-            removeBtn.className = 'remove-file';
-            removeBtn.innerHTML = '&times;';
-            removeBtn.addEventListener('click', () => removeFile(index));
-            fileItem.appendChild(fileName);
-            fileItem.appendChild(removeBtn);
-            fileList.appendChild(fileItem);
-        });
-    }
-
-    function removeFile(index) {
-        const dt = new DataTransfer();
-        const files = fileInput.files;
-        for (let i = 0; i < files.length; i++) {
-            if (i !== index) {
-                dt.items.add(files[i]);
-            }
-        }
-        fileInput.files = dt.files;
-        handleFileSelect();
-    }
-
-    function processFiles() {
-        const files = fileInput.files;
-        if (files.length === 0) return;
-
-        showStatus('Processing files...', 'success');
-        uploadBtn.disabled = true;
-        processFileBatch(Array.from(files), 0);
-    }
-
-    async function processFileBatch(files, index) {
-        if (index >= files.length) {
-            showStatus(`Processed ${files.length} files successfully!`, 'success');
-            uploadBtn.disabled = false;
-            return;
-        }
-
-        const file = files[index];
-        try {
-            showStatus(`Analyzing formats for ${file.name}...`, 'success');
-            const dateTimeInfo = await detectDateTimeFormats(file);
-            console.log(`Date/Time Info for ${file.name}:`, dateTimeInfo);
-
-            const reader = new FileReader();
-            reader.onload = async function(e) {
-                try {
-                    const arrayBuffer = e.target.result;
-
-                    const fileDataSectionFragment = fileDataSectionTemplate.content.cloneNode(true);
-                    const fileDataSection = fileDataSectionFragment.querySelector('.file-data-section');
-                    fileDataSection.fileName = file.name;
-                    fileDataSection.dateTimeInfo = dateTimeInfo;
-
-                    const deleteBtn = fileDataSection.querySelector('.delete-section-btn');
-                    deleteBtn.addEventListener('click', () => deleteFileSection(fileDataSection));
-
-                    const fileTitle = fileDataSection.querySelector('.file-title');
-                    fileTitle.textContent = `Data from: ${file.name}`;
-
-                    const sheetTabsContainer = fileDataSection.querySelector('.sheet-tabs');
-                    const table = fileDataSection.querySelector('table');
-                    const tableHeader = table.querySelector('thead');
-                    const tableBody = table.querySelector('tbody');
-                    const noDataMessage = fileDataSection.querySelector('.no-data');
-                    const columnControls = fileDataSection.querySelector('.column-controls');
-
-                    if (!hidden[file.name]) hidden[file.name] = {};
-
-                    // Store raw ArrayBuffer for lazy loading
-                    fileDataSection.fileDataArrayBuffer = arrayBuffer;
-                    fileDataSection.workbook = null; // Will be parsed on demand
-
-                    // Read workbook structure to get sheet names
-                    const tempWorkbook = XLSX.read(arrayBuffer, { type: 'array', bookSheets: true , cellDates: true });
-                    const sheetNames = tempWorkbook.SheetNames;
-
-                    if (sheetNames.length === 0) {
-                        noDataMessage.style.display = 'block';
-                        table.style.display = 'none';
-                        columnControls.style.display = 'none';
-                    } else {
-                        noDataMessage.style.display = 'none';
-                        table.style.display = 'table';
-                        columnControls.style.display = 'flex';
-
-                        // Create tabs
-                        sheetNames.forEach((sheetName, tabIndex) => {
-                            const tab = document.createElement('div');
-                            tab.className = 'sheet-tab';
-                            if (tabIndex === 0) tab.classList.add('active');
-                            tab.textContent = sheetName;
-                            tab.addEventListener('click', function() {
-                                // Lazy load sheet data when tab is clicked
-                                loadSheetData(sheetName, fileDataSection, sheetTabsContainer, tableHeader, tableBody, columnControls, file.name);
-                            });
-                            sheetTabsContainer.appendChild(tab);
-                        });
-
-                        // Load first sheet immediately
-                        loadSheetData(sheetNames[0], fileDataSection, sheetTabsContainer, tableHeader, tableBody, columnControls, file.name);
-                    }
-
-                    dataSectionContainer.appendChild(fileDataSection);
-                    processFileBatch(files, index + 1);
-                } catch (err) {
-                    console.error('Error parsing file:', err);
-                    showStatus(`Error processing ${file.name}.`, 'error');
-                    processFileBatch(files, index + 1);
-                }
-            };
-            reader.onerror = () => {
-                showStatus(`Error reading ${file.name}.`, 'error');
-                processFileBatch(files, index + 1);
-            };
-            reader.readAsArrayBuffer(file);
-        } catch (err) {
-            console.error('Error detecting formats:', err);
-            showStatus(`Error analyzing ${file.name}. Skipping.`, 'error');
-            processFileBatch(files, index + 1);
-        }
-    }
-
-    // --- NEW: Lazy Load Sheet Data ---
-    // --- NEW: Advanced Search Functionality ---
-function addAdvancedSearchControls(fileDataSection) {
-    // Create advanced search container
-    const advancedSearchContainer = document.createElement('div');
-    advancedSearchContainer.className = 'advanced-search-container';
-    advancedSearchContainer.style.cssText = `
-        margin: 15px 0;
-        padding: 15px;
-        background: rgba(0, 0, 0, 0.2);
-        border-radius: 8px;
-        display: none; /* Hidden by default */
-    `;
-    
-    // Create toggle button
-    const toggleBtn = document.createElement('button');
-    toggleBtn.className = 'toggle-advanced-search';
-    toggleBtn.textContent = 'Toggle Advanced Search';
-    toggleBtn.style.cssText = `
-        background: rgba(79, 172, 254, 0.3);
-        color: white;
-        border: 1px solid rgba(255, 255, 255, 0.3);
-        padding: 8px 16px;
-        border-radius: 5px;
-        cursor: pointer;
-        margin-bottom: 10px;
-        font-size: 0.9rem;
-    `;
-    
-    // Advanced search form
-    advancedSearchContainer.innerHTML = `
-        <div class="search-conditions" style="margin-bottom: 10px; max-height: 200px; overflow-y: auto;">
-            <div class="condition-group" style="margin-bottom: 10px; padding: 10px; background: rgba(0, 0, 0, 0.2); border-radius: 5px;">
-                <select class="condition-type" style="padding: 5px; margin-right: 5px; background: rgba(255, 255, 255, 0.1); color: #888888; border: 1px solid rgba(255, 255, 255, 0.3); border-radius: 4px;">
-                    <option value="AND">AND</option>
-                    <option value="OR">OR</option>
-                </select>
-                <select class="column-name" style="padding: 5px; margin-right: 5px; background: rgba(255, 255, 255, 0.1); color: #888888; border: 1px solid rgba(255, 255, 255, 0.3); border-radius: 4px; flex: 1;"></select>
-                <select class="operator" style="padding: 5px; margin-right: 5px; background: rgba(255, 255, 255, 0.1); color: #888888; border: 1px solid rgba(255, 255, 255, 0.3); border-radius: 4px;">
-                    <option value="equals">=</option>
-                    <option value="not-equals">!=</option>
-                    <option value="contains">Contains</option>
-                    <option value="starts-with">Starts With</option>
-                    <option value="ends-with">Ends With</option>
-                    <option value="greater-than">></option>
-                    <option value="less-than"><</option>
-                    <option value="greater-than-equal">>=</option>
-                    <option value="less-than-equal"><=</option>
-                    <option value="like">LIKE</option>
-                </select>
-                <input type="text" class="value" placeholder="Value" style="flex: 1; padding: 5px; border-radius: 4px; border: 1px solid rgba(255, 255, 255, 0.3); background-color: rgba(255, 255, 255, 0.1); color: white;">
-                <button class="remove-condition" style="background: rgba(255, 0, 0, 0.3); color: white; border: none; padding: 5px 10px; border-radius: 4px; cursor: pointer; margin-left: 5px;">✕</button>
+    <footer>
+        <div class="footer-content">
+            <div class="footer-logo-container">
+                <img src="https://via.placeholder.com/100" alt="School Logo 1" class="footer-logo" loading="lazy">
+                <img src="https://via.placeholder.com/100" alt="School Logo 2" class="footer-logo" loading="lazy">
             </div>
+            <p class="copyright">&copy; 2025 ANHS-SH Yearbook. All rights reserved.</p>
         </div>
-        <div style="display: flex; gap: 10px;">
-            <button class="add-condition-btn" style="flex: 1; background: rgba(79, 172, 254, 0.3); color: white; border: 1px solid rgba(255, 255, 255, 0.3); padding: 8px; border-radius: 5px; cursor: pointer;">
-                + Add Condition
-            </button>
-            <button class="apply-advanced-filter" style="flex: 1; background: linear-gradient(to right, #4facfe, #00f2fe); color: white; border: none; padding: 8px; border-radius: 5px; cursor: pointer;">
-                Apply Filter
-            </button>
-            <button class="reset-advanced-filter" style="flex: 1; background: rgba(255, 0, 0, 0.3); color: white; border: none; padding: 8px; border-radius: 5px; cursor: pointer;">
-                Reset
-            </button>
-        </div>
-    `;
-    
-    // Add the controls to the file data section
-    const sheetData = fileDataSection.querySelector('.sheet-data');
-    sheetData.parentNode.insertBefore(advancedSearchContainer, sheetData);
-    sheetData.parentNode.insertBefore(toggleBtn, advancedSearchContainer);
-    
-    // Setup event listeners
-    toggleBtn.addEventListener('click', () => {
-        advancedSearchContainer.style.display = advancedSearchContainer.style.display === 'none' ? 'block' : 'none';
-    });
-    
-    // Add initial condition event listeners
-    setupConditionEvents(advancedSearchContainer, fileDataSection);
-    
-    // Add condition button
-    const addConditionBtn = advancedSearchContainer.querySelector('.add-condition-btn');
-    addConditionBtn.addEventListener('click', () => {
-        const conditionGroup = document.createElement('div');
-        conditionGroup.className = 'condition-group';
-        conditionGroup.style.cssText = 'margin-bottom: 10px; padding: 10px; background: rgba(0, 0, 0, 0.2); border-radius: 5px;';
-        
-        conditionGroup.innerHTML = `
-            <select class="condition-type" style="padding: 5px; margin-right: 5px; background: rgba(255, 255, 255, 0.1); color: #888888; border: 1px solid rgba(255, 255, 255, 0.3); border-radius: 4px;">
-                <option value="AND">AND</option>
-                <option value="OR">OR</option>
-            </select>
-            <select class="column-name" style="padding: 5px; margin-right: 5px; background: rgba(255, 255, 255, 0.1); color: #888888; border: 1px solid rgba(255, 255, 255, 0.3); border-radius: 4px; flex: 1;"></select>
-            <select class="operator" style="padding: 5px; margin-right: 5px; background: rgba(255, 255, 255, 0.1); color: #888888; border: 1px solid rgba(255, 255, 255, 0.3); border-radius: 4px;">
-                <option value="equals">=</option>
-                <option value="not-equals">!=</option>
-                <option value="contains">Contains</option>
-                <option value="starts-with">Starts With</option>
-                <option value="ends-with">Ends With</option>
-                <option value="greater-than">></option>
-                <option value="less-than"><</option>
-                <option value="greater-than-equal">>=</option>
-                <option value="less-than-equal"><=</option>
-                <option value="like">LIKE</option>
-            </select>
-            <input type="text" class="value" placeholder="Value" style="flex: 1; padding: 5px; border-radius: 4px; border: 1px solid rgba(255, 255, 255, 0.3); background-color: rgba(255, 255, 255, 0.1); color: white;">
-            <button class="remove-condition" style="background: rgba(255, 0, 0, 0.3); color: white; border: none; padding: 5px 10px; border-radius: 4px; cursor: pointer; margin-left: 5px;">✕</button>
-        `;
-        
-        advancedSearchContainer.querySelector('.search-conditions').appendChild(conditionGroup);
-        setupConditionEvents(advancedSearchContainer, fileDataSection);
-        populateColumnNames(fileDataSection, conditionGroup);
-    });
-    
-    // Apply filter button
-    const applyFilterBtn = advancedSearchContainer.querySelector('.apply-advanced-filter');
-    applyFilterBtn.addEventListener('click', () => {
-        applyAdvancedFilter(fileDataSection);
-    });
-    
-    // Reset filter button
-    const resetFilterBtn = advancedSearchContainer.querySelector('.reset-advanced-filter');
-    resetFilterBtn.addEventListener('click', () => {
-        resetAdvancedFilter(fileDataSection);
-    });
-    
-    return advancedSearchContainer;
-}
+    </footer>
 
-function setupConditionEvents(advancedSearchContainer, fileDataSection) {
-    // Remove condition button
-    const removeButtons = advancedSearchContainer.querySelectorAll('.remove-condition');
-    removeButtons.forEach(btn => {
-        btn.onclick = null; // Remove any existing listeners
-        btn.addEventListener('click', function() {
-            if (advancedSearchContainer.querySelectorAll('.condition-group').length > 1) {
-                this.closest('.condition-group').remove();
-            } else {
-                // Clear values instead of removing the last condition
-                const group = this.closest('.condition-group');
-                group.querySelector('.value').value = '';
+    <script>
+        // Data
+        const students = {
+            "aquarius": [
+                { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/aquarius/Adrian_D._Gallos.webp", name: "Adrian D. Gallos" },
+                { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/aquarius/Aldred_C._Salcedo.webp", name: "Aldred C. Salcedo" },
+                { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/aquarius/Andray_A._Realino.webp", name: "Andray A. Realino" },
+                { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/aquarius/Angel_L._Gabrera.webp", name: "Angel L. Gabrera" },
+                { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/aquarius/Antonia_Louisse_R._Mendoza.webp", name: "Antonia Louisse R. Mendoza" },
+                { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/aquarius/Ashley_A._Rinos.webp", name: "Ashley A. Riños" },
+                { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/aquarius/Bernard_Jr._M._Padoga.webp", name: "Bernard Jr. M. Padoga" },
+                { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/aquarius/Cherry_Ann_B._Adonis.webp", name: "Cherry Ann B. Adonis" },
+                { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/aquarius/Cheska_R._Cecilio.webp", name: "Cheska R. Cecilio" },
+                { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/aquarius/Christal_Mae_T._Loreno.webp", name: "Christal Mae T. Loreño" },
+                { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/aquarius/Christian_James_D._Reas.webp", name: "Christian James D. Reas" }
+            ],
+            "capricorn": [
+                { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/capricorn/Aaron_P._Atienza.webp", name: "Aaron P. Atienza" },
+                { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/capricorn/Allison_Fate_P._Dalugdugan.webp", name: "Allison Fate P. Dalugdugan" },
+                { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/capricorn/Althea_Genesis_S._Tarinque.webp", name: "Althea Genesis S. Tarinque" },
+                { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/capricorn/Angelene_B._Risos.webp", name: "Angelene B. Risos" },
+                { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/capricorn/Anghelo_L._Olita.webp", name: "Anghelo L. Olita" },
+                { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/capricorn/April_Jean_E._Delgado.webp", name: "April Jean E. Delgado" },
+                { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/capricorn/Crystal_S._Madrona.webp", name: "Crystal S. Madrona" },
+                { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/capricorn/Cyrine_A._Tejero.webp", name: "Cyrine A. Tejero" },
+                { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/capricorn/Darwin_S._Castro.webp", name: "Darwin S. Castro" }
+            ]
+        };
+
+        const teachers = [
+            { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/libra/Frenz_Jay_O._Felizarta.webp", name: "Frenz Jay O. Felizarta", section_name: "None" },
+            { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/libra/Fritz_N._Dioso.webp", name: "Fritz N. Dioso", section_name: "Aquarius" },
+            { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/libra/Izzy_N._Robes.webp", name: "Izzy N. Robes", section_name: "Capricorn" }
+        ];
+
+        const achievements = {
+            "Aaron P. Atienza": ["Most Improved Student", "Math Olympiad Winner"],
+            "Allison Fate P. Dalugdugan": ["Best in English", "Leadership Award", "Science Fair Champion"],
+            "Adrian D. Gallos": ["Athlete of the Year", "Community Service Award"],
+            "Ashley A. Riños": ["Art Excellence Award", "Most Creative Project","Most Improved Student","Leadership Award","Athlete of the Year","Art Excellence Award","fghghgjhjj","fdfdggfhhfdhh","fdfgfdhghghjhgfh","dfdfdgfhg"],
+            "Christian James D. Reas": ["Programming Contest Winner", "Debate Champion"]
+        };
+
+        const otherAwards = {
+            "Most Improved Student": ["Aaron P. Atienza", "April Jean E. Delgado","Ashley A. Riños"],
+            "Leadership Award": ["Allison Fate P. Dalugdugan", "Althea Genesis S. Tarinque","Ashley A. Riños"],
+            "Athlete of the Year": ["Adrian D. Gallos", "Darwin S. Castro","Ashley A. Riños"],
+            "Art Excellence Award": ["Ashley A. Riños", "Cherry Ann B. Adonis"],
+            "Science Fair Champion": ["Allison Fate P. Dalugdugan", "Anghelo L. Olita","Ashley A. Riños"]
+        };
+
+        const speeches = [
+            {
+                name: "Dr. Maria Santos",
+                status: "Principal",
+                img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/libra/Frenz_Jay_O._Felizarta.webp",
+                message: "To the graduating class of 2025, you have shown remarkable resilience and dedication throughout your journey at ANHS-SH. Your achievements, both academic and extracurricular, have set new standards for excellence. As you move forward to the next chapter of your lives, remember that education is not just about grades and awards, but about character, compassion, and the courage to make a difference in the world. We are immensely proud of each and every one of you."
+            },
+            {
+                name: "John Reyes",
+                status: "Student Council Secretary",
+                img: "https://via.placeholder.com/150",
+                message: "Fellow students, what a journey it has been! From early morning classes to late-night study sessions, from school events to competitions, we've grown together in ways we never imagined. I'm honored to have served as your Student Council Secretary and witnessed firsthand the incredible talent, creativity, and spirit that defines our class. As we part ways, let's promise to stay connected, support each other's dreams, and never forget the memories we've created at ANHS-SH. The future belongs to us!"
             }
-        });
-    });
-    
-    // Populate column names for all condition groups
-    const conditionGroups = advancedSearchContainer.querySelectorAll('.condition-group');
-    conditionGroups.forEach(group => {
-        populateColumnNames(fileDataSection, group);
-    });
-}
+        ];
 
-function populateColumnNames(fileDataSection, conditionGroup) {
-    const columnNameSelect = conditionGroup.querySelector('.column-name');
-    columnNameSelect.innerHTML = ''; // Clear existing options
-    
-    // Get headers from the current active sheet
-    const tableHeader = fileDataSection.querySelector('thead');
-    if (tableHeader) {
-        const headers = tableHeader.querySelectorAll('th');
-        headers.forEach(th => {
-            const headerText = th.textContent.split('\n')[0]; // Extract just the header text, not the search input
-            const option = document.createElement('option');
-            option.value = headerText;
-            option.textContent = headerText;
-            columnNameSelect.appendChild(option);
-        });
-    }
-}
+        const memories = [
+            "anhs-school.jpg",
+            "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/libra/Frenz_Jay_O._Felizarta.webp",
+            "https://via.placeholder.com/400x300?text=Science+Fair",
+            "https://via.placeholder.com/400x300?text=Arts+Exhibition",
+            "https://via.placeholder.com/400x300?text=Field+Trip",
+            "https://via.placeholder.com/400x300?text=Christmas+Party",
+            "https://via.placeholder.com/400x300?text=Debate+Competition",
+            "https://via.placeholder.com/400x300?text=Volunteer+Activity"
+        ];
 
-function applyAdvancedFilter(fileDataSection) {
-    const advancedSearchContainer = fileDataSection.querySelector('.advanced-search-container');
-    const conditions = advancedSearchContainer.querySelectorAll('.condition-group');
-    const tableBody = fileDataSection.querySelector('tbody');
-    const bodyRows = tableBody.querySelectorAll('tr');
-    
-    // Store the original display state
-    if (!fileDataSection.originalDisplayState) {
-        fileDataSection.originalDisplayState = Array.from(bodyRows).map(row => row.style.display);
-    }
-    
-    // Reset all rows to visible first
-    bodyRows.forEach(row => {
-        row.style.display = '';
-    });
-    
-    // Apply each condition
-    conditions.forEach((conditionGroup, index) => {
-        const columnName = conditionGroup.querySelector('.column-name').value;
-        const operator = conditionGroup.querySelector('.operator').value;
-        const value = conditionGroup.querySelector('.value').value.trim();
-        const conditionType = conditionGroup.querySelector('.condition-type').value;
-        
-        if (!value) return; // Skip empty conditions
-        
-        // Find the column index
-        const tableHeader = fileDataSection.querySelector('thead');
-        const headers = Array.from(tableHeader.querySelectorAll('th'));
-        const colIndex = headers.findIndex(th => {
-            const headerText = th.textContent.split('\n')[0];
-            return headerText === columnName;
-        });
-        
-        if (colIndex === -1) return;
-        
-        // Process the value to handle special characters
-        const processedValue = processValueForComparison(value);
-        
-        // Apply the filter based on operator
-        bodyRows.forEach((row, rowIndex) => {
-            if (row.style.display === 'none' && conditionType === 'AND') return; // Skip already hidden rows for AND conditions
-            
-            const cell = row.cells[colIndex];
-            if (!cell) return;
-            
-            const cellText = cell.textContent.trim();
-            const processedCellText = processValueForComparison(cellText);
-            
-            let matches = false;
-            
-            switch (operator) {
-                case 'equals':
-                    matches = processedCellText === processedValue;
-                    break;
-                case 'not-equals':
-                    matches = processedCellText !== processedValue;
-                    break;
-                case 'contains':
-                    matches = processedCellText.toLowerCase().includes(processedValue.toLowerCase());
-                    break;
-                case 'starts-with':
-                    matches = processedCellText.toLowerCase().startsWith(processedValue.toLowerCase());
-                    break;
-                case 'ends-with':
-                    matches = processedCellText.toLowerCase().endsWith(processedValue.toLowerCase());
-                    break;
-                case 'greater-than':
-                    matches = parseFloat(processedCellText) > parseFloat(processedValue);
-                    break;
-                case 'less-than':
-                    matches = parseFloat(processedCellText) < parseFloat(processedValue);
-                    break;
-                case 'greater-than-equal':
-                    matches = parseFloat(processedCellText) >= parseFloat(processedValue);
-                    break;
-                case 'less-than-equal':
-                    matches = parseFloat(processedCellText) <= parseFloat(processedValue);
-                    break;
-                case 'like':
-                    // Handle LIKE with % wildcards
-                    const pattern = processedValue.replace(/%/g, '.*');
-                    const regex = new RegExp(`^${pattern}$`, 'i');
-                    matches = regex.test(processedCellText);
-                    break;
+        const graduationLyrics = `
+song title
+
+We walked these halls with dreams so wide,
+Through every storm, we stood with pride.
+From morning bells to sunset cheers,
+We faced our hopes, we faced our fears.
+
+Now caps fly high, hearts beat as one,
+Our chapter ends—but not our run.
+ANHS-SH, you shaped our way,
+We’ll carry you in all we say.
+
+So here’s to friends, to teachers true,
+To every laugh, to all we knew.
+Though paths may part, our bond stays strong—
+Graduates of 2025, we all belong.
+`;
+
+        // DOM Elements
+        const searchInput = document.getElementById('searchInput');
+        const navLinks = document.querySelectorAll('.nav-link');
+        const sections = document.querySelectorAll('.section');
+        const studentModal = document.getElementById('studentModal');
+        const closeModal = document.getElementById('closeModal');
+        const modalImg = document.getElementById('modalImg');
+        const modalName = document.getElementById('modalName');
+        const modalAwards = document.getElementById('modalAwards');
+        const modalAwardsSection = document.getElementById('modalAwardsSection');
+        const viewFullBtn = document.getElementById('viewFullBtn');
+        const fullImageModal = document.getElementById('fullImageModal');
+        const fullImage = document.getElementById('fullImage');
+        const closeFullImage = document.getElementById('closeFullImage');
+        const loading = document.getElementById('loading');
+        const scrollLoader = document.getElementById('scrollLoader');
+        const scrollToTopBtn = document.getElementById('scrollToTopBtn');
+
+        // Pagination
+        const ITEMS_PER_PAGE = 6;
+        let currentPage = { aquarius: 1, capricorn: 1 };
+        let isFetching = { aquarius: false, capricorn: false };
+
+        // Lazy load image
+        function lazyLoadImage(imgElement, src) {
+            if (!imgElement || !src) return;
+            imgElement.classList.add('img-loading');
+            const img = new Image();
+            img.onload = () => {
+                imgElement.src = src;
+                imgElement.classList.remove('img-loading');
+                imgElement.classList.add('img-loaded');
+            };
+            img.onerror = () => {
+                imgElement.src = "https://via.placeholder.com/150?text=Image+Not+Found";
+                imgElement.classList.remove('img-loading');
+                imgElement.classList.add('img-loaded');
+            };
+            img.src = src;
+        }
+
+        // Get all awards (individual + other) for a student
+        function getAllAwards(studentName) {
+            const awardsSet = new Set();
+            if (achievements[studentName]) {
+                achievements[studentName].forEach(a => awardsSet.add(a));
             }
-            
-            // Apply the condition based on condition type
-            if (index === 0) {
-                // First condition always determines initial visibility
-                if (!matches) row.style.display = 'none';
-            } else {
-                if (conditionType === 'AND') {
-                    // For AND, hide if doesn't match
-                    if (!matches) row.style.display = 'none';
-                } else {
-                    // For OR, show if matches (but don't hide if doesn't match)
-                    if (matches) row.style.display = '';
+            for (const [award, recipients] of Object.entries(otherAwards)) {
+                if (recipients.includes(studentName)) {
+                    awardsSet.add(award);
                 }
             }
-        });
-    });
-    
-    showStatus('Advanced filter applied', 'success');
-}
-
-function resetAdvancedFilter(fileDataSection) {
-    const advancedSearchContainer = fileDataSection.querySelector('.advanced-search-container');
-    const conditions = advancedSearchContainer.querySelectorAll('.condition-group');
-    
-    // Reset all condition values
-    conditions.forEach((conditionGroup, index) => {
-        if (index === 0) {
-            // Keep the first condition but clear its value
-            conditionGroup.querySelector('.value').value = '';
-        } else {
-            // Remove additional conditions
-            if (conditionGroup.parentNode) {
-                conditionGroup.remove();
-            }
+            return Array.from(awardsSet);
         }
-    });
-    
-    // Reset the table to show all rows
-    const tableBody = fileDataSection.querySelector('tbody');
-    const bodyRows = tableBody.querySelectorAll('tr');
-    
-    if (fileDataSection.originalDisplayState) {
-        bodyRows.forEach((row, index) => {
-            row.style.display = fileDataSection.originalDisplayState[index] || '';
-        });
-        fileDataSection.originalDisplayState = null;
-    } else {
-        bodyRows.forEach(row => {
-            row.style.display = '';
-        });
-    }
-    
-    showStatus('Advanced filter reset', 'success');
-}
 
-function processValueForComparison(value) {
-    // Remove currency symbols and percent signs for comparison
-    return value
-        .replace(/[$€£¥₹]/g, '')  // Remove currency symbols
-        .replace(/%/g, '')        // Remove percent signs
-        .trim();
-}
+        // Generate student cards
+        function generateStudentCards(section, containerId, page = 1) {
+            const container = document.getElementById(containerId);
+            const startIndex = (page - 1) * ITEMS_PER_PAGE;
+            const endIndex = startIndex + ITEMS_PER_PAGE;
+            const studentsToShow = students[section].slice(startIndex, endIndex);
 
-// --- Modified loadSheetData function to include advanced search ---
-function loadSheetData(sheetName, fileDataSection, sheetTabsContainer, tableHeader, tableBody, columnControls, fileName) {
-    // Update active tab
-    sheetTabsContainer.querySelectorAll('.sheet-tab').forEach(tab => {
-        tab.classList.toggle('active', tab.textContent === sheetName);
-    });
-
-    // If workbook not yet parsed, do it now
-    if (!fileDataSection.workbook) {
-        try {
-            fileDataSection.workbook = XLSX.read(fileDataSection.fileDataArrayBuffer, { 
-                type: 'array', 
-                cellDates: false,
-                cellNF: true,
-                cellText: true
+            studentsToShow.forEach(student => {
+                const card = document.createElement('div');
+                card.className = 'student-card fade-in';
+                card.innerHTML = `
+                    <img alt="${student.name}" class="student-img" loading="lazy">
+                    <div class="student-info">
+                        <h3 class="student-name">${student.name}</h3>
+                    </div>
+                `;
+                const imgElement = card.querySelector('.student-img');
+                lazyLoadImage(imgElement, student.img);
+                card.addEventListener('click', () => openStudentModal(student, student.img));
+                container.appendChild(card);
             });
-        } catch (err) {
-            showStatus(`Failed to parse workbook for ${fileName}.`, 'error');
-            return;
+
+            if (endIndex >= students[section].length) {
+                isFetching[section] = true;
+            }
         }
-    }
-    const workbook = fileDataSection.workbook;
-    const worksheet = workbook.Sheets[sheetName];
-    if (!worksheet) {
-        tableBody.innerHTML = '<tr><td colspan="100">Sheet data not found.</td></tr>';
-        return;
-    }
-    const jsonData = XLSX.utils.sheet_to_json(worksheet, { header: 1, defval: '' });
-    if (jsonData.length === 0) {
-        tableHeader.innerHTML = '';
-        tableBody.innerHTML = '<tr><td colspan="100">No data available</td></tr>';
-        columnControls.innerHTML = '';
-        return;
-    }
 
-    const headers = jsonData[0];
+        // Generate teachers
+        function generateTeachers() {
+            const container = document.getElementById('teachers-grid');
+            container.innerHTML = '';
+            teachers.forEach(teacher => {
+                const card = document.createElement('div');
+                card.className = 'teacher-card fade-in';
+                const sectionText = teacher.section_name && teacher.section_name !== "None" ? `<div class="teacher-section">${teacher.section_name} Section</div>` : '';
+                card.innerHTML = `
+                    <img alt="${teacher.name}" class="teacher-img" loading="lazy">
+                    <div class="teacher-info">
+                        <h3 class="teacher-name">${teacher.name}</h3>
+                        ${sectionText}
+                    </div>
+                `;
+                const imgElement = card.querySelector('.teacher-img');
+                lazyLoadImage(imgElement, teacher.img);
+                card.addEventListener('click', () => {
+                    fullImage.src = teacher.img;
+                    fullImageModal.style.display = 'flex';
+                });
+                container.appendChild(card);
+            });
+        }
 
-    // Render header with search
-    tableHeader.innerHTML = '';
-    const headerRow = document.createElement('tr');
-    const searchTerms = {};
-    headers.forEach((header, index) => {
-        const th = document.createElement('th');
-        th.dataset.columnIndex = index;
-        const headerContainer = document.createElement('div');
-        headerContainer.style.display = 'flex';
-        headerContainer.style.flexDirection = 'column';
-        const headerText = document.createElement('div');
-        headerText.textContent = header || `Column ${index}`;
-        headerContainer.appendChild(headerText);
-        const searchInput = document.createElement('input');
-        searchInput.type = 'text';
-        searchInput.placeholder = 'Search...';
-        searchInput.style.width = '100%';
-        searchInput.style.padding = '5px';
-        searchInput.style.marginTop = '5px';
-        searchInput.style.borderRadius = '4px';
-        searchInput.style.border = '1px solid rgba(255, 255, 255, 0.3)';
-        searchInput.style.backgroundColor = 'rgba(255, 255, 255, 0.1)';
-        searchInput.style.color = 'white';
-        searchInput.addEventListener('input', function() {
-            const colIndex = parseInt(th.dataset.columnIndex);
-            if (this.value.trim() === '') {
-                delete searchTerms[colIndex];
+        // Generate individual achievements
+        function generateIndividualAchievements() {
+            const container = document.getElementById('individual-achievements');
+            container.innerHTML = '';
+            Object.keys(achievements).forEach(studentName => {
+                const student = [...students.aquarius, ...students.capricorn].find(s => s.name === studentName);
+                if (!student) return;
+                const card = document.createElement('div');
+                card.className = 'speech-card fade-in';
+                card.innerHTML = `
+                    <div class="speech-header">
+                        <img alt="${student.name}" class="speech-img" loading="lazy">
+                        <div class="speech-info">
+                            <h3>${student.name}</h3>
+                            <p>Outstanding Achievements</p>
+                        </div>
+                    </div>
+                    <div class="speech-content">
+                        <ul>
+                            ${achievements[studentName].map(award => `<li>🏆 ${award}</li>`).join('')}
+                        </ul>
+                    </div>
+                `;
+                const imgElement = card.querySelector('.speech-img');
+                lazyLoadImage(imgElement, student.img);
+                card.addEventListener('click', () => openStudentModal(student, student.img));
+                container.appendChild(card);
+            });
+        }
+
+        // Generate other awards
+        function generateOtherAwards() {
+            const container = document.getElementById('other-awards');
+            container.innerHTML = '';
+            Object.keys(otherAwards).forEach(awardName => {
+                const awardDiv = document.createElement('div');
+                awardDiv.className = 'award-category fade-in';
+                awardDiv.innerHTML = `
+                    <h3 class="award-title">${awardName}</h3>
+                    <div class="award-recipients">
+                        ${otherAwards[awardName].map(recipient => 
+                            `<div class="recipient" data-name="${recipient}">${recipient}</div>`
+                        ).join('')}
+                    </div>
+                `;
+                container.appendChild(awardDiv);
+            });
+            document.querySelectorAll('.recipient').forEach(recipient => {
+                recipient.addEventListener('click', () => {
+                    const studentName = recipient.getAttribute('data-name');
+                    const student = [...students.aquarius, ...students.capricorn].find(s => s.name === studentName);
+                    if (student) {
+                        openStudentModal(student, student.img);
+                    }
+                });
+            });
+        }
+
+        // Generate speeches
+        function generateSpeeches() {
+            const container = document.getElementById('speeches-container');
+            container.innerHTML = '';
+            speeches.forEach(speech => {
+                const card = document.createElement('div');
+                card.className = 'speech-card fade-in';
+                card.innerHTML = `
+                    <div class="speech-header">
+                        <img alt="${speech.name}" class="speech-img" loading="lazy">
+                        <div class="speech-info">
+                            <h3>${speech.name}</h3>
+                            <p>${speech.status}</p>
+                        </div>
+                    </div>
+                    <div class="speech-content">
+                        ${speech.message}
+                    </div>
+                `;
+                const imgElement = card.querySelector('.speech-img');
+                lazyLoadImage(imgElement, speech.img);
+                container.appendChild(card);
+            });
+        }
+
+        // Generate memories
+        function generateMemories() {
+            const container = document.getElementById('memories-grid');
+            container.innerHTML = '';
+            memories.forEach(imgSrc => {
+                const img = document.createElement('img');
+                img.alt = "School Memory";
+                img.className = 'memory-img fade-in';
+                img.loading = "lazy";
+                img.addEventListener('click', () => {
+                    fullImage.src = imgSrc;
+                    fullImageModal.style.display = 'flex';
+                });
+                lazyLoadImage(img, imgSrc);
+                container.appendChild(img);
+            });
+        }
+        // Open student modal
+        function openStudentModal(student, imgSrc) {
+            modalName.textContent = student.name;
+            modalAwards.innerHTML = '';
+            const allAwards = getAllAwards(student.name);
+            if (allAwards.length > 0) {
+                allAwards.forEach(award => {
+                    const li = document.createElement('li');
+                    li.innerHTML = `<span class="award-icon">🏆</span> ${award}`;
+                    modalAwards.appendChild(li);
+                });
             } else {
-                searchTerms[colIndex] = this.value;
+                const li = document.createElement('li');
+                li.textContent = "No awards recorded yet.";
+                modalAwards.appendChild(li);
             }
-            filterTableData(fileName, sheetName, tableHeader.closest('table'), searchTerms);
-        });
-        headerContainer.appendChild(searchInput);
-        th.appendChild(headerContainer);
-        headerRow.appendChild(th);
-    });
-    tableHeader.appendChild(headerRow);
+            lazyLoadImage(modalImg, imgSrc);
+            modalAwardsSection.style.display = 'block';
+            viewFullBtn.onclick = () => {
+                fullImage.src = imgSrc;
+                fullImageModal.style.display = 'flex';
+            };
+            studentModal.style.display = 'flex';
+        }
 
-    // Render body
-    tableBody.innerHTML = '';
-    for (let i = 1; i < jsonData.length; i++) {
-        const row = document.createElement('tr');
-        const rowData = jsonData[i];
-        headers.forEach((_, cellIndex) => {
-            const td = document.createElement('td');
-            let displayText = '';
-            const cellAddress = XLSX.utils.encode_cell({ r: i, c: cellIndex });
-            const cell = worksheet[cellAddress];
-            if (cell) {
-                displayText = cell.w !== undefined ? cell.w : cell.v;
-            } else {
-                displayText = rowData[cellIndex] || '';
-            }
-            td.textContent = displayText;
-            row.appendChild(td);
-        });
-        tableBody.appendChild(row);
+        
+        // Open teacher modal
+function openTeacherModal(teacher, imgSrc) {
+    modalName.textContent = teacher.name;
+    modalAwards.innerHTML = '';
+
+    // Display section name if available and not "None"
+    if (teacher.section_name && teacher.section_name !== "None") {
+        const li = document.createElement('li');
+        li.textContent = `${teacher.section_name} Section`;
+        modalAwards.appendChild(li);
+    } else {
+        const li = document.createElement('li');
+        li.textContent = "No assigned section";
+        modalAwards.appendChild(li);
     }
 
-    // Initialize hidden columns
-    if (!hidden[fileName][sheetName]) hidden[fileName][sheetName] = [];
-    columnControls.innerHTML = '';
-    headers.forEach((header, index) => {
-        const headerText = header || `Column ${index}`;
-        const btn = document.createElement('button');
-        btn.className = 'column-control-btn';
-        btn.textContent = headerText;
-        btn.dataset.columnIndex = index;
-        if (hidden[fileName][sheetName].includes(headerText)) btn.classList.add('hidden');
-        btn.addEventListener('click', function() {
-            toggleColumnVisibility(index, headerText, fileName, sheetName, tableHeader, tableBody);
-            this.classList.toggle('hidden');
-        });
-        columnControls.appendChild(btn);
-    });
-    applyHiddenColumns(fileName, sheetName, tableHeader, tableBody);
+    lazyLoadImage(modalImg, imgSrc);
 
-    // --- NEW: Repopulate Advanced Search column dropdowns ---
-    const advancedSearchContainer = fileDataSection.querySelector('.advanced-search-container');
-    if (advancedSearchContainer) {
-        const conditionGroups = advancedSearchContainer.querySelectorAll('.condition-group');
-        conditionGroups.forEach(group => {
-            const selectElement = group.querySelector('.column-name');
-            if (selectElement) {
-                // Clear and repopulate options
-                selectElement.innerHTML = '';
-                headers.forEach(header => {
-                    const option = document.createElement('option');
-                    option.value = header;
-                    option.textContent = header;
-                    selectElement.appendChild(option);
+    // Update modal header to "Section" instead of "Profile"
+    const modalHeader = document.querySelector('#studentModal .modal-section h3');
+    modalHeader.textContent = 'Section';
+
+    modalAwardsSection.style.display = 'block';
+
+    // Update button behavior to show full image
+    viewFullBtn.onclick = () => {
+        fullImage.src = imgSrc;
+        fullImageModal.style.display = 'flex';
+    };
+
+    // Show modal
+    studentModal.style.display = 'flex';
+}
+        // Close modals
+        closeModal.addEventListener('click', () => studentModal.style.display = 'none');
+        closeFullImage.addEventListener('click', () => fullImageModal.style.display = 'none');
+        window.addEventListener('click', (e) => {
+            if (e.target === studentModal) studentModal.style.display = 'none';
+            if (e.target === fullImageModal) fullImageModal.style.display = 'none';
+        });
+
+        // Navigation
+        navLinks.forEach(link => {
+            link.addEventListener('click', (e) => {
+                e.preventDefault();
+                navLinks.forEach(l => l.classList.remove('active'));
+                link.classList.add('active');
+                const section = link.getAttribute('data-section');
+                sections.forEach(s => {
+                    s.style.display = (s.id === `${section}-section`) ? 'block' : 'none';
+                });
+            });
+        });
+
+        // Search
+        searchInput.addEventListener('input', (e) => {
+            const term = e.target.value.toLowerCase().trim();
+            document.querySelectorAll('.section-title').forEach(t => t.classList.remove('highlight'));
+            if (term === '') {
+                document.querySelectorAll('.student-card, .teacher-card').forEach(c => c.style.display = 'block');
+                return;
+            }
+
+            let found = false;
+            const sectionMap = { aquarius: 'aquarius-title', capricorn: 'capricorn-title' };
+            for (const [key, id] of Object.entries(sectionMap)) {
+                if (key.includes(term)) {
+                    const el = document.getElementById(id);
+                    if (el) {
+                        el.classList.add('highlight');
+                        el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                        found = true;
+                    }
+                }
+            }
+
+            if (!found) {
+                document.querySelectorAll('.student-card, .teacher-card').forEach(card => {
+                    const name = card.querySelector('.student-name, .teacher-name').textContent.toLowerCase();
+                    card.style.display = name.includes(term) ? 'block' : 'none';
                 });
             }
         });
-        // Re-apply event listeners for dynamic elements
-        setupConditionEvents(advancedSearchContainer, fileDataSection);
-    }
 
-    // Add advanced search controls if not already added
-    if (!fileDataSection.querySelector('.advanced-search-container')) {
-        addAdvancedSearchControls(fileDataSection);
-    }
-}
+        // Scroll to top
+        window.addEventListener('scroll', () => {
+            scrollToTopBtn.classList.toggle('show', window.pageYOffset > 300);
+        });
+        scrollToTopBtn.addEventListener('click', () => window.scrollTo({ top: 0, behavior: 'smooth' }));
 
-    function clearAllData() {
-        dataSectionContainer.innerHTML = '';
-        hidden = {};
-        fileInput.value = '';
-        fileText.textContent = 'Drag & drop files here or click to browse';
-        uploadBtn.disabled = true;
-        fileList.innerHTML = '';
-        showStatus('All data cleared', 'success');
-    }
+        // Infinite scroll
+        let isScrolling = false;
+        function handleScroll() {
+            if (isScrolling) return;
+            const studentsSection = document.getElementById('students-section');
+            const rect = studentsSection.getBoundingClientRect();
+            if (rect.top > window.innerHeight || rect.bottom < 0) return;
 
-    function toggleColumnVisibility(columnIndex, columnName, fileName, sheetName, tableHeader, tableBody) {
-        if (!hidden[fileName][sheetName]) hidden[fileName][sheetName] = [];
-        const idx = hidden[fileName][sheetName].indexOf(columnName);
-        if (idx > -1) {
-            hidden[fileName][sheetName].splice(idx, 1);
-        } else {
-            hidden[fileName][sheetName].push(columnName);
+            const aquarius = document.getElementById('aquarius-students');
+            const capricorn = document.getElementById('capricorn-students');
+
+            let targetSection = null;
+            if (!isFetching.aquarius && aquarius.scrollHeight - window.scrollY <= window.innerHeight + 100) {
+                targetSection = 'aquarius';
+            } else if (!isFetching.capricorn && capricorn.scrollHeight - window.scrollY <= window.innerHeight + 100) {
+                targetSection = 'capricorn';
+            } else return;
+
+            if (!targetSection || isFetching[targetSection]) return;
+            isScrolling = true;
+            scrollLoader.classList.add('show');
+            setTimeout(() => {
+                currentPage[targetSection]++;
+                generateStudentCards(targetSection, `${targetSection}-students`, currentPage[targetSection]);
+                scrollLoader.classList.remove('show');
+                isScrolling = false;
+            }, 800);
         }
-        applyHiddenColumns(fileName, sheetName, tableHeader, tableBody);
-        showStatus(`Column "${columnName}" ${hidden[fileName][sheetName].includes(columnName) ? 'hidden' : 'shown'}`, 'success');
-    }
+        window.addEventListener('scroll', handleScroll);
 
-    function applyHiddenColumns(fileName, sheetName, tableHeader, tableBody) {
-        const headerCells = Array.from(tableHeader.querySelectorAll('th'));
-        const bodyRows = tableBody.querySelectorAll('tr');
-        bodyRows.forEach(row => row.querySelectorAll('td').forEach(td => td.classList.remove('hidden-column')));
-        headerCells.forEach(th => th.classList.remove('hidden-column'));
-
-        if (hidden[fileName] && hidden[fileName][sheetName]) {
-            hidden[fileName][sheetName].forEach(colName => {
-                const colIndex = headerCells.findIndex(th => th.textContent.trim() === colName);
-                if (colIndex !== -1) {
-                    headerCells[colIndex].classList.add('hidden-column');
-                    bodyRows.forEach(row => {
-                        const cells = row.querySelectorAll('td');
-                        if (cells[colIndex]) cells[colIndex].classList.add('hidden-column');
-                    });
-                }
-            });
-        }
-    }
-
-    function filterTableData(fileName, sheetName, table, searchTerms) {
-        const bodyRows = table.querySelector('tbody').querySelectorAll('tr');
-        const headers = Array.from(table.querySelector('thead').querySelectorAll('th'));
-        const lowerCaseSearchTerms = {};
-        Object.keys(searchTerms).forEach(k => {
-            if (searchTerms[k]) lowerCaseSearchTerms[k] = searchTerms[k].toLowerCase();
+        // Initialize
+        document.addEventListener('DOMContentLoaded', () => {
+            loading.style.display = 'block';
+            setTimeout(() => {
+                generateStudentCards('aquarius', 'aquarius-students', 1);
+                generateStudentCards('capricorn', 'capricorn-students', 1);
+                generateTeachers();
+                generateIndividualAchievements();
+                generateOtherAwards();
+                generateSpeeches();
+                generateMemories();
+                generateLyrics();
+                loading.style.display = 'none';
+                currentPage.aquarius = 1;
+                currentPage.capricorn = 1;
+                document.querySelectorAll('.section').forEach(s => s.classList.add('fade-in'));
+            }, 1000);
         });
 
-        bodyRows.forEach(row => {
-            const cells = row.querySelectorAll('td');
-            let matches = true;
-            Object.keys(lowerCaseSearchTerms).forEach(colIndex => {
-                const term = lowerCaseSearchTerms[colIndex];
-                if (colIndex < cells.length) {
-                    const text = (cells[colIndex].textContent || '').toLowerCase();
-                    if (!text.includes(term)) matches = false;
-                }
-            });
-            row.style.display = matches ? '' : 'none';
+        // Keyboard support
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') {
+                if (studentModal.style.display === 'flex') studentModal.style.display = 'none';
+                if (fullImageModal.style.display === 'flex') fullImageModal.style.display = 'none';
+            }
         });
-        showStatus(`Filtered results applied`, 'success');
-    }
 
-    function showStatus(message, type) {
-        statusDiv.textContent = message;
-        statusDiv.className = `status ${type}`;
-    }
-
-    window.addEventListener('DOMContentLoaded', init);
-</script>
+        function generateLyrics() {
+            const lyricsContainer = document.getElementById('lyrics-content');
+            lyricsContainer.innerHTML = `<p class="lyrics-text">${graduationLyrics}</p>`;
+        }
+    </script>
 </body>
 </html>
