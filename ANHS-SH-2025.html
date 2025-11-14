@@ -1,0 +1,1821 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ANHS-SH 2025 Yearbook</title>
+    <style>
+        :root {
+            --primary-color: #3a506b;
+            --secondary-color: #5bc0be;
+            --accent-color: #ffb997;
+            --text-color: #1c2541;
+            --bg-color: #f8f9fa;
+            --card-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            --transition: all 0.3s ease;
+        }
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            line-height: 1.6;
+        }
+        header {
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            color: white;
+            padding: 1rem 2rem;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: var(--card-shadow);
+        }
+        .header-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+        .logo-container {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+        .logo {
+            height: 60px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 3px solid white;
+        }
+        .title {
+            font-size: 1.8rem;
+            font-weight: 700;
+            letter-spacing: 1px;
+        }
+        .search-container {
+            position: relative;
+            width: 300px;
+        }
+        .search-input {
+            width: 100%;
+            padding: 0.8rem 1rem;
+            border-radius: 30px;
+            border: none;
+            outline: none;
+            font-size: 1rem;
+            box-shadow: var(--card-shadow);
+        }
+        .search-icon {
+            position: absolute;
+            right: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--primary-color);
+        }
+        nav {
+            background-color: white;
+            padding: 1rem 2rem;
+            box-shadow: var(--card-shadow);
+        }
+        .nav-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: center;
+            gap: 2rem;
+        }
+        .nav-link {
+            text-decoration: none;
+            color: var(--text-color);
+            font-weight: 600;
+            padding: 0.5rem 1rem;
+            border-radius: 25px;
+            transition: var(--transition);
+            position: relative;
+        }
+        .nav-link:hover, .nav-link.active {
+            background-color: var(--secondary-color);
+            color: white;
+        }
+        .nav-link::after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 0;
+            height: 3px;
+            background-color: var(--accent-color);
+            transition: var(--transition);
+        }
+        .nav-link:hover::after, .nav-link.active::after {
+            width: 80%;
+        }
+        main {
+            max-width: 1400px;
+            margin: 2rem auto;
+            padding: 0 2rem;
+        }
+        .section-title {
+            font-size: 2rem;
+            margin-bottom: 1.5rem;
+            color: var(--primary-color);
+            text-align: center;
+            position: relative;
+            padding-bottom: 0.5rem;
+        }
+        .section-title::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 100px;
+            height: 3px;
+            background: linear-gradient(to right, var(--primary-color), var(--secondary-color));
+        }
+        .section-title.highlight {
+            background-color: var(--accent-color);
+            color: var(--primary-color);
+            border-radius: 8px;
+            padding: 0.5rem 1rem;
+            animation: pulse 1.5s infinite;
+        }
+        @keyframes pulse {
+            0% { box-shadow: 0 0 0 0 rgba(255, 185, 151, 0.7); }
+            70% { box-shadow: 0 0 0 10px rgba(255, 185, 151, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(255, 185, 151, 0); }
+        }
+        .students-grid, .teachers-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 2rem;
+            margin-bottom: 3rem;
+        }
+        .student-card, .teacher-card {
+            background: white;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: var(--card-shadow);
+            transition: var(--transition);
+            cursor: pointer;
+            position: relative;
+        }
+        .student-card:hover, .teacher-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.15);
+        }
+        .student-img, .teacher-img {
+            width: 100%;
+            height: 350px;
+            object-fit: cover;
+            object-position: top;
+            transition: var(--transition);
+            background: linear-gradient(45deg, #f0f0f0, #e0e0e0);
+        }
+        .student-card:hover .student-img,
+        .teacher-card:hover .teacher-img {
+            transform: scale(1.05);
+        }
+        .student-info, .teacher-info {
+            padding: 1.5rem;
+            text-align: center;
+        }
+        .student-name, .teacher-name {
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: var(--primary-color);
+            margin-bottom: 0.5rem;
+            transition: var(--transition);
+        }
+        .student-card:hover .student-name,
+        .teacher-card:hover .teacher-name {
+            color: var(--secondary-color);
+        }
+        .teacher-section {
+            font-size: 0.9rem;
+            color: var(--secondary-color);
+        }
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.7);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+            padding: 1rem;
+        }
+        .modal-content {
+            background: white;
+            border-radius: 20px;
+            max-width: 800px;
+            max-height: 90vh;
+            overflow-y: auto;
+            position: relative;
+            animation: modalFadeIn 0.3s ease;
+        }
+        @keyframes modalFadeIn {
+            from { opacity: 0; transform: scale(0.9); }
+            to { opacity: 1; transform: scale(1); }
+        }
+        .close-modal {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            font-size: 1.5rem;
+            background: none;
+            border: none;
+            cursor: pointer;
+            color: var(--text-color);
+            transition: var(--transition);
+        }
+        .close-modal:hover {
+            color: var(--primary-color);
+            transform: rotate(90deg);
+        }
+        .modal-header {
+            padding: 2rem;
+            text-align: center;
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            color: white;
+            border-radius: 20px 20px 0 0;
+        }
+        .modal-img {
+            width: 180px;
+            height: 180px;
+            border-radius: 50%;
+            object-fit: cover;
+            object-position: top;
+            border: 5px solid white;
+            margin-bottom: 1rem;
+            background: linear-gradient(45deg, #f0f0f0, #e0e0e0);
+        }
+        .modal-name {
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+        .modal-section {
+            padding: 2rem;
+        }
+        .modal-section h3 {
+            font-size: 1.5rem;
+            color: var(--primary-color);
+            margin-bottom: 1rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 2px solid var(--secondary-color);
+        }
+        .awards-list {
+            list-style: none;
+        }
+        .awards-list li {
+            padding: 0.8rem;
+            margin-bottom: 0.5rem;
+            background-color: var(--bg-color);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            transition: var(--transition);
+        }
+        .awards-list li:hover {
+            background-color: var(--secondary-color);
+            color: white;
+            transform: translateX(5px);
+        }
+        .award-icon {
+            margin-right: 10px;
+            color: var(--accent-color);
+            font-weight: bold;
+        }
+        .view-full-btn {
+            display: block;
+            margin-top: 1rem;
+            padding: 0.6rem 1.2rem;
+            background: var(--secondary-color);
+            color: white;
+            border: none;
+            border-radius: 25px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: var(--transition);
+        }
+        .view-full-btn:hover {
+            background: var(--primary-color);
+            transform: translateY(-2px);
+        }
+        .speeches-section, .memories-section {
+            margin: 3rem 0;
+        }
+        .speech-card {
+            background: white;
+            border-radius: 15px;
+            padding: 2rem;
+            box-shadow: var(--card-shadow);
+            margin-bottom: 2rem;
+            display: flex;
+            flex-direction: column;
+            transition: var(--transition);
+        }
+        .speech-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+        .speech-img {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            object-fit: cover;
+            object-position: top;
+            margin-right: 1.5rem;
+            border: 3px solid var(--secondary-color);
+            background: linear-gradient(45deg, #f0f0f0, #e0e0e0);
+        }
+        .speech-info h3 {
+            font-size: 1.5rem;
+            color: var(--primary-color);
+        }
+        .speech-info p {
+            color: var(--secondary-color);
+            font-weight: 600;
+        }
+        .speech-content {
+            line-height: 1.8;
+            font-style: italic;
+            padding: 1rem;
+            background-color: var(--bg-color);
+            border-radius: 10px;
+            margin-top: 1rem;
+        }
+        .memories-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 1.5rem;
+        }
+        .memory-img {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+            border-radius: 15px;
+            cursor: pointer;
+            transition: var(--transition);
+            box-shadow: var(--card-shadow);
+            background: linear-gradient(45deg, #f0f0f0, #e0e0e0);
+        }
+        .memory-img:hover {
+            transform: scale(1.05);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.15);
+        }
+
+        .lyrics-content {
+            background: white;
+            padding: 2rem;
+            border-radius: 15px;
+            box-shadow: var(--card-shadow);
+            line-height: 1.8;
+            font-family: 'Georgia', serif;
+            font-size: 1.1rem;
+            text-align: center;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        .lyrics-text {
+            white-space: pre-line;
+            color: var(--text-color);
+        }
+        .other-awards-section {
+            margin: 3rem 0;
+        }
+        .award-category {
+            margin-bottom: 2rem;
+        }
+        .award-title {
+            font-size: 1.5rem;
+            color: var(--primary-color);
+            margin-bottom: 1rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 2px solid var(--secondary-color);
+        }
+        .award-recipients {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+        .recipient {
+            background-color: var(--secondary-color);
+            color: white;
+            padding: 0.8rem 1.5rem;
+            border-radius: 25px;
+            font-weight: 600;
+            
+            cursor: pointer;
+            transition: var(--transition);
+        }
+        .recipient:hover {
+            background-color: var(--primary-color);
+            transform: translateY(-3px);
+        }
+        footer {
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            color: white;
+            text-align: center;
+            padding: 2rem;
+            margin-top: 3rem;
+        }
+        .footer-content {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+        .footer-logo-container {
+            display: flex;
+            justify-content: center;
+            gap: 2rem;
+            margin-bottom: 2rem;
+        }
+        .footer-logo {
+            height: 80px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 3px solid white;
+        }
+        .copyright {
+            font-size: 0.9rem;
+            opacity: 0.8;
+        }
+        #scrollToTopBtn {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            width: 50px;
+            height: 50px;
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            color: white;
+            border: none;
+            border-radius: 50%;
+            cursor: pointer;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 20px;
+            box-shadow: var(--card-shadow);
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+            z-index: 99;
+        }
+        #scrollToTopBtn.show {
+            opacity: 1;
+            visibility: visible;
+        }
+        #scrollToTopBtn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+        }
+
+        /* Blurred placeholder while loading */
+        .img-placeholder {
+            filter: blur(8px);
+            transition: filter 0.3s ease, opacity 0.3s ease;
+        }
+        .img-loaded {
+            filter: blur(0);
+        }
+
+        .student-img, .teacher-img, .modal-img, .speech-img, .memory-img {
+            will-change: filter;
+        }
+        @media (max-width: 768px) {
+            .title {
+                font-size: 1.5rem;
+            }
+            .header-container {
+                flex-direction: column;
+                gap: 1rem;
+            }
+            .search-container {
+                width: 100%;
+            }
+            .nav-container {
+                flex-wrap: wrap;
+                gap: 0.5rem;
+            }
+            .students-grid, .teachers-grid {
+                grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+                gap: 1rem;
+            }
+            .student-img, .teacher-img {
+                height: 300px;
+            }
+            .modal-img {
+                width: 150px;
+                height: 150px;
+            }
+            .speech-header {
+                flex-direction: column;
+                text-align: center;
+            }
+            .speech-img {
+                margin-bottom: 1rem;
+            }
+            .memories-grid {
+                grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+            }
+            .memory-img {
+                height: 150px;
+            }
+            #scrollToTopBtn {
+                bottom: 20px;
+                right: 20px;
+                width: 45px;
+                height: 45px;
+            }
+            .recipient {
+                font-size: 10px;
+            }
+        }
+        @media (max-width: 480px) {
+            .title {
+                font-size: 1.5rem;
+            }
+            .students-grid, .teachers-grid {
+                grid-template-columns: 1fr;
+            }
+            .memories-grid {
+                grid-template-columns: 1fr;
+            }
+            .nav-link {
+                padding: 0.5rem 0.8rem;
+                font-size: 0.9rem;
+            }
+        }
+        .loading {
+            display: none;
+            text-align: center;
+            padding: 2rem;
+            font-size: 1.2rem;
+            color: var(--primary-color);
+        }
+        .spinner {
+            border: 4px solid rgba(0, 0, 0, 0.1);
+            border-left: 4px solid var(--secondary-color);
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 1rem;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        .fade-in {
+            animation: fadeIn 0.5s ease-in;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .scroll-loader {
+            text-align: center;
+            padding: 2rem;
+            display: none;
+        }
+        .scroll-loader.show {
+            display: block;
+        }
+        
+        /* Full image modal */
+        #fullImageModal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.9);
+            z-index: 2000;
+            justify-content: center;
+            align-items: center;
+        }
+        #fullImageModal img {
+            max-width: 90%;
+            max-height: 90%;
+            border: 3px solid white;
+            border-radius: 10px;
+        }
+        #closeFullImage {
+            position: absolute;
+            top: 20px;
+            right: 30px;
+            color: white;
+            font-size: 2rem;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="header-container">
+            <div class="logo-container">
+                <img src="anhs-school.jpg" alt="School Logo" class="logo" loading="lazy">
+                <h1 class="title">ANHS-SH 2025 Yearbook</h1>
+            </div>
+            <div class="search-container">
+                <input type="text" class="search-input" id="searchInput" placeholder="Search for a student, teacher, or section...">
+                <span class="search-icon">🔍</span>
+            </div>
+        </div>
+    </header>
+    <nav>
+        <div class="nav-container">
+            <a href="#" class="nav-link active" data-section="students">Students</a>
+            <a href="#" class="nav-link" data-section="teachers">Teachers</a>
+            <a href="#" class="nav-link" data-section="achievements">Achievements</a>
+            <a href="#" class="nav-link" data-section="speeches">Speeches</a>
+            <a href="#" class="nav-link" data-section="memories">Memories</a>
+            <a href="#" class="nav-link" data-section="lyrics">Lyrics</a>
+        </div>
+    </nav>
+    <main>
+        <div id="loading" class="loading">
+            <div class="spinner"></div>
+            <p>Loading content...</p>
+        </div>
+
+        <!-- Students Section -->
+        <section id="students-section" class="section">
+            <h2 class="section-title" id="aquarius-title">Aquarius Section</h2>
+            <div class="students-grid" id="aquarius-students"></div>
+
+            <h2 class="section-title" id="aries-title">Aries Section</h2>
+            <div class="students-grid" id="aries-students"></div>
+
+            <h2 class="section-title" id="capricorn-title">Capricorn Section</h2>
+            <div class="students-grid" id="capricorn-students"></div>
+
+            <h2 class="section-title" id="gemini-title">Gemini Section</h2>
+            <div class="students-grid" id="gemini-students"></div>
+
+            <h2 class="section-title" id="leo-title">Leo Section</h2>
+            <div class="students-grid" id="leo-students"></div>
+
+            <h2 class="section-title" id="libra-title">Libra Section</h2>
+            <div class="students-grid" id="libra-students"></div>
+
+            <h2 class="section-title" id="saguitarius-title">Saguitarius Section</h2>
+            <div class="students-grid" id="saguitarius-students"></div>
+
+            <h2 class="section-title" id="taurus-title">Taurus Section</h2>
+            <div class="students-grid" id="taurus-students"></div>
+
+            <h2 class="section-title" id="virgo-title">Virgo Section</h2>
+            <div class="students-grid" id="virgo-students"></div>
+            
+            <!-- ✅ ADD NEW SECTION HERE -->
+            <!-- <h2 class="section-title" id="pisces-title">Pisces Section</h2> -->
+            <!-- <div class="students-grid" id="pisces-students"></div> -->
+
+
+            <div class="scroll-loader" id="scrollLoader">
+                <div class="spinner"></div>
+                <p>Loading more students...</p>
+            </div>
+        </section>
+
+        <!-- Teachers Section -->
+        <section id="teachers-section" class="section" style="display: none;">
+            <h2 class="section-title">Our Teachers</h2>
+            <div class="teachers-grid" id="teachers-grid"></div>
+        </section>
+
+        <!-- Achievements Section -->
+        <section id="achievements-section" class="section" style="display: none;">
+            <h2 class="section-title">Individual Achievements</h2>
+            <div id="individual-achievements"></div>
+            <h2 class="section-title">Award Categories</h2>
+            <div class="other-awards-section" id="other-awards"></div>
+        </section>
+
+        <!-- Speeches Section -->
+        <section id="speeches-section" class="section" style="display: none;">
+            <h2 class="section-title">Special Speeches</h2>
+            <div id="speeches-container"></div>
+        </section>
+
+        <!-- Memories Section -->
+        <section id="memories-section" class="section" style="display: none;">
+            <h2 class="section-title">School Memories</h2>
+            <div class="memories-grid" id="memories-grid"></div>
+        </section>
+
+        <!-- Graduation Song Lyrics Section -->
+        <section id="lyrics-section" class="section" style="display: none;">
+            <h2 class="section-title">Graduation Song Lyrics</h2>
+            <div class="lyrics-content" id="lyrics-content">
+                <p class="lyrics-text">
+                    <!-- Lyrics will be inserted here via JS or hardcoded -->
+                </p>
+            </div>
+        </section>
+    </main>
+
+    <!-- Student/Teacher Profile Modal -->
+    <div id="studentModal" class="modal">
+        <div class="modal-content">
+            <button class="close-modal" id="closeModal">&times;</button>
+            <div class="modal-header">
+                <img src="" alt="Profile" class="modal-img" id="modalImg" loading="lazy">
+                <h2 class="modal-name" id="modalName"></h2>
+            </div>
+            <div class="modal-section" id="modalAwardsSection">
+                <h3>Achievements & Awards</h3>
+                <ul class="awards-list" id="modalAwards"></ul>
+                <button class="view-full-btn" id="viewFullBtn">View Full Image</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Full Image Modal -->
+    <div id="fullImageModal" class="modal">
+        <span id="closeFullImage">&times;</span>
+        <img id="fullImage" src="" alt="Full Image">
+    </div>
+
+    <!-- Scroll to Top Button -->
+    <button id="scrollToTopBtn" title="Scroll to Top">↑</button>
+
+    <footer>
+        <div class="footer-content">
+            <div class="footer-logo-container">
+                <img src="https://via.placeholder.com/100" alt="School Logo 1" class="footer-logo" loading="lazy">
+                <img src="https://via.placeholder.com/100" alt="School Logo 2" class="footer-logo" loading="lazy">
+            </div>
+            <p class="copyright">&copy; 2025 ANHS-SH Yearbook. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script>
+        // Data
+        const students = {
+            "aquarius": [
+  { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/aquarius/Adrian_D._Gallos.webp", name: "Adrian D. Gallos" },
+  { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/aquarius/Aldred_C._Salcedo.webp", name: "Aldred C. Salcedo" },
+  { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/aquarius/Andray_A._Realino.webp", name: "Andray A. Realino" },
+  { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/aquarius/Angel_L._Gabrera.webp", name: "Angel L. Gabrera" },
+  { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/aquarius/Antonia_Louisse_R._Mendoza.webp", name: "Antonia Louisse R. Mendoza" },
+  { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/aquarius/Ashley_A._Rinos.webp", name: "Ashley A. Rinos" },
+  { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/aquarius/Ashley_A._Riños.webp", name: "Ashley A. Riños" },
+  { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/aquarius/Bernard_Jr._M._Padoga.webp", name: "Bernard Jr. M. Padoga" },
+  { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/aquarius/Cherry_Ann_B._Adonis.webp", name: "Cherry Ann B. Adonis" },
+  { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/aquarius/Cheska_R._Cecilio.webp", name: "Cheska R. Cecilio" },
+  { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/aquarius/Christal_Mae_T._Loreno.webp", name: "Christal Mae T. Loreno" },
+  { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/aquarius/Christal_Mae_T._Loreño.webp", name: "Christal Mae T. Loreño" },
+  { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/aquarius/Christian_James_D._Reas.webp", name: "Christian James D. Reas" },
+  { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/aquarius/Daisy_Jane_T._Mansinadez.webp", name: "Daisy Jane T. Mansinadez" },
+  { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/aquarius/Dinna_C._Dancil.webp", name: "Dinna C. Dancil" },
+  { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/aquarius/Felicity_Zoe_M._Palen.webp", name: "Felicity Zoe M. Palen" },
+  { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/aquarius/Genos_Denver_A._Hinunangan.webp", name: "Genos Denver A. Hinunangan" },
+  { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/aquarius/Gerard_Alvin_R._Elmido.webp", name: "Gerard Alvin R. Elmido" },
+  { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/aquarius/Hans_Jespher_A._Alfante.webp", name: "Hans Jespher A. Alfante" },
+  { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/aquarius/Harold_P._Luma-as.webp", name: "Harold P. Luma-as" },
+  { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/aquarius/Jasson_Kim_O._Bayot.webp", name: "Jasson Kim O. Bayot" },
+  { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/aquarius/Jay_P._Degrano.webp", name: "Jay P. Degrano" },
+  { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/aquarius/Jayson_A._Obias.webp", name: "Jayson A. Obias" },
+  { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/aquarius/Jhonson_A._Guillano.webp", name: "Jhonson A. Guillano" },
+  { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/aquarius/John_Airon_D._Gadon.webp", name: "John Airon D. Gadon" },
+  { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/aquarius/John_Steven_M._Tomines.webp", name: "John Steven M. Tomines" },
+  { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/aquarius/Jovy_S._Portugaliza.webp", name: "Jovy S. Portugaliza" },
+  { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/aquarius/Justinne_Caryl_G._Palana.webp", name: "Justinne Caryl G. Palana" },
+  { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/aquarius/Justinne_Caryl_G._Palaña.webp", name: "Justinne Caryl G. Palaña" },
+  { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/aquarius/Khevin_Paul_C._Sanico.webp", name: "Khevin Paul C. Sanico" },
+  { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/aquarius/Lady_Charcassie_O._Cabal.webp", name: "Lady Charcassie O. Cabal" },
+  { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/aquarius/Lady_Hone_T._Macasocol.webp", name: "Lady Hone T. Macasocol" },
+  { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/aquarius/Lance_C._Cabilogan.webp", name: "Lance C. Cabilogan" },
+  { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/aquarius/Lean_Paul_P._Reyes.webp", name: "Lean Paul P. Reyes" },
+  { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/aquarius/Lorlie_Jane_E._Opada.webp", name: "Lorlie Jane E. Opada" },
+  { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/aquarius/Maria_Mae_P._Laher.webp", name: "Maria Mae P. Laher" },
+  { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/aquarius/Mark_Justine_C._Amano.webp", name: "Mark Justine C. Amano" },
+  { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/aquarius/Mark_Stevin_J._Robin.webp", name: "Mark Stevin J. Robin" },
+  { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/aquarius/Merian_N._Costin.webp", name: "Merian N. Costin" },
+  { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/aquarius/Nicole_S._Tobias.webp", name: "Nicole S. Tobias" },
+  { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/aquarius/Princess_Nazzariane_A._Cabsag.webp", name: "Princess Nazzariane A. Cabsag" },
+  { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/aquarius/Princezz_Ellyn_V._Carino.webp", name: "Princezz Ellyn V. Carino" },
+  { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/aquarius/Princezz_Ellyn_V._Cariño.webp", name: "Princezz Ellyn V. Cariño" },
+  { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/aquarius/Richard_P._Guston.webp", name: "Richard P. Guston" },
+  { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/aquarius/Rodeliza_D._Abilay.webp", name: "Rodeliza D. Abilay" },
+  { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/aquarius/Vince_Patrick_L._Edloy.webp", name: "Vince Patrick L. Edloy" },
+  { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/aquarius/Yuri_Gwen_B._Pinote.webp", name: "Yuri Gwen B. Pinote" }
+],
+
+            "aries":  [
+  { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/aries/Aira_B._Delon.webp", name: "Aira B. Delon" },
+  { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/aries/Alnie_L._Arabis.webp", name: "Alnie L. Arabis" },
+  { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/aries/Alyssa_D._Elmido.webp", name: "Alyssa D. Elmido" },
+  { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/aries/Anna_Jane_A._Rubes.webp", name: "Anna Jane A. Rubes" },
+  { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/aries/Annie_Rose_T._Delgado.webp", name: "Annie Rose T. Delgado" },
+  { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/aries/Apple_Jane_D,_Declaro.webp", name: "Apple Jane D, Declaro" },
+  { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/aries/Apple_P._Hermida.webp", name: "Apple P. Hermida" },
+  { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/aries/Bianca_G._Tagarao.webp", name: "Bianca G. Tagarao" },
+  { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/aries/Cassandra_Juliane_T._Donayre.webp", name: "Cassandra Juliane T. Donayre" },
+  { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/aries/Catherine_N._Humawid.webp", name: "Catherine N. Humawid" },
+  { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/aries/Christine_Alexis_T._Monleon.webp", name: "Christine Alexis T. Monleon" },
+  { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/aries/Cindy_B._Anonuevo.webp", name: "Cindy B. Anonuevo" },
+  { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/aries/Cindy_B._Añonuevo.webp", name: "Cindy B. Añonuevo" },
+  { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/aries/Cyrah_Jane_M._Remandaban.webp", name: "Cyrah Jane M. Remandaban" },
+  { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/aries/Edmar_D._Gonzaga.webp", name: "Edmar D. Gonzaga" },
+  { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/aries/Francis_Tutor.webp", name: "Francis Tutor" },
+  { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/aries/Frencess_Mae_A._Gloria.webp", name: "Frencess Mae A. Gloria" },
+  { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/aries/Isaiah_Chayanne_George_Kyle_G._Cerena.webp", name: "Isaiah Chayanne George Kyle G. Cerena" },
+  { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/aries/JADE_B._CABAL.webp", name: "JADE B. CABAL" },
+  { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/aries/JOSE,_RANGLE.webp", name: "JOSE, RANGLE" },
+  { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/aries/Janelle_Rian_A._Beronilla.webp", name: "Janelle Rian A. Beronilla" },
+  { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/aries/Jecelyn_P._Gonzales.webp", name: "Jecelyn P. Gonzales" },
+  { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/aries/Jeil_C._Alvero.webp", name: "Jeil C. Alvero" },
+  { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/aries/Jesselle_D._Gubat.webp", name: "Jesselle D. Gubat" },
+  { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/aries/Joan_L._Sellar.webp", name: "Joan L. Sellar" },
+  { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/aries/John_C._Rebojo.webp", name: "John C. Rebojo" },
+  { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/aries/John_Mark_R._Lawag.webp", name: "John Mark R. Lawag" },
+  { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/aries/Jussel_Fiona_L._Altejar.webp", name: "Jussel Fiona L. Altejar" },
+  { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/aries/Kate_Nathalie_B._Rapada.webp", name: "Kate Nathalie B. Rapada" },
+  { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/aries/Kathleen_C._Cozares.webp", name: "Kathleen C. Cozares" },
+  { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/aries/Kent_Joshua_R._Belanigue.webp", name: "Kent Joshua R. Belanigue" },
+  { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/aries/Kim_Alexis_M._Tobia.webp", name: "Kim Alexis M. Tobia" },
+  { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/aries/Kimberly_Anne_D._Casas.webp", name: "Kimberly Anne D. Casas" },
+  { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/aries/Krystal_A._Japson.webp", name: "Krystal A. Japson" },
+  { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/aries/Leliza_Jean_N._Durias.webp", name: "Leliza Jean N. Durias" },
+  { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/aries/Lyza_M._Bolano.webp", name: "Lyza M. Bolano" },
+  { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/aries/Lyza_M._Bolaño.webp", name: "Lyza M. Bolaño" },
+  { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/aries/Mark_Lorence_R._Soria.webp", name: "Mark Lorence R. Soria" },
+  { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/aries/Michael_B._Surabia.webp", name: "Michael B. Surabia" },
+  { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/aries/Nicole_Ann_R._Cabahug.webp", name: "Nicole Ann R. Cabahug" },
+  { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/aries/Renelyn_A._Madula.webp", name: "Renelyn A. Madula" },
+  { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/aries/Rhedge_N._Laperag.webp", name: "Rhedge N. Laperag" },
+  { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/aries/Rhena_Mae_Bahinting.webp", name: "Rhena Mae Bahinting" },
+  { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/aries/Ricky_Boy_L._Sabili.webp", name: "Ricky Boy L. Sabili" },
+  { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/aries/Roxan_C._Ritaga.webp", name: "Roxan C. Ritaga" },
+  { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/aries/Stephanie_G._Dioso.webp", name: "Stephanie G. Dioso" }
+],
+          "capricorn" :  [
+  { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/capricorn/Aaron_P._Atienza.webp", name: "Aaron P. Atienza" },
+  { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/capricorn/Allison_Fate_P._Dalugdugan.webp", name: "Allison Fate P. Dalugdugan" },
+  { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/capricorn/Althea_Genesis_S._Tarinque.webp", name: "Althea Genesis S. Tarinque" },
+  { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/capricorn/Angelene_B._Risos.webp", name: "Angelene B. Risos" },
+  { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/capricorn/Anghelo_L._Olita.webp", name: "Anghelo L. Olita" },
+  { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/capricorn/April_Jean_E._Delgado.webp", name: "April Jean E. Delgado" },
+  { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/capricorn/Crystal_S._Madrona.webp", name: "Crystal S. Madrona" },
+  { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/capricorn/Cyrine_A._Tejero.webp", name: "Cyrine A. Tejero" },
+  { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/capricorn/Darwin_S._Castro.webp", name: "Darwin S. Castro" },
+  { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/capricorn/Daryl_S._Alas.webp", name: "Daryl S. Alas" },
+  { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/capricorn/Donald_C._Larioque.webp", name: "Donald C. Larioque" },
+  { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/capricorn/Edcin_E._Alcoser.webp", name: "Edcin E. Alcoser" },
+  { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/capricorn/Edwin_N._Elmido.webp", name: "Edwin N. Elmido" },
+  { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/capricorn/Glenn_V._Redrendo.webp", name: "Glenn V. Redrendo" },
+  { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/capricorn/Ivan_D._Benusa.webp", name: "Ivan D. Benusa" },
+  { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/capricorn/Jamilla_Nicole_R._Cabrera_.webp", name: "Jamilla Nicole R. Cabrera " },
+  { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/capricorn/Janelle_R._Rivera.webp", name: "Janelle R. Rivera" },
+  { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/capricorn/Jenny_M._Quano.webp", name: "Jenny M. Quano" },
+  { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/capricorn/Jenybe_E._Bug-atan.webp", name: "Jenybe E. Bug-atan" },
+  { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/capricorn/Jerome_M._Bracero.webp", name: "Jerome M. Bracero" },
+  { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/capricorn/Jessil_E._Canuday.webp", name: "Jessil E. Canuday" },
+  { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/capricorn/Jhun_Rennan_D._De_Paz.webp", name: "Jhun Rennan D. De Paz" },
+  { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/capricorn/Junny_Boy_L._Cabintoy.webp", name: "Junny Boy L. Cabintoy" },
+  { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/capricorn/Kelvin_Jay_R._Pernites.webp", name: "Kelvin Jay R. Pernites" },
+  { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/capricorn/M-Jay_J._Mediona.webp", name: "M-Jay J. Mediona" },
+  { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/capricorn/Ma._Cherry_C._Perez.webp", name: "Ma. Cherry C. Perez" },
+  { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/capricorn/Malou_U._Olazo.webp", name: "Malou U. Olazo" },
+  { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/capricorn/Marian_Nicol_P._Lomonsod.webp", name: "Marian Nicol P. Lomonsod" },
+  { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/capricorn/Mark_Gary_M._Mistula.webp", name: "Mark Gary M. Mistula" },
+  { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/capricorn/Mark_L._Fuentes.webp", name: "Mark L. Fuentes" },
+  { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/capricorn/Nenien_Joy_A._Cagna-an.webp", name: "Nenien Joy A. Cagna-an" },
+  { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/capricorn/Nicole_B._Balano.webp", name: "Nicole B. Balano" },
+  { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/capricorn/Paul_R._Beyong.webp", name: "Paul R. Beyong" },
+  { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/capricorn/Rannie_M._Alvero.webp", name: "Rannie M. Alvero" },
+  { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/capricorn/Rexander_B._Espina.webp", name: "Rexander B. Espina" },
+  { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/capricorn/Rico_Jay_F._Porazo.webp", name: "Rico Jay F. Porazo" },
+  { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/capricorn/Rochell_C._Ritaga.webp", name: "Rochell C. Ritaga" },
+  { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/capricorn/Ronel_S._Ampong.webp", name: "Ronel S. Ampong" },
+  { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/capricorn/Ronie_E._Turado.webp", name: "Ronie E. Turado" },
+  { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/capricorn/Rouna_Joy_M._Golo.webp", name: "Rouna Joy M. Golo" },
+  { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/capricorn/Ruffa_mae_L._Aluyog.webp", name: "Ruffa mae L. Aluyog" },
+  { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/capricorn/Vincent_D._Dagcutan.webp", name: "Vincent D. Dagcutan" },
+  { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/capricorn/Vincent_Rafael_L._Laderas.webp", name: "Vincent Rafael L. Laderas" },
+  { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/capricorn/Weslie_Vertudazo.webp", name: "Weslie Vertudazo" }
+],
+          "gemini" :  [
+  { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/gemini/Angelou_S._Daniel.webp", name: "Angelou S. Daniel" },
+  { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/gemini/Chris_Andrie_D._Terante.webp", name: "Chris Andrie D. Terante" },
+  { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/gemini/Christian_B._Dublas.webp", name: "Christian B. Dublas" },
+  { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/gemini/Edison_Jr._R._Caspe.webp", name: "Edison Jr. R. Caspe" },
+  { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/gemini/Elgie_Lacbayo.webp", name: "Elgie Lacbayo" },
+  { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/gemini/Fate_Gerald_P._Gonzaga.webp", name: "Fate Gerald P. Gonzaga" },
+  { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/gemini/Francis_Mel_T._Corayag.webp", name: "Francis Mel T. Corayag" },
+  { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/gemini/Gino_A._Escuadra.webp", name: "Gino A. Escuadra" },
+  { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/gemini/Isagani_C._Andales.webp", name: "Isagani C. Andales" },
+  { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/gemini/Jairus_Kylle_E._Tomines.webp", name: "Jairus Kylle E. Tomines" },
+  { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/gemini/James_Ashley_M._Elmido.webp", name: "James Ashley M. Elmido" },
+  { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/gemini/James_F._Dublon.webp", name: "James F. Dublon" },
+  { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/gemini/James_N._Diaz.webp", name: "James N. Diaz" },
+  { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/gemini/Jason_C._Terante.webp", name: "Jason C. Terante" },
+  { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/gemini/Jaymark_R._Bansig.webp", name: "Jaymark R. Bansig" },
+  { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/gemini/Jessie_Jr._M._Cuizon.webp", name: "Jessie Jr. M. Cuizon" },
+  { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/gemini/John_Dave_L._Delgado.webp", name: "John Dave L. Delgado" },
+  { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/gemini/John_Rey_D._Yayon.webp", name: "John Rey D. Yayon" },
+  { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/gemini/Joshua_P._Ceda.webp", name: "Joshua P. Ceda" },
+  { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/gemini/Jude_Mark_Z._Diaz.webp", name: "Jude Mark Z. Diaz" },
+  { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/gemini/Jumong_P._Sarzuela.webp", name: "Jumong P. Sarzuela" },
+  { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/gemini/Junnard_Robert_H._Liporada.webp", name: "Junnard Robert H. Liporada" },
+  { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/gemini/Junray_Jr._A._Cantilang.webp", name: "Junray Jr. A. Cantilang" },
+  { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/gemini/Kain_Carlo_J._Grospe.webp", name: "Kain Carlo J. Grospe" },
+  { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/gemini/Kyle_Shane_Delgado.webp", name: "Kyle Shane Delgado" },
+  { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/gemini/Mark_John_P._Norega.webp", name: "Mark John P. Norega" },
+  { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/gemini/Nevada_Dawn_James_Padero.webp", name: "Nevada Dawn James Padero" },
+  { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/gemini/Prince_Ronald_D._Labides.webp", name: "Prince Ronald D. Labides" },
+  { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/gemini/R-Jay_M._Ruanes.webp", name: "R-Jay M. Ruanes" },
+  { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/gemini/Rasel_D._Villezas.webp", name: "Rasel D. Villezas" },
+  { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/gemini/Ronald_L._Barcelon.webp", name: "Ronald L. Barcelon" },
+  { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/gemini/Ronron_B._Rufil.webp", name: "Ronron B. Rufil" },
+  { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/gemini/Rowel_L._Diaz.webp", name: "Rowel L. Diaz" },
+  { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/gemini/Roziel_mae_A._Barrio.webp", name: "Roziel mae A. Barrio" },
+  { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/gemini/Ruben_N._Barquin.webp", name: "Ruben N. Barquin" },
+  { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/gemini/Ryan_C._Naval.webp", name: "Ryan C. Naval" },
+  { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/gemini/Rytchil_N._Catayas.webp", name: "Rytchil N. Catayas" },
+  { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/gemini/Stephen_Jr._C._Robin.webp", name: "Stephen Jr. C. Robin" }
+],
+          "leo" :  [
+  { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/leo/Aira_B._De_Paz.webp", name: "Aira B. De Paz" },
+  { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/leo/Aldrin_Jay_A._Salmoro.webp", name: "Aldrin Jay A. Salmoro" },
+  { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/leo/Angelie_D._Realino.webp", name: "Angelie D. Realino" },
+  { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/leo/Archie_A._Corpin.webp", name: "Archie A. Corpin" },
+  { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/leo/Chamille_D._Olarte.webp", name: "Chamille D. Olarte" },
+  { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/leo/Cristopher_A._Porcadilla.webp", name: "Cristopher A. Porcadilla" },
+  { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/leo/Crystal_N._Cabia.webp", name: "Crystal N. Cabia" },
+  { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/leo/Erna_Mae_V._Alajas.webp", name: "Erna Mae V. Alajas" },
+  { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/leo/Gabriel_Loreno.webp", name: "Gabriel Loreno" },
+  { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/leo/Gabriel_Loreño.webp", name: "Gabriel Loreño" },
+  { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/leo/Ivy_G._Chavez.webp", name: "Ivy G. Chavez" },
+  { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/leo/Jhoy_A._Ceno.webp", name: "Jhoy A. Ceno" },
+  { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/leo/Jilamae_B._Pasadas.webp", name: "Jilamae B. Pasadas" },
+  { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/leo/John_Michael_A._Samocino.webp", name: "John Michael A. Samocino" },
+  { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/leo/John_Paul_L._Cumpio.webp", name: "John Paul L. Cumpio" },
+  { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/leo/Joyce_M._Sabonsolin.webp", name: "Joyce M. Sabonsolin" },
+  { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/leo/Julian_P._Cabal.webp", name: "Julian P. Cabal" },
+  { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/leo/Julius_D._Olazo.webp", name: "Julius D. Olazo" },
+  { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/leo/Justine_J._Moquia.webp", name: "Justine J. Moquia" },
+  { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/leo/Kevin_G._Delgado.webp", name: "Kevin G. Delgado" },
+  { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/leo/King_B._Cinco.webp", name: "King B. Cinco" },
+  { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/leo/Louise_Joy_L._Almaden.webp", name: "Louise Joy L. Almaden" },
+  { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/leo/Lovely_Joy_P._Lumbre.webp", name: "Lovely Joy P. Lumbre" },
+  { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/leo/Ma._Jenny_A._Gabrera.webp", name: "Ma. Jenny A. Gabrera" },
+  { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/leo/Madelyn_E._Garcia.webp", name: "Madelyn E. Garcia" },
+  { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/leo/Madonna_C._Noveda.webp", name: "Madonna C. Noveda" },
+  { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/leo/Mariel_A._Impuesto.webp", name: "Mariel A. Impuesto" },
+  { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/leo/Meriam_O._Kininahan.webp", name: "Meriam O. Kininahan" },
+  { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/leo/Nimfa_V._Impuesto.webp", name: "Nimfa V. Impuesto" },
+  { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/leo/Princess_Diane_V._Ringor.webp", name: "Princess Diane V. Ringor" },
+  { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/leo/Rainier_D._De_Paz.webp", name: "Rainier D. De Paz" },
+  { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/leo/Rea_Daisylyn_A._Vallejos.webp", name: "Rea Daisylyn A. Vallejos" },
+  { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/leo/Reymart_A._Gabrera.webp", name: "Reymart A. Gabrera" },
+  { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/leo/Rhea_Mae_D._Baristo.webp", name: "Rhea Mae D. Baristo" },
+  { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/leo/Rhea_Mae_D._Mecairan.webp", name: "Rhea Mae D. Mecairan" },
+  { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/leo/Rica_Mae_M._Bisnar.webp", name: "Rica Mae M. Bisnar" },
+  { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/leo/Rieza_Mae_C._De_Paz.webp", name: "Rieza Mae C. De Paz" },
+  { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/leo/Sabelle_O._Tisado.webp", name: "Sabelle O. Tisado" },
+  { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/leo/Shiena_Mae_L._Ritaga.webp", name: "Shiena Mae L. Ritaga" },
+  { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/leo/Wesley_Franz_P._Cultura.webp", name: "Wesley Franz P. Cultura" }
+],
+          "libra" : [
+  { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/libra/A-J_F._Lucapa.webp", name: "A-J F. Lucapa" },
+  { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/libra/Angel_C._Rosquites.webp", name: "Angel C. Rosquites" },
+  { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/libra/Angela_P._Montaño.webp", name: "Angela P. Montaño" },
+  { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/libra/Angela_P._montano.webp", name: "Angela P. montano" },
+  { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/libra/Angelou_R._Ledesma.webp", name: "Angelou R. Ledesma" },
+  { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/libra/Ariel_D._Manaog.webp", name: "Ariel D. Manaog" },
+  { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/libra/Bernadeth_C._Evarrete.webp", name: "Bernadeth C. Evarrete" },
+  { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/libra/Cesario_Jr._R._Barquin.webp", name: "Cesario Jr. R. Barquin" },
+  { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/libra/Chandlier_Justin_Gumba.webp", name: "Chandlier Justin Gumba" },
+  { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/libra/Chinalyn_L._Abenoja.webp", name: "Chinalyn L. Abenoja" },
+  { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/libra/Christine_Margarette_M._Capilitan.webp", name: "Christine Margarette M. Capilitan" },
+  { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/libra/Crisanto_C._Davido.webp", name: "Crisanto C. Davido" },
+  { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/libra/Cymon_Jade_O._Sombilon.webp", name: "Cymon Jade O. Sombilon" },
+  { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/libra/Danica_Albiar.webp", name: "Danica Albiar" },
+  { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/libra/Dexter_P._De_Jesus.webp", name: "Dexter P. De Jesus" },
+  { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/libra/Edelyn_A._Remollo.webp", name: "Edelyn A. Remollo" },
+  { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/libra/Erica_Lien_A._Austero.webp", name: "Erica Lien A. Austero" },
+  { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/libra/Francine_Mae_O._Felizarta.webp", name: "Francine Mae O. Felizarta" },
+  { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/libra/Francis_D._Tan.webp", name: "Francis D. Tan" },
+  { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/libra/Frenz_Jay_O._Felizarta.webp", name: "Frenz Jay O. Felizarta" },
+  { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/libra/Fritz_N._Dioso.webp", name: "Fritz N. Dioso" },
+  { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/libra/Gecel_G._Robes.webp", name: "Gecel G. Robes" },
+  { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/libra/Girlie_Ann_T._Elmido.webp", name: "Girlie Ann T. Elmido" },
+  { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/libra/Izzy_N._Robes.webp", name: "Izzy N. Robes" },
+  { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/libra/Jake_C._Bulan.webp", name: "Jake C. Bulan" },
+  { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/libra/Jenalyn_N._Ritaga.webp", name: "Jenalyn N. Ritaga" },
+  { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/libra/Jerald_Jay_U._Del_Monte.webp", name: "Jerald Jay U. Del Monte" },
+  { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/libra/Jessi_Han_M._Yongzon.webp", name: "Jessi Han M. Yongzon" },
+  { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/libra/Jessie_Rose_B._Villote.webp", name: "Jessie Rose B. Villote" },
+  { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/libra/Jhonel_P._Doromal.webp", name: "Jhonel P. Doromal" },
+  { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/libra/Jiro_S._Colarte.webp", name: "Jiro S. Colarte" },
+  { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/libra/John_Bert_S._Talisay.webp", name: "John Bert S. Talisay" },
+  { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/libra/John_Robert_A._Petere.webp", name: "John Robert A. Petere" },
+  { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/libra/Jonalyn_H._Cabal.webp", name: "Jonalyn H. Cabal" },
+  { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/libra/Joshua_P._Ardiente.webp", name: "Joshua P. Ardiente" },
+  { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/libra/Julia_Mae_B._Gimena.webp", name: "Julia Mae B. Gimena" },
+  { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/libra/Justine_D._Aurella.webp", name: "Justine D. Aurella" },
+  { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/libra/Kenniedy_C._Eria.webp", name: "Kenniedy C. Eria" },
+  { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/libra/Kent_Anthony_T._Amago.webp", name: "Kent Anthony T. Amago" },
+  { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/libra/Kim_Jiel_E._Argate.webp", name: "Kim Jiel E. Argate" },
+  { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/libra/Lowella_V._Tomines.webp", name: "Lowella V. Tomines" },
+  { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/libra/Mark_Kimberly_R._Villarama.webp", name: "Mark Kimberly R. Villarama" },
+  { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/libra/Marlito_D._Tupaz.webp", name: "Marlito D. Tupaz" },
+  { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/libra/Mary_Ann_N._Tubao.webp", name: "Mary Ann N. Tubao" },
+  { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/libra/Mary_Grace_B._Urdaneta.webp", name: "Mary Grace B. Urdaneta" },
+  { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/libra/Mia_D._Alvero.webp", name: "Mia D. Alvero" },
+  { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/libra/Michaella_D._Balena.webp", name: "Michaella D. Balena" },
+  { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/libra/Michaella_D._Baleña.webp", name: "Michaella D. Baleña" },
+  { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/libra/Michelle_J._Alicer.webp", name: "Michelle J. Alicer" },
+  { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/libra/Nelly_Fe_C._Duzar.webp", name: "Nelly Fe C. Duzar" },
+  { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/libra/Nikki_R._Loreno.webp", name: "Nikki R. Loreno" },
+  { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/libra/Nikki_R._Loreño.webp", name: "Nikki R. Loreño" },
+  { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/libra/Princess_Lalaine_M._Balleno.webp", name: "Princess Lalaine M. Balleno" },
+  { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/libra/Retchel_R._Echon.webp", name: "Retchel R. Echon" },
+  { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/libra/Robert_Jr._E._Anonuevo.webp", name: "Robert Jr. E. Anonuevo" },
+  { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/libra/Rodela_C._Dioso.webp", name: "Rodela C. Dioso" },
+  { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/libra/Rosalinda_D._Villado.webp", name: "Rosalinda D. Villado" },
+  { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/libra/Sara_Claire_A._Baquiro.webp", name: "Sara Claire A. Baquiro" },
+  { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/libra/Shilby_Pulan.webp", name: "Shilby Pulan" },
+  { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/libra/Stefany_R._Gelarzo.webp", name: "Stefany R. Gelarzo" },
+  { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/libra/Terence_Jazen_A._Retaga.webp", name: "Terence Jazen A. Retaga" },
+  { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/libra/Wenje_May_H._Yanag.webp", name: "Wenje May H. Yanag" },
+  { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/libra/Zander_C._Bigoy.webp", name: "Zander C. Bigoy" },
+  { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/libra/Zebastian_A._Cinco.webp", name: "Zebastian A. Cinco" }
+],
+          "saguitarius" : [
+  { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/saguitarius/Adeliza_D._Mendoza.webp", name: "Adeliza D. Mendoza" },
+  { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/saguitarius/Alexander_Sebugon.webp", name: "Alexander Sebugon" },
+  { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/saguitarius/Alyssa_Mae_R._Lopez.webp", name: "Alyssa Mae R. Lopez" },
+  { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/saguitarius/Alysza_B._Colarte.webp", name: "Alysza B. Colarte" },
+  { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/saguitarius/Angelica_C._Poliquit.webp", name: "Angelica C. Poliquit" },
+  { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/saguitarius/Anika_Leigh_Arias.webp", name: "Anika Leigh Arias" },
+  { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/saguitarius/Ariane_C._Cabal.webp", name: "Ariane C. Cabal" },
+  { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/saguitarius/Ashly_A._Lambonao.webp", name: "Ashly A. Lambonao" },
+  { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/saguitarius/Aya_Lorain_Y._Laher.webp", name: "Aya Lorain Y. Laher" },
+  { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/saguitarius/Cristel_Anne_V._Deles.webp", name: "Cristel Anne V. Deles" },
+  { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/saguitarius/Daisyrie_S._Degollacion.webp", name: "Daisyrie S. Degollacion" },
+  { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/saguitarius/Divine_M._Beyong.webp", name: "Divine M. Beyong" },
+  { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/saguitarius/Eljay_D._Enano.webp", name: "Eljay D. Enano" },
+  { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/saguitarius/Erica_T._Pedro.webp", name: "Erica T. Pedro" },
+  { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/saguitarius/Glecy_Mae_R._Tagra.webp", name: "Glecy Mae R. Tagra" },
+  { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/saguitarius/Harold_Alavera.webp", name: "Harold Alavera" },
+  { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/saguitarius/Jackie_P._Diaz.webp", name: "Jackie P. Diaz" },
+  { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/saguitarius/James_Braile_D._Cabero.webp", name: "James Braile D. Cabero" },
+  { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/saguitarius/Jasmine_A._Paler.webp", name: "Jasmine A. Paler" },
+  { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/saguitarius/Jeannica_Rose_E._Manito.webp", name: "Jeannica Rose E. Manito" },
+  { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/saguitarius/Jemart_Loreno.webp", name: "Jemart Loreno" },
+  { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/saguitarius/Jemart_Loreño.webp", name: "Jemart Loreño" },
+  { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/saguitarius/Jemel_Dagcutan.webp", name: "Jemel Dagcutan" },
+  { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/saguitarius/Jerry_Jr._P._San_Juan.webp", name: "Jerry Jr. P. San Juan" },
+  { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/saguitarius/John_Nikko_A._Adaya.webp", name: "John Nikko A. Adaya" },
+  { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/saguitarius/John_Rey_O._Algodon.webp", name: "John Rey O. Algodon" },
+  { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/saguitarius/John_Reynald_G._Boticalao.webp", name: "John Reynald G. Boticalao" },
+  { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/saguitarius/Jomer_C._Dandoy.webp", name: "Jomer C. Dandoy" },
+  { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/saguitarius/Joseph_Benedict_T._Rendon.webp", name: "Joseph Benedict T. Rendon" },
+  { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/saguitarius/Joshua_H._De_Leon.webp", name: "Joshua H. De Leon" },
+  { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/saguitarius/Joshua_M._Alegre.webp", name: "Joshua M. Alegre" },
+  { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/saguitarius/Justin_H._De_Leon.webp", name: "Justin H. De Leon" },
+  { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/saguitarius/Kean_M._Laurea.webp", name: "Kean M. Laurea" },
+  { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/saguitarius/King_Jhon_B._Agravante.webp", name: "King Jhon B. Agravante" },
+  { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/saguitarius/Lester_Jade_B._Fernandez.webp", name: "Lester Jade B. Fernandez" },
+  { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/saguitarius/Lucille_Anne_R._Loyaga.webp", name: "Lucille Anne R. Loyaga" },
+  { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/saguitarius/Lyka_I._Mendoza.webp", name: "Lyka I. Mendoza" },
+  { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/saguitarius/Maivie_D._Loreno.webp", name: "Maivie D. Loreno" },
+  { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/saguitarius/Maivie_D._Loreño.webp", name: "Maivie D. Loreño" },
+  { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/saguitarius/Marichelle_D._Barbo.webp", name: "Marichelle D. Barbo" },
+  { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/saguitarius/Marielle_C._Bonife.webp", name: "Marielle C. Bonife" },
+  { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/saguitarius/Mark_Jupiter_S._Comunsad.webp", name: "Mark Jupiter S. Comunsad" },
+  { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/saguitarius/Marlon_Jr._G._Reas.webp", name: "Marlon Jr. G. Reas" },
+  { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/saguitarius/Marnie_Chin_Joy_C._Robin.webp", name: "Marnie Chin Joy C. Robin" },
+  { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/saguitarius/Merriam_Webster_D._Tolo.webp", name: "Merriam Webster D. Tolo" },
+  { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/saguitarius/Myra_R._Meras.webp", name: "Myra R. Meras" },
+  { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/saguitarius/Paolo_N._Atienza.webp", name: "Paolo N. Atienza" },
+  { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/saguitarius/Princes_Mae_N._Marasigan.webp", name: "Princes Mae N. Marasigan" },
+  { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/saguitarius/Reina_G._Adolfo.webp", name: "Reina G. Adolfo" },
+  { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/saguitarius/Rheanae_T._Lonquias.webp", name: "Rheanae T. Lonquias" },
+  { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/saguitarius/Robert_P._Gonzaga.webp", name: "Robert P. Gonzaga" },
+  { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/saguitarius/Rochelle_Canane.webp", name: "Rochelle Canane" },
+  { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/saguitarius/Rodilyn_D._Tano.webp", name: "Rodilyn D. Tano" },
+  { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/saguitarius/Roxane_O._Cayasan.webp", name: "Roxane O. Cayasan" },
+  { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/saguitarius/Shera_Mae_Gwyn_J._Pacia.webp", name: "Shera Mae Gwyn J. Pacia" }
+],
+          "taurus" :  [
+  { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/taurus/Alkhilies_V._Tingcungco.webp", name: "Alkhilies V. Tingcungco" },
+  { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/taurus/Andrie_Ken_C._Donayre.webp", name: "Andrie Ken C. Donayre" },
+  { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/taurus/Angelou_B._Montana.webp", name: "Angelou B. Montana" },
+  { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/taurus/Angelou_B._Montaña,_.webp", name: "Angelou B. Montaña, " },
+  { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/taurus/Arianne_Mae_V._Austero.webp", name: "Arianne Mae V. Austero" },
+  { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/taurus/Chris_John_D._Mayola.webp", name: "Chris John D. Mayola" },
+  { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/taurus/Chrizia_Mae_G._Poliquit.webp", name: "Chrizia Mae G. Poliquit" },
+  { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/taurus/Emmarvin_L._Belanigue.webp", name: "Emmarvin L. Belanigue" },
+  { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/taurus/Haide_M._Maico.webp", name: "Haide M. Maico" },
+  { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/taurus/JOSE,_ARCH.webp", name: "JOSE, ARCH" },
+  { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/taurus/Jan_Rey_R._Saladaga.webp", name: "Jan Rey R. Saladaga" },
+  { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/taurus/Jay-R_E._Bulilan.webp", name: "Jay-R E. Bulilan" },
+  { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/taurus/Jeremie_Kelario.webp", name: "Jeremie Kelario" },
+  { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/taurus/Jerry_Veneracion.webp", name: "Jerry Veneracion" },
+  { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/taurus/Jery_C._Mendova.webp", name: "Jery C. Mendova" },
+  { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/taurus/Jeve_A._Aluyog.webp", name: "Jeve A. Aluyog" },
+  { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/taurus/Jhon_Carlo_D._Velarde.webp", name: "Jhon Carlo D. Velarde" },
+  { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/taurus/Jhon_Kevin_Boticalao.webp", name: "Jhon Kevin Boticalao" },
+  { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/taurus/Jhonril_F._Canuto.webp", name: "Jhonril F. Canuto" },
+  { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/taurus/John_Mier_P._Tubesa.webp", name: "John Mier P. Tubesa" },
+  { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/taurus/John_Ray_C._Manlangit.webp", name: "John Ray C. Manlangit" },
+  { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/taurus/John_Rich_R._Loreño.webp", name: "John Rich R. Loreño" },
+  { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/taurus/John_Rich_R._Lorino.webp", name: "John Rich R. Lorino" },
+  { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/taurus/Joshua_L._Luzon.webp", name: "Joshua L. Luzon" },
+  { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/taurus/Jovanie_V._Lagumbay.webp", name: "Jovanie V. Lagumbay" },
+  { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/taurus/Jovanne_N._Nedera.webp", name: "Jovanne N. Nedera" },
+  { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/taurus/Joyce_P._Garcia.webp", name: "Joyce P. Garcia" },
+  { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/taurus/Justine_Kier_L._Sanchez.webp", name: "Justine Kier L. Sanchez" },
+  { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/taurus/Juvy_M._Anadia.webp", name: "Juvy M. Anadia" },
+  { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/taurus/Kent_Jerick_L._Palomar.webp", name: "Kent Jerick L. Palomar" },
+  { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/taurus/Kiven_F._Partosa.webp", name: "Kiven F. Partosa" },
+  { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/taurus/Laica_Jhen_Quinco.webp", name: "Laica Jhen Quinco" },
+  { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/taurus/Lealyn_M._Corbes.webp", name: "Lealyn M. Corbes" },
+  { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/taurus/Marian_Rose_S._Carrozo.webp", name: "Marian Rose S. Carrozo" },
+  { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/taurus/Mark_Justin_Nyl_G._Quimbo.webp", name: "Mark Justin Nyl G. Quimbo" },
+  { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/taurus/Mark_Louise_M._Robenta.webp", name: "Mark Louise M. Robenta" },
+  { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/taurus/Marwin_T._Regis.webp", name: "Marwin T. Regis" },
+  { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/taurus/Mary_Faith_A._Balili.webp", name: "Mary Faith A. Balili" },
+  { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/taurus/Mary_Joy_P._Ligaton.webp", name: "Mary Joy P. Ligaton" },
+  { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/taurus/Princess_Marie_D._Navarro.webp", name: "Princess Marie D. Navarro" },
+  { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/taurus/Ram_Nicko_C._Begonte.webp", name: "Ram Nicko C. Begonte" },
+  { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/taurus/Reymon_C._Elmido.webp", name: "Reymon C. Elmido" },
+  { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/taurus/Reymond_T._Gacita.webp", name: "Reymond T. Gacita" },
+  { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/taurus/Rosabel_C._Andales.webp", name: "Rosabel C. Andales" },
+  { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/taurus/Shan_Andrew_L._Tisado.webp", name: "Shan Andrew L. Tisado" },
+  { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/taurus/Shyra_Mae_Dean_Asis.webp", name: "Shyra Mae Dean Asis" },
+  { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/taurus/Tristan_Jake_R._Mendiola.webp", name: "Tristan Jake R. Mendiola" },
+  { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/taurus/Wilchard_E._Padero.webp", name: "Wilchard E. Padero" },
+  { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/taurus/William_C._Morales.webp", name: "William C. Morales" },
+  { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/taurus/Yashmien_Priya_Olea_G._Cerena.webp", name: "Yashmien Priya Olea G. Cerena" }
+],
+          "virgo" :  [
+  { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/virgo/ABUANA,_CAMILLE_.webp", name: "ABUANA, CAMILLE " },
+  { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/virgo/ALUYOG,_ERWIN_BLOBZ_.webp", name: "ALUYOG, ERWIN BLOBZ " },
+  { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/virgo/ALUYOG,_JEMWEL,_LONQUIAS.webp", name: "ALUYOG, JEMWEL, LONQUIAS" },
+  { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/virgo/ALVERO,_JOSHUA,_NABONG.webp", name: "ALVERO, JOSHUA, NABONG" },
+  { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/virgo/AMARILLE,_ARNNIE,_TORRES.webp", name: "AMARILLE, ARNNIE, TORRES" },
+  { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/virgo/AMPONG,_DANIELLA,_PEREGRINO.webp", name: "AMPONG, DANIELLA, PEREGRINO" },
+  { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/virgo/AQUINO,_CASSANDRA_KHAIN,_MABUTE.webp", name: "AQUINO, CASSANDRA KHAIN, MABUTE" },
+  { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/virgo/AQUINO,_MA._JOAN,_TROYO.webp", name: "AQUINO, MA. JOAN, TROYO" },
+  { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/virgo/ATIENZA,_ANGELA,_COSTIN.webp", name: "ATIENZA, ANGELA, COSTIN" },
+  { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/virgo/ATIENZA,_ANGELICA,_COSTIN.webp", name: "ATIENZA, ANGELICA, COSTIN" },
+  { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/virgo/BALONDO,_MATHEW_CALDA.webp", name: "BALONDO, MATHEW CALDA" },
+  { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/virgo/BEYONG,_JOMEL.webp", name: "BEYONG, JOMEL" },
+  { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/virgo/CALO-OY,_JOLLY,_LOQUINTE_.webp", name: "CALO-OY, JOLLY, LOQUINTE " },
+  { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/virgo/CENO,_JHUN_GERLEE_,_ALMINE.webp", name: "CENO, JHUN GERLEE , ALMINE" },
+  { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/virgo/CRUZADA,_ALBERT,_GUBAT.webp", name: "CRUZADA, ALBERT, GUBAT" },
+  { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/virgo/CUYSONA,_ZYRA,_DIAZ.webp", name: "CUYSONA, ZYRA, DIAZ" },
+  { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/virgo/DIOSO,_JOHN_ALBERT.webp", name: "DIOSO, JOHN ALBERT" },
+  { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/virgo/ERNE,_JEROME,_TOMINES_.webp", name: "ERNE, JEROME, TOMINES " },
+  { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/virgo/ESTALANI,_MARTIN,_MONTERO.webp", name: "ESTALANI, MARTIN, MONTERO" },
+  { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/virgo/GACITA,_FREDERICK,_JR._NAVARRO.webp", name: "GACITA, FREDERICK, JR. NAVARRO" },
+  { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/virgo/GACITA,_NOAH_BENEDICTO_III_SEBUGON.webp", name: "GACITA, NOAH BENEDICTO III SEBUGON" },
+  { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/virgo/GALENZOGA,_ANGEL_MAE,_ATIENZA.webp", name: "GALENZOGA, ANGEL MAE, ATIENZA" },
+  { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/virgo/GILBUENA,_NINO_ANGELO,_CABINTOY_.webp", name: "GILBUENA, NINO ANGELO, CABINTOY " },
+  { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/virgo/GILBUENA,_NIÑO_ANGELO,_CABINTOY_.webp", name: "GILBUENA, NIÑO ANGELO, CABINTOY " },
+  { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/virgo/GLORIA,_VILMA,_LORENO.webp", name: "GLORIA, VILMA, LORENO" },
+  { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/virgo/GLORIA,_VILMA,_LOREÑO.webp", name: "GLORIA, VILMA, LOREÑO" },
+  { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/virgo/JAMINAR,_ALRHEY,_MANDRAS_.webp", name: "JAMINAR, ALRHEY, MANDRAS " },
+  { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/virgo/JAVIER,_LOURAIN,_ADOLFO.webp", name: "JAVIER, LOURAIN, ADOLFO" },
+  { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/virgo/JUSTIMBASTE,_KAREN,_.webp", name: "JUSTIMBASTE, KAREN, " },
+  { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/virgo/LABARES,_ANGELIKA,_QUEROBIN_.webp", name: "LABARES, ANGELIKA, QUEROBIN " },
+  { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/virgo/LEDESMA,_ANTONIO,_ROSQUITES.webp", name: "LEDESMA, ANTONIO, ROSQUITES" },
+  { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/virgo/LLEVE,_WILMAR,_BOLANO.webp", name: "LLEVE, WILMAR, BOLANO" },
+  { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/virgo/LLEVE,_WILMAR,_BOLAÑO.webp", name: "LLEVE, WILMAR, BOLAÑO" },
+  { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/virgo/LUMA-AS,_JURY_JEAN,_PECITAS.webp", name: "LUMA-AS, JURY JEAN, PECITAS" },
+  { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/virgo/MAICO,_FRANCIS_ARTHUR,_URGEL.webp", name: "MAICO, FRANCIS ARTHUR, URGEL" },
+  { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/virgo/MALAREJES,_LORENCE,_ALCASODA.webp", name: "MALAREJES, LORENCE, ALCASODA" },
+  { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/virgo/MANSINADEZ,_DARYLLE,_DUMAGING.webp", name: "MANSINADEZ, DARYLLE, DUMAGING" },
+  { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/virgo/MONTON,_MARIO,_MURILLO.webp", name: "MONTON, MARIO, MURILLO" },
+  { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/virgo/NAVARRO,_CYRA_JAY,_MAJARAS.webp", name: "NAVARRO, CYRA JAY, MAJARAS" },
+  { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/virgo/NAVARRO,_ROGIE,_CANUTO.webp", name: "NAVARRO, ROGIE, CANUTO" },
+  { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/virgo/PALLAR,_JEMUEL,_ALVARES.webp", name: "PALLAR, JEMUEL, ALVARES" },
+  { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/virgo/PARAN,_PRINCE_CARL,_AZUCENA_.webp", name: "PARAN, PRINCE CARL, AZUCENA " },
+  { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/virgo/PENARANDA,_KRISFHE,_OLENDAN.webp", name: "PENARANDA, KRISFHE, OLENDAN" },
+  { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/virgo/PERJES,_MA_CRISTINE,_TOMINES.webp", name: "PERJES, MA CRISTINE, TOMINES" },
+  { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/virgo/PEÑARANDA,_KRISFHE,_OLENDAN.webp", name: "PEÑARANDA, KRISFHE, OLENDAN" },
+  { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/virgo/QUITAIN,_AERON,_VILLARIN_.webp", name: "QUITAIN, AERON, VILLARIN " },
+  { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/virgo/REGIS,_AYHEZA_MAE,_ALLONAR.webp", name: "REGIS, AYHEZA MAE, ALLONAR" },
+  { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/virgo/REMANES,_LENALYN,_COMUNSAD.webp", name: "REMANES, LENALYN, COMUNSAD" },
+  { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/virgo/Rhenee_Rose_R._Sugbo.webp", name: "Rhenee Rose R. Sugbo" },
+  { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/virgo/SERVANA,_ANGEL,_GACITA.webp", name: "SERVANA, ANGEL, GACITA" },
+  { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/virgo/SERVAÑA,_ANGEL,_GACITA.webp", name: "SERVAÑA, ANGEL, GACITA" },
+  { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/virgo/TABURADA,_SARAH_MAY.webp", name: "TABURADA, SARAH MAY" },
+  { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/virgo/TALISAY,_JOHN_MARK,_SANCHEZ_.webp", name: "TALISAY, JOHN MARK, SANCHEZ " },
+  { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/virgo/TEROY,_MARIELLE,_PAMIN.webp", name: "TEROY, MARIELLE, PAMIN" },
+  { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/virgo/TOBIAS,_AVRIL,_CARDINAL_.webp", name: "TOBIAS, AVRIL, CARDINAL " },
+  { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/virgo/TOROTORO,_GIALYN,_ASA.webp", name: "TOROTORO, GIALYN, ASA" },
+  { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/virgo/VEROS,_JELLO,_GAY.webp", name: "VEROS, JELLO, GAY" }
+]
+        };
+
+        const teachers = [
+            { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/libra/Frenz_Jay_O._Felizarta.webp", name: "Frenz Jay O. Felizarta", section_name: "None" },
+            { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/libra/Fritz_N._Dioso.webp", name: "Fritz N. Dioso", section_name: "Aquarius" },
+            { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/libra/Izzy_N._Robes.webp", name: "Izzy N. Robes", section_name: "Capricorn" }
+        ];
+
+        const achievements = {
+            "Aaron P. Atienza": ["Most Improved Student", "Math Olympiad Winner"],
+            "Allison Fate P. Dalugdugan": ["Best in English", "Leadership Award", "Science Fair Champion"],
+            "Adrian D. Gallos": ["Athlete of the Year", "Community Service Award"],
+            "Ashley A. Riños": ["Art Excellence Award", "Most Creative Project","Most Improved Student","Leadership Award","Athlete of the Year","Art Excellence Award","fghghgjhjj","fdfdggfhhfdhh","fdfgfdhghghjhgfh","dfdfdgfhg"],
+            "Christian James D. Reas": ["Programming Contest Winner", "Debate Champion"]
+        };
+
+        const otherAwards = {
+            "Most Improved Student": ["Aaron P. Atienza", "April Jean E. Delgado","Ashley A. Riños"],
+            "Leadership Award": ["Allison Fate P. Dalugdugan", "Althea Genesis S. Tarinque","Ashley A. Riños"],
+            "Athlete of the Year": ["Adrian D. Gallos", "Darwin S. Castro","Ashley A. Riños"],
+            "Art Excellence Award": ["Ashley A. Riños", "Cherry Ann B. Adonis"],
+            "Science Fair Champion": ["Allison Fate P. Dalugdugan", "Anghelo L. Olita","Ashley A. Riños"]
+        };
+
+        const speeches = [
+            {
+                name: "Dr. Maria Santos",
+                status: "Principal",
+                img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/libra/Frenz_Jay_O._Felizarta.webp",
+                message: "To the graduating class of 2025, you have shown remarkable resilience and dedication throughout your journey at ANHS-SH. Your achievements, both academic and extracurricular, have set new standards for excellence. As you move forward to the next chapter of your lives, remember that education is not just about grades and awards, but about character, compassion, and the courage to make a difference in the world. We are immensely proud of each and every one of you."
+            },
+            {
+                name: "John Reyes",
+                status: "Student Council Secretary",
+                img: "https://via.placeholder.com/150",
+                message: "Fellow students, what a journey it has been! From early morning classes to late-night study sessions, from school events to competitions, we've grown together in ways we never imagined. I'm honored to have served as your Student Council Secretary and witnessed firsthand the incredible talent, creativity, and spirit that defines our class. As we part ways, let's promise to stay connected, support each other's dreams, and never forget the memories we've created at ANHS-SH. The future belongs to us!"
+            }
+        ];
+
+        const memories = [
+            "anhs-school.jpg",
+            "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/libra/Frenz_Jay_O._Felizarta.webp",
+            "https://via.placeholder.com/400x300?text=Science+Fair",
+            "https://via.placeholder.com/400x300?text=Arts+Exhibition",
+            "https://via.placeholder.com/400x300?text=Field+Trip",
+            "https://via.placeholder.com/400x300?text=Christmas+Party",
+            "https://via.placeholder.com/400x300?text=Debate+Competition",
+            "https://via.placeholder.com/400x300?text=Volunteer+Activity"
+        ];
+
+        const graduationLyrics = `
+song title
+
+We walked these halls with dreams so wide,
+Through every storm, we stood with pride.
+From morning bells to sunset cheers,
+We faced our hopes, we faced our fears.
+
+Now caps fly high, hearts beat as one,
+Our chapter ends—but not our run.
+ANHS-SH, you shaped our way,
+We’ll carry you in all we say.
+
+So here’s to friends, to teachers true,
+To every laugh, to all we knew.
+Though paths may part, our bond stays strong—
+Graduates of 2025, we all belong.
+`;
+
+        // DOM Elements
+        const searchInput = document.getElementById('searchInput');
+        const navLinks = document.querySelectorAll('.nav-link');
+        const sections = document.querySelectorAll('.section');
+        const studentModal = document.getElementById('studentModal');
+        const closeModal = document.getElementById('closeModal');
+        const modalImg = document.getElementById('modalImg');
+        const modalName = document.getElementById('modalName');
+        const modalAwards = document.getElementById('modalAwards');
+        const modalAwardsSection = document.getElementById('modalAwardsSection');
+        const viewFullBtn = document.getElementById('viewFullBtn');
+        const fullImageModal = document.getElementById('fullImageModal');
+        const fullImage = document.getElementById('fullImage');
+        const closeFullImage = document.getElementById('closeFullImage');
+        const loading = document.getElementById('loading');
+        const scrollLoader = document.getElementById('scrollLoader');
+        const scrollToTopBtn = document.getElementById('scrollToTopBtn');
+
+        // Pagination
+        // ✅ ADD NEW SECTION HERE 
+        const ITEMS_PER_PAGE = 6;
+        let currentPage = { aquarius: 1, aries: 1,capricorn: 1, gemini: 1, leo: 1, libra: 1, saguitarius: 1, taurus: 1, virgo: 1}; // to let currentPage = { aquarius: 1, capricorn: 1, pisces: 1 };  // ← add pisces
+        let isFetching = { aquarius: false, aries: false, capricorn: false, gemini: false, leo: false, libra: false, saguitarius: false, taurus: false, virgo: false}; // to let isFetching = { aquarius: false, capricorn: false, pisces: false };  // ← add pisces
+
+        // Lazy load image
+        function lazyLoadImage(imgElement, src) {
+            if (!imgElement || !src) return;
+
+            // Tiny transparent placeholder to avoid layout shift & enable blur
+            const placeholder = "data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Crect width='100%25' height='100%25' fill='%23f0f0f0'/%3E%3C/svg%3E";
+            imgElement.src = placeholder;
+            imgElement.classList.add('img-placeholder');
+
+            const img = new Image();
+            img.onload = () => {
+                imgElement.src = src;
+                imgElement.classList.remove('img-placeholder');
+                imgElement.classList.add('img-loaded');
+            };
+            img.onerror = () => {
+                imgElement.src = "https://via.placeholder.com/300x300/cccccc/666666?text=Image+Not+Found";
+                imgElement.classList.remove('img-placeholder');
+                imgElement.classList.add('img-loaded');
+            };
+            img.src = src;
+        }
+
+        // Get all awards (individual + other) for a student
+        function getAllAwards(studentName) {
+            const awardsSet = new Set();
+            if (achievements[studentName]) {
+                achievements[studentName].forEach(a => awardsSet.add(a));
+            }
+            for (const [award, recipients] of Object.entries(otherAwards)) {
+                if (recipients.includes(studentName)) {
+                    awardsSet.add(award);
+                }
+            }
+            return Array.from(awardsSet);
+        }
+
+        // Generate student cards
+        function generateStudentCards(section, containerId, page = 1) {
+            const container = document.getElementById(containerId);
+            const startIndex = (page - 1) * ITEMS_PER_PAGE;
+            const endIndex = startIndex + ITEMS_PER_PAGE;
+            const studentsToShow = students[section].slice(startIndex, endIndex);
+
+            studentsToShow.forEach(student => {
+                const card = document.createElement('div');
+                card.className = 'student-card fade-in';
+                card.innerHTML = `
+                    <img alt="${student.name}" class="student-img" loading="lazy">
+                    <div class="student-info">
+                        <h3 class="student-name">${student.name}</h3>
+                    </div>
+                `;
+                const imgElement = card.querySelector('.student-img');
+                lazyLoadImage(imgElement, student.img);
+                card.addEventListener('click', () => openStudentModal(student, student.img));
+                container.appendChild(card);
+            });
+
+            if (endIndex >= students[section].length) {
+                isFetching[section] = true;
+            }
+        }
+
+        // Generate teachers
+        function generateTeachers() {
+            const container = document.getElementById('teachers-grid');
+            container.innerHTML = '';
+            teachers.forEach(teacher => {
+                const card = document.createElement('div');
+                card.className = 'teacher-card fade-in';
+                const sectionText = teacher.section_name && teacher.section_name !== "None" ? `<div class="teacher-section">${teacher.section_name} Section</div>` : '';
+                card.innerHTML = `
+                    <img alt="${teacher.name}" class="teacher-img" loading="lazy">
+                    <div class="teacher-info">
+                        <h3 class="teacher-name">${teacher.name}</h3>
+                        ${sectionText}
+                    </div>
+                `;
+                const imgElement = card.querySelector('.teacher-img');
+                lazyLoadImage(imgElement, teacher.img);
+                card.addEventListener('click', () => {
+                    fullImage.src = teacher.img;
+                    fullImageModal.style.display = 'flex';
+                });
+                container.appendChild(card);
+            });
+        }
+
+        // Generate individual achievements (now includes all awards)
+function generateIndividualAchievements() {
+    const container = document.getElementById('individual-achievements');
+    container.innerHTML = '';
+
+    // Get all unique student names who have any award (individual or category-based)
+    const allAwardedStudents = new Set([
+        ...Object.keys(achievements),
+        ...Object.values(otherAwards).flat()
+    ]);
+
+    // Map names back to student objects
+    const allStudents = [...students.aquarius, ...students.capricorn];
+    const studentObjects = Array.from(allAwardedStudents)
+        .map(name => allStudents.find(s => s.name === name))
+        .filter(Boolean); // remove undefined
+
+    // Remove duplicates by name
+    const seen = new Set();
+    const uniqueStudents = studentObjects.filter(s => {
+        if (seen.has(s.name)) return false;
+        seen.add(s.name);
+        return true;
+    });
+
+    uniqueStudents.forEach(student => {
+        const allAwards = getAllAwards(student.name);
+        if (allAwards.length === 0) return; // skip if somehow no awards
+
+        const card = document.createElement('div');
+        card.className = 'speech-card fade-in';
+        card.innerHTML = `
+            <div class="speech-header">
+                <img alt="${student.name}" class="speech-img" loading="lazy">
+                <div class="speech-info">
+                    <h3>${student.name}</h3>
+                    <p>Total Awards: ${allAwards.length}</p>
+                </div>
+            </div>
+            <div class="speech-content">
+                <ul>
+                    ${allAwards.map(award => `<li>🏆 ${award}</li>`).join('')}
+                </ul>
+            </div>
+        `;
+        const imgElement = card.querySelector('.speech-img');
+        lazyLoadImage(imgElement, student.img);
+        card.addEventListener('click', () => openStudentModal(student, student.img));
+        container.appendChild(card);
+    });
+}
+
+        // Generate other awards
+        function generateOtherAwards() {
+            const container = document.getElementById('other-awards');
+            container.innerHTML = '';
+            Object.keys(otherAwards).forEach(awardName => {
+                const awardDiv = document.createElement('div');
+                awardDiv.className = 'award-category fade-in';
+                awardDiv.innerHTML = `
+                    <h3 class="award-title">${awardName}</h3>
+                    <div class="award-recipients">
+                        ${otherAwards[awardName].map(recipient => 
+                            `<div class="recipient" data-name="${recipient}">${recipient}</div>`
+                        ).join('')}
+                    </div>
+                `;
+                container.appendChild(awardDiv);
+            });
+            document.querySelectorAll('.recipient').forEach(recipient => {
+                recipient.addEventListener('click', () => {
+                    const studentName = recipient.getAttribute('data-name');
+                    const student = [...students.aquarius, ...students.capricorn].find(s => s.name === studentName);
+                    if (student) {
+                        openStudentModal(student, student.img);
+                    }
+                });
+            });
+        }
+
+        // Generate speeches
+        function generateSpeeches() {
+            const container = document.getElementById('speeches-container');
+            container.innerHTML = '';
+            speeches.forEach(speech => {
+                const card = document.createElement('div');
+                card.className = 'speech-card fade-in';
+                card.innerHTML = `
+                    <div class="speech-header">
+                        <img alt="${speech.name}" class="speech-img" loading="lazy">
+                        <div class="speech-info">
+                            <h3>${speech.name}</h3>
+                            <p>${speech.status}</p>
+                        </div>
+                    </div>
+                    <div class="speech-content">
+                        ${speech.message}
+                    </div>
+                `;
+                const imgElement = card.querySelector('.speech-img');
+                lazyLoadImage(imgElement, speech.img);
+                container.appendChild(card);
+            });
+        }
+
+        // Generate memories
+        function generateMemories() {
+            const container = document.getElementById('memories-grid');
+            container.innerHTML = '';
+            memories.forEach(imgSrc => {
+                const img = document.createElement('img');
+                img.alt = "School Memory";
+                img.className = 'memory-img fade-in';
+                img.loading = "lazy";
+                img.addEventListener('click', () => {
+                    fullImage.src = imgSrc;
+                    fullImageModal.style.display = 'flex';
+                });
+                lazyLoadImage(img, imgSrc);
+                container.appendChild(img);
+            });
+        }
+        // Open student modal
+        function openStudentModal(student, imgSrc) {
+            modalName.textContent = student.name;
+            modalAwards.innerHTML = '';
+            const allAwards = getAllAwards(student.name);
+            if (allAwards.length > 0) {
+                allAwards.forEach(award => {
+                    const li = document.createElement('li');
+                    li.innerHTML = `<span class="award-icon">🏆</span> ${award}`;
+                    modalAwards.appendChild(li);
+                });
+            } else {
+                const li = document.createElement('li');
+                li.textContent = "No awards recorded yet.";
+                modalAwards.appendChild(li);
+            }
+            lazyLoadImage(modalImg, imgSrc);
+            modalAwardsSection.style.display = 'block';
+            viewFullBtn.onclick = () => {
+                fullImage.src = imgSrc;
+                fullImageModal.style.display = 'flex';
+            };
+            studentModal.style.display = 'flex';
+        }
+
+        
+        // Open teacher modal
+function openTeacherModal(teacher, imgSrc) {
+    modalName.textContent = teacher.name;
+    modalAwards.innerHTML = '';
+
+    // Display section name if available and not "None"
+    if (teacher.section_name && teacher.section_name !== "None") {
+        const li = document.createElement('li');
+        li.textContent = `${teacher.section_name} Section`;
+        modalAwards.appendChild(li);
+    } else {
+        const li = document.createElement('li');
+        li.textContent = "No assigned section";
+        modalAwards.appendChild(li);
+    }
+
+    lazyLoadImage(modalImg, imgSrc);
+
+    // Update modal header to "Section" instead of "Profile"
+    const modalHeader = document.querySelector('#studentModal .modal-section h3');
+    modalHeader.textContent = 'Section';
+
+    modalAwardsSection.style.display = 'block';
+
+    // Update button behavior to show full image
+    viewFullBtn.onclick = () => {
+        fullImage.src = imgSrc;
+        fullImageModal.style.display = 'flex';
+    };
+
+   
+
+    // Show modal
+    studentModal.style.display = 'flex';
+}
+        // Close modals
+        closeModal.addEventListener('click', () => studentModal.style.display = 'none');
+        closeFullImage.addEventListener('click', () => fullImageModal.style.display = 'none');
+        window.addEventListener('click', (e) => {
+            if (e.target === studentModal) studentModal.style.display = 'none';
+            if (e.target === fullImageModal) fullImageModal.style.display = 'none';
+        });
+
+        // Navigation
+        navLinks.forEach(link => {
+            link.addEventListener('click', (e) => {
+                e.preventDefault();
+                navLinks.forEach(l => l.classList.remove('active'));
+                link.classList.add('active');
+                const section = link.getAttribute('data-section');
+                sections.forEach(s => {
+                    s.style.display = (s.id === `${section}-section`) ? 'block' : 'none';
+                });
+            });
+        });
+
+        // Search
+       // Enhanced Search: Hide sections with no matches
+searchInput.addEventListener('input', (e) => {
+    const term = e.target.value.toLowerCase().trim();
+
+    // Reset: Show all section titles and cards initially
+    document.querySelectorAll('.section-title').forEach(t => {
+        t.classList.remove('highlight');
+        t.style.display = 'block';
+    });
+    document.querySelectorAll('.student-card, .teacher-card').forEach(c => c.style.display = 'block');
+
+    // If search is empty, stop here
+    if (term === '') return;
+
+    // Section-to-container mapping (for extensibility)
+    const sectionMap = {
+        aquarius: { titleId: 'aquarius-title', containerId: 'aquarius-students' },
+        aries: { titleId: 'aries-title', containerId: 'aries-students' },
+        capricorn: { titleId: 'capricorn-title', containerId: 'capricorn-students' },
+        gemini: { titleId: 'gemini-title', containerId: 'gemini-students' },
+        leo: { titleId: 'leo-title', containerId: 'leo-students' },
+        libra: { titleId: 'libra-title', containerId: 'libra-students' },
+        saguitarius: { titleId: 'saguitarius-title', containerId: 'saguitarius-students' },
+        taurus: { titleId: 'taurus-title', containerId: 'taurus-students' },
+        virgo: { titleId: 'virgo-title', containerId: 'virgo-students' }
+        // ✅ Add new sections here as needed, e.g.:
+        // pisces: { titleId: 'pisces-title', containerId: 'pisces-students' }
+    };
+
+    // First pass: check for section name match
+    let sectionMatchFound = false;
+    for (const [key, { titleId, containerId }] of Object.entries(sectionMap)) {
+        const titleEl = document.getElementById(titleId);
+        if (key.toLowerCase().includes(term) || (titleEl && titleEl.textContent.toLowerCase().includes(term))) {
+            titleEl.classList.add('highlight');
+            sectionMatchFound = true;
+        }
+    }
+
+    // Gather all student names across sections (with section association)
+    const allStudents = [];
+    for (const [sectionKey, data] of Object.entries(sectionMap)) {
+        const studentsInSection = students[sectionKey] || [];
+        studentsInSection.forEach(student => {
+            allStudents.push({ ...student, section: sectionKey });
+        });
+    }
+
+    // Find matching students
+    const matchingStudents = allStudents.filter(s =>
+        s.name.toLowerCase().includes(term)
+    );
+
+    // Build set of sections that have matches (either by name or student)
+    const sectionsWithMatches = new Set(matchingStudents.map(s => s.section));
+    if (sectionMatchFound) {
+        // If section name matched, show *all* students in that section
+        for (const [key, { titleId }] of Object.entries(sectionMap)) {
+            const titleEl = document.getElementById(titleId);
+            if (key.toLowerCase().includes(term) || (titleEl && titleEl.textContent.toLowerCase().includes(term))) {
+                sectionsWithMatches.add(key);
+            }
+        }
+    }
+
+    // Hide sections *without* matches
+    for (const [key, { titleId, containerId }] of Object.entries(sectionMap)) {
+        const titleEl = document.getElementById(titleId);
+        const containerEl = document.getElementById(containerId);
+        if (sectionsWithMatches.has(key)) {
+            titleEl.style.display = 'block';
+            // If section name matched (not just student), show *all* its students
+            const sectionNameMatched = key.toLowerCase().includes(term) || (titleEl && titleEl.textContent.toLowerCase().includes(term));
+            if (sectionNameMatched) {
+                containerEl.querySelectorAll('.student-card').forEach(c => c.style.display = 'block');
+            } else {
+                // Otherwise, show only matching students in this section
+                containerEl.querySelectorAll('.student-card').forEach(card => {
+                    const nameEl = card.querySelector('.student-name');
+                    const name = nameEl ? nameEl.textContent.toLowerCase() : '';
+                    card.style.display = name.includes(term) ? 'block' : 'none';
+                });
+            }
+        } else {
+            // Hide entire section
+            titleEl.style.display = 'none';
+            containerEl.querySelectorAll('.student-card').forEach(c => c.style.display = 'none');
+        }
+    }
+    // After hiding cards & titles, also hide student-grid containers if empty
+document.querySelectorAll('.students-grid').forEach(grid => {
+    const visibleCards = Array.from(grid.children).some(card => 
+        card.style.display !== 'none'
+    );
+    grid.style.display = visibleCards ? 'grid' : 'none';
+});
+
+    // Optional: smooth scroll to first visible section if any
+    const firstVisibleTitle = document.querySelector('.section-title:not([style*="display: none"])');
+    if (firstVisibleTitle) {
+        firstVisibleTitle.scrollIntoView({ behavior: 'smooth', block: 'start', inline: 'nearest' });
+    }
+});
+
+
+
+        // Scroll to top
+        window.addEventListener('scroll', () => {
+            scrollToTopBtn.classList.toggle('show', window.pageYOffset > 300);
+        });
+        scrollToTopBtn.addEventListener('click', () => window.scrollTo({ top: 0, behavior: 'smooth' }));
+ 
+        // Infinite scroll
+        let isScrolling = false;
+        function handleScroll() {
+        if (isScrolling) return;
+        const studentsSection = document.getElementById('students-section');
+        const rect = studentsSection.getBoundingClientRect();
+        if (rect.top > window.innerHeight || rect.bottom < 0) return;
+
+        // ✅ Add new section name to this list
+        const sectionNames = ['aquarius', 'aries','capricorn', 'gemini', 'leo', 'libra', 'saguitarius', 'taurus', 'virgo'];  // to const sectionNames = ['aquarius', 'capricorn', 'pisces'];  // ← updated list
+        let targetSection = null;
+
+        for (const name of sectionNames) {
+            if (!isFetching[name]) {
+            const container = document.getElementById(`${name}-students`);
+            const containerRect = container.getBoundingClientRect();
+            if (containerRect.bottom <= window.innerHeight + 200) {
+                // scrolled near bottom of this section
+                targetSection = name;
+                break;
+            }
+            }
+        }
+
+        if (!targetSection || isFetching[targetSection]) return;
+
+        isScrolling = true;
+        scrollLoader.classList.add('show');
+        setTimeout(() => {
+            currentPage[targetSection]++;
+            generateStudentCards(targetSection, `${targetSection}-students`, currentPage[targetSection]);
+            scrollLoader.classList.remove('show');
+            isScrolling = false;
+        }, 800);
+        }
+        
+        window.addEventListener('scroll', handleScroll);
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', () => {
+            loading.style.display = 'block';
+            setTimeout(() => {
+
+                // ✅ ADD NEW SECTION HERE 
+                generateStudentCards('aquarius', 'aquarius-students', 1);
+                generateStudentCards('aries', 'aries-students', 1);
+                generateStudentCards('capricorn', 'capricorn-students', 1);
+                generateStudentCards('gemini', 'gemini-students', 1);
+                generateStudentCards('leo', 'leo-students', 1);
+                generateStudentCards('libra', 'libra-students', 1);
+                generateStudentCards('saguitarius', 'saguitarius-students', 1);
+                generateStudentCards('taurus', 'taurus-students', 1);
+                generateStudentCards('virgo', 'virgo-students', 1);
+                // generateStudentCards('pisces', 'pisces-students', 1);  // ✅ add this
+
+                generateTeachers();
+                generateIndividualAchievements();
+                generateOtherAwards();
+                generateSpeeches();
+                generateMemories();
+                generateLyrics();
+                loading.style.display = 'none';
+
+                 // ✅ ADD NEW SECTION HERE
+                currentPage.aquarius = 1;
+                currentPage.aries = 1;
+                currentPage.capricorn = 1;
+                currentPage.gemini = 1;
+                currentPage.leo = 1;
+                currentPage.libra = 1;
+                currentPage.saguitarius = 1;
+                currentPage.taurus = 1;
+                currentPage.virgo = 1;
+                // currentPage.pisces = 1;  // ✅
+
+                document.querySelectorAll('.section').forEach(s => s.classList.add('fade-in'));
+            }, 1000);
+        });
+
+        // Keyboard support
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') {
+                if (studentModal.style.display === 'flex') studentModal.style.display = 'none';
+                if (fullImageModal.style.display === 'flex') fullImageModal.style.display = 'none';
+            }
+        });
+
+        function generateLyrics() {
+            const lyricsContainer = document.getElementById('lyrics-content');
+            lyricsContainer.innerHTML = `<p class="lyrics-text">${graduationLyrics}</p>`;
+        }
+    </script>
+</body>
+</html>
