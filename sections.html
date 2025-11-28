@@ -1,0 +1,1080 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title id="page-title">Section — ANHS-SH 2025</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <style>
+    :root {
+      --primary: #e58e26;
+      --primary-dark: #d47a1c;
+      --secondary: #f0a500;
+      --accent: #ffcc00;
+      --light: #fff9e6;
+      --glass-bg: rgba(255, 255, 255, 0.75);
+      --glass-border: rgba(255, 255, 255, 0.3);
+      --shadow-sm: 0 4px 12px rgba(0,0,0,0.08);
+      --shadow-md: 0 8px 24px rgba(0,0,0,0.12);
+      --shadow-lg: 0 16px 40px rgba(0,0,0,0.15);
+      --radius-sm: 8px;
+      --radius-md: 12px;
+      --radius-lg: 16px;
+      --transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+      line-height: 1.6;
+      background: linear-gradient(135deg, #fff8e1, #ffecb3);
+      color: #2d2d2d;
+      min-height: 100vh;
+    }
+
+    header {
+      background: linear-gradient(120deg, var(--primary), var(--secondary));
+      color: white;
+      padding: 1.8rem 1.5rem;
+      text-align: center;
+      box-shadow: var(--shadow-sm);
+      position: relative;
+      overflow: hidden;
+    }
+    header::before {
+      content: '';
+      position: absolute;
+      top: -50%;
+      left: -50%;
+      width: 200%;
+      height: 200%;
+      background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
+      transform: rotate(30deg);
+    }
+    header h1 {
+      font-size: 2.2rem;
+      font-weight: 800;
+      letter-spacing: -0.5px;
+      text-shadow: 0 2px 4px rgba(0,0,0,0.2);
+    }
+    header p {
+      font-size: 1.1rem;
+      opacity: 0.9;
+      max-width: 600px;
+      margin: 0.5rem auto 0;
+    }
+
+    nav {
+      background: white;
+      box-shadow: var(--shadow-sm);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+    .nav-container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0.8rem 1.25rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .nav-logo {
+      font-weight: 800;
+      font-size: 1.4rem;
+      background: linear-gradient(90deg, var(--primary), var(--secondary));
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    .nav-logo i { font-size: 1.2rem; }
+
+    .nav-back a {
+      text-decoration: none;
+      color: #555;
+      background: var(--glass-bg);
+      padding: 0.6rem 1.2rem;
+      border-radius: var(--radius-sm);
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+      backdrop-filter: blur(8px);
+      border: 1px solid var(--glass-border);
+      transition: var(--transition);
+    }
+    .nav-back a:hover {
+      background: rgba(229, 142, 38, 0.15);
+      color: var(--primary-dark);
+      transform: translateY(-1px);
+      box-shadow: var(--shadow-sm);
+    }
+
+    .dropdown {
+      position: relative;
+      display: inline-block;
+    }
+
+    .dropdown-btn {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 0.5rem;
+      background: var(--glass-bg);
+      color: #444;
+      padding: 0.65rem 1.25rem;
+      border-radius: var(--radius-sm);
+      font-weight: 600;
+      text-decoration: none;
+      border: 1px solid var(--glass-border);
+      backdrop-filter: blur(10px);
+      transition: var(--transition);
+      cursor: pointer;
+      min-width: 140px;
+      text-align: left;
+      box-shadow: var(--shadow-sm);
+    }
+
+    .dropdown-btn:hover,
+    .dropdown-btn:focus {
+      background: linear-gradient(145deg, rgba(229, 142, 38, 0.12), rgba(240, 165, 0, 0.08));
+      color: var(--primary-dark);
+      transform: translateY(-1px);
+      box-shadow: var(--shadow-md);
+      outline: none;
+    }
+
+    .dropdown-btn::after {
+      content: "▼";
+      font-size: 0.7rem;
+      transition: transform 0.25s ease;
+      transform: translateY(-1px);
+    }
+
+    .dropdown-btn[aria-expanded="true"]::after {
+      transform: rotate(180deg) translateY(1px);
+    }
+
+    .dropdown-content {
+      position: absolute;
+      top: calc(100% + 6px);
+      right: 0;
+      background: white;
+      min-width: 180px;
+      border-radius: var(--radius-md);
+      box-shadow: var(--shadow-lg);
+      z-index: 101;
+      backdrop-filter: blur(12px);
+      border: 1px solid var(--glass-border);
+      opacity: 0;
+      visibility: hidden;
+      transform: translateY(-8px);
+      transition: 
+        opacity 0.25s ease,
+        visibility 0.25s,
+        transform 0.25s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      overflow: hidden;
+    }
+
+    .dropdown-btn[aria-expanded="true"] + .dropdown-content {
+      opacity: 1;
+      visibility: visible;
+      transform: translateY(0);
+    }
+
+    .dropdown-content a {
+      display: flex;
+      align-items: center;
+      padding: 0.85rem 1.25rem;
+      color: #333;
+      text-decoration: none;
+      font-weight: 500;
+      transition: var(--transition);
+      gap: 0.75rem;
+      border-bottom: 1px solid rgba(0, 0, 0, 0.04);
+      position: relative;
+    }
+
+    .dropdown-content a:last-child {
+      border-bottom: none;
+    }
+
+    .dropdown-content a::before {
+      content: '';
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 4px;
+      height: 100%;
+      background: var(--primary);
+      transform: scaleY(0);
+      transform-origin: top;
+      transition: transform 0.25s ease;
+    }
+
+    .dropdown-content a:hover,
+    .dropdown-content a:focus {
+      background: rgba(255, 243, 224, 0.85);
+      color: var(--primary-dark);
+      padding-left: 1.35rem;
+      outline: none;
+    }
+
+    .dropdown-content a:hover::before,
+    .dropdown-content a:focus::before {
+      transform: scaleY(1);
+    }
+
+    .dropdown-content i {
+      color: var(--secondary);
+      font-size: 1rem;
+      width: 1.2em;
+      text-align: center;
+      flex-shrink: 0;
+    }
+
+    @media (max-width: 768px) {
+      .nav-container {
+        flex-direction: row;
+        align-items: stretch;
+        gap: 0.75rem;
+        padding: 0.8rem 0.5rem;
+      }
+
+      .nav-logo,
+      .nav-back,
+      .dropdown {
+        width: 100%;
+        text-align: center;
+        justify-content: center;
+      }
+
+      .nav-back a,
+      .dropdown-btn {
+        width: 100%;
+        justify-content: center;
+      }
+
+      .dropdown {
+        order: 3;
+      }
+
+      .dropdown-content {
+        position: relative;
+        top: 6px;
+        box-shadow: var(--shadow-md);
+        border-radius: var(--radius-md);
+        max-height: 0;
+        overflow: hidden;
+        opacity: 1;
+        visibility: visible;
+        transform: none;
+        transition: max-height 0.3s ease, padding 0.2s ease;
+      }
+
+      .dropdown-btn[aria-expanded="true"] + .dropdown-content {
+        max-height: 500px;
+        padding: 0.25rem 0;
+      }
+
+      .dropdown-content a {
+        justify-content: center;
+        padding: 0.75rem 1rem;
+        font-size: 0.95rem;
+      }
+
+      .dropdown-content i {
+        font-size: 0.9rem;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .dropdown-content {
+        min-width: 100%;
+        right: 0;
+      }
+    }
+
+    main {
+      max-width: 1500px;
+      margin: 2rem auto;
+      padding: 0 1.25rem;
+    }
+    .section-header {
+      text-align: center;
+      margin-bottom: 2.5rem;
+    }
+    .section-header h1 {
+      font-size: 2.4rem;
+      color: var(--primary);
+      font-weight: 800;
+      margin-bottom: 0.75rem;
+    }
+    .section-header p {
+      font-size: 1.15rem;
+      color: #555;
+      max-width: 700px;
+      margin: 0 auto;
+    }
+
+    .students-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+      gap: 1.5rem;
+    }
+    .student-card {
+      background: var(--glass-bg);
+      border-radius: var(--radius-md);
+      overflow: hidden;
+      box-shadow: var(--shadow-sm);
+      transition: var(--transition);
+      cursor: pointer;
+      position: relative;
+      border: 1px solid var(--glass-border);
+      backdrop-filter: blur(10px);
+      will-change: transform;
+    }
+    .student-card:hover {
+      transform: translateY(-6px);
+      box-shadow: var(--shadow-md);
+    }
+    .student-card:active {
+      transform: translateY(0) scale(0.98);
+      box-shadow: var(--shadow-lg);
+    }
+    .student-card:focus-visible {
+      outline: 2px solid var(--primary);
+      outline-offset: 2px;
+    }
+    .student-card img {
+      width: 100%;
+      height: 180px;
+      object-fit: cover;
+      object-position: top;
+      display: block;
+      transition: var(--transition);
+    }
+    .student-card:hover img {
+      filter: brightness(1.05);
+    }
+    .student-card h3 {
+      padding: 1rem 0.75rem 1.25rem;
+      text-align: center;
+      font-size: 1.05rem;
+      font-weight: 700;
+      color: #333;
+      line-height: 1.3;
+    }
+
+    .modal {
+      display: none;
+      position: fixed;
+      z-index: 1000;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.85);
+      backdrop-filter: blur(10px);
+      justify-content: center;
+      align-items: center;
+      padding: 1.5rem;
+      opacity: 0;
+      visibility: hidden;
+      transition: opacity 0.3s, visibility 0.3s;
+    }
+    .modal.active {
+      opacity: 1;
+      visibility: visible;
+      display: flex; 
+    }
+    .modal-content {
+      background: white;
+      border-radius: var(--radius-lg);
+      width: 100%;
+      max-width: 550px;
+      padding: 2rem;
+      text-align: center;
+      position: relative;
+      box-shadow: var(--shadow-lg);
+      transform: scale(0.95);
+      transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      max-height: 90vh;
+      overflow-y: auto;
+    }
+    .modal.active .modal-content {
+      transform: scale(1);
+    }
+    .close-btn {
+      position: absolute;
+      top: 1.25rem;
+      right: 1.25rem;
+      font-size: 1.75rem;
+      cursor: pointer;
+      color: #aaa;
+      width: 36px;
+      height: 36px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 50%;
+      transition: var(--transition);
+      background: rgba(0,0,0,0.05);
+    }
+    .close-btn:hover,
+    .close-btn:focus {
+      color: var(--primary);
+      background: rgba(229, 142, 38, 0.1);
+      transform: rotate(90deg);
+    }
+    .modal-img-wrapper {
+      margin: 0 auto 1.5rem;
+      width: 140px;
+      height: 140px;
+      border-radius: 50%;
+      overflow: hidden;
+      box-shadow: var(--shadow-md);
+      border: 4px solid white;
+    }
+    .modal img {
+      width: 100%;
+      object-fit: cover;
+      object-position: top;
+    }
+    .modal h2 {
+      margin-bottom: 0.5rem;
+      color: var(--primary);
+      font-size: 1.75rem;
+      font-weight: 800;
+    }
+    .modal p.subtitle {
+      color: #666;
+      font-size: 1rem;
+      margin-bottom: 1.5rem;
+    }
+    .award-section {
+      margin-top: 1.25rem;
+    }
+    .award-section h3 {
+      color: var(--primary-dark);
+      font-size: 1.25rem;
+      margin-bottom: 1rem;
+      font-weight: 700;
+    }
+    .award-list {
+      text-align: left;
+      max-height: 180px;
+      overflow-y: auto;
+      padding-right: 8px;
+    }
+    .award-list ul {
+      list-style: none;
+      padding-left: 0;
+    }
+    .award-list li {
+      padding: 0.5rem 0 0.5rem 2rem;
+      position: relative;
+      border-bottom: 1px dashed #eee;
+      font-size: 0.95rem;
+    }
+    .award-list li:last-child {
+      border-bottom: none;
+    }
+    .award-list li::before {
+      content: '★';
+      position: absolute;
+      left: 0;
+      color: var(--accent);
+      font-weight: bold;
+    }
+    .no-awards {
+      color: #888;
+      font-style: italic;
+      padding: 1rem;
+    }
+
+    .view-full-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      background: linear-gradient(90deg, var(--primary), var(--primary-dark));
+      color: white;
+      padding: 0.75rem 1.5rem;
+      border-radius: 50px;
+      text-decoration: none;
+      font-weight: 600;
+      font-size: 1rem;
+      margin-top: 1.25rem;
+      transition: var(--transition);
+      box-shadow: 0 4px 12px rgba(229, 142, 38, 0.3);
+      border: none;
+      cursor: pointer;
+    }
+    .view-full-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 16px rgba(229, 142, 38, 0.4);
+    }
+    .view-full-btn:active {
+      transform: translateY(0);
+    }
+
+    .modal-content > div[style*="display:flex"] {
+      display: flex;
+      gap: 0.75rem;
+      justify-content: center;
+      margin-top: 1.25rem;
+      flex-wrap: wrap;
+    }
+
+    @media (max-width: 480px) {
+      .modal-content > div[style*="display:flex"] {
+        flex-direction: column;
+      }
+      .modal-content > div[style*="display:flex"] .view-full-btn + .view-full-btn {
+        margin-left: 0;
+        margin-top: 0.5rem;
+      }
+    }
+
+    footer {
+      text-align: center;
+      margin-top: 5rem;
+      padding: 1.5rem;
+      background: #2d2d2d;
+      color: #ddd;
+      border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+    }
+
+    @media (max-width: 768px) {
+      header h1 { font-size: 1.9rem; }
+      header p { font-size: 1rem; }
+      .section-header h1 { font-size: 2rem; }
+      .students-grid { grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 1.25rem; }
+      .modal-content { padding: 1.5rem; }
+      .modal-img-wrapper { width: 120px; height: 120px; }
+    }
+    @media (max-width: 480px) {
+      .students-grid { grid-template-columns: repeat(2, 1fr); }
+      .modal-content {
+        padding: 1.25rem;
+        max-width: calc(100vw - 2rem);
+      }
+      .modal-img-wrapper { width: 100px; height: 100px; }
+      .view-full-btn { font-size: 0.95rem; padding: 0.65rem 1.25rem; }
+    }
+
+    .award-list::-webkit-scrollbar {
+      width: 6px;
+    }
+    .award-list::-webkit-scrollbar-track {
+      background: #f1f1f1;
+      border-radius: 10px;
+    }
+    .award-list::-webkit-scrollbar-thumb {
+      background: var(--primary);
+      border-radius: 10px;
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <h1 id="section-title">Section</h1>
+  <p id="section-tagline">Class of 2025 — <span id="section-motto">Loading…</span></p>
+</header>
+
+<nav>
+  <div class="nav-container">
+    <div class="nav-logo">
+      <i class="fas fa-graduation-cap"></i>
+      ANHS-SH-Yearbook
+    </div>
+    <div class="nav-actions">
+      <div class="nav-back">
+        <a href="index.html">
+          <i class="fas fa-arrow-left"></i> Home
+        </a>
+      </div>
+      <div class="dropdown">
+        <button id="dropdownBtn" class="dropdown-btn" aria-haspopup="true" aria-expanded="false" aria-label="Navigate sections">Sections</button>
+        <div id="dropdownContent" class="dropdown-content" role="menu">
+          <!-- Filled dynamically -->
+        </div>
+      </div>
+    </div>
+  </div>
+</nav>
+
+<main>
+  <section class="section-header">
+    <h1 id="students-title">Meet Our Stars</h1>
+  </section>
+  <div class="students-grid" id="students-container"></div>
+</main>
+
+<!-- Main Student Modal -->
+<div id="studentModal" class="modal" role="dialog" aria-labelledby="modal-title" aria-modal="true">
+  <div class="modal-content">
+    <button class="close-btn" id="closeModal" aria-label="Close modal">
+      <i class="fas fa-times"></i>
+    </button>
+    <div class="modal-img-wrapper">
+      <img id="modal-img" src="" alt="" />
+    </div>
+    <h2 id="modal-name" class="modal-title">Student Name</h2>
+    <p id="modal-subtitle" class="subtitle">Section • Class of 2025</p>
+    <div id="modal-awards"></div>
+  </div>
+</div>
+
+<!-- Fullscreen Image Modal -->
+<div id="fullscreenImageModal" class="modal" role="dialog" aria-labelledby="fullscreen-modal-title" aria-modal="true">
+  <div style="position:relative;width:100%;height:100%;display:flex;justify-content:center;align-items:center;background:black;">
+    <button id="closeFullscreenModal" class="close-btn" style="position:absolute;top:1rem;right:1rem;z-index:10;" aria-label="Close full image">
+      <i class="fas fa-times"></i>
+    </button>
+    <img id="fullscreenImg" src="" alt="" style="max-width:95vw;max-height:90vh;object-fit:contain;border-radius:8px;" />
+  </div>
+</div>
+
+<footer>
+  <p>© 2025 ANHS Senior High Yearbook | <span id="footer-section">Section</span> Section</p>
+</footer>
+
+<script>
+// 🔁 Universal: Get section from URL (e.g. ?section=leo) or fallback
+function getSectionFromURL() {
+  const urlParams = new URLSearchParams(window.location.search);
+  let section = urlParams.get('section')?.toLowerCase() || 'leo';
+  // Validate: only allow known sections
+  if (!sectionsData[section]) section = 'leo';
+  return section;
+}
+
+// 📚 Centralized Data (All sections + awards)
+const sectionsData = {
+  leo: {
+    title: "Leo Section",
+    motto: "Courageous, Confident, Charismatic",
+    colorPrimary: "#d47a1c",
+    colorPrimaryDark: "#d47a1c",
+    students: [
+      { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/libra/A-J_F._Lucapa.webp", name: "A-J F. Lucapa" },
+  { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/libra/Angel_C._Rosquites.webp", name: "Angel C. Rosquites" },
+  { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/libra/Angela_P._Montaño.webp", name: "Angela P. Montaño" },
+  { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/libra/Angela_P._montano.webp", name: "Angela P. montano" },
+  { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/libra/Angelou_R._Ledesma.webp", name: "Angelou R. Ledesma" },
+  { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/libra/Ariel_D._Manaog.webp", name: "Ariel D. Manaog" },
+  { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/libra/Bernadeth_C._Evarrete.webp", name: "Bernadeth C. Evarrete" },
+  { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/libra/Cesario_Jr._R._Barquin.webp", name: "Cesario Jr. R. Barquin" },
+  { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/libra/Chandlier_Justin_Gumba.webp", name: "Chandlier Justin Gumba" },
+  { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/libra/Chinalyn_L._Abenoja.webp", name: "Chinalyn L. Abenoja" },
+  { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/libra/Christine_Margarette_M._Capilitan.webp", name: "Christine Margarette M. Capilitan" },
+  { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/libra/Crisanto_C._Davido.webp", name: "Crisanto C. Davido" },
+  { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/libra/Cymon_Jade_O._Sombilon.webp", name: "Cymon Jade O. Sombilon" },
+  { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/libra/Danica_Albiar.webp", name: "Danica Albiar" },
+  { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/libra/Dexter_P._De_Jesus.webp", name: "Dexter P. De Jesus" },
+  { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/libra/Edelyn_A._Remollo.webp", name: "Edelyn A. Remollo" },
+  { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/libra/Erica_Lien_A._Austero.webp", name: "Erica Lien A. Austero" },
+  { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/libra/Francine_Mae_O._Felizarta.webp", name: "Francine Mae O. Felizarta" },
+  { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/libra/Francis_D._Tan.webp", name: "Francis D. Tan" },
+  { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/libra/Frenz_Jay_O._Felizarta.webp", name: "Frenz Jay O. Felizarta" },
+  { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/libra/Fritz_N._Dioso.webp", name: "Fritz N. Dioso" },
+  { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/libra/Gecel_G._Robes.webp", name: "Gecel G. Robes" }
+    ]
+  },
+  aquarius: {
+    title: "Aquarius Section",
+    motto: "Innovative, Independent, Visionary",
+    colorPrimary: "#4a90e2",
+    colorPrimaryDark: "#8e14ad",
+    students: [
+      { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/aquarius/Adrian_D._Gallos.webp  ", name: "Adrian D. Gallos" },
+      { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/aquarius/Aldred_C._Salcedo.webp  ", name: "Aldred C. Salcedo" },
+      { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/aquarius/Andray_A._Realino.webp  ", name: "Andray A. Realino" },
+      { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/leo/Aira_B._De_Paz.webp  ", name: "Aira B. De Paz" },
+      { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/leo/Aldrin_Jay_A._Salmoro.webp  ", name: "Aldrin Jay A. Salmoro" },
+      { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/leo/Angelie_D._Realino.webp  ", name: "Angelie D. Realino" },
+      { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/leo/Archie_A._Corpin.webp  ", name: "Archie A. Corpin" },
+      { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/leo/Chamille_D._Olarte.webp  ", name: "Chamille D. Olarte" },
+      { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/leo/Cristopher_A._Porcadilla.webp  ", name: "Cristopher A. Porcadilla" },
+      { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/leo/Crystal_N._Cabia.webp  ", name: "Crystal N. Cabia" },
+      { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/leo/Erna_Mae_V._Alajas.webp  ", name: "Erna Mae V. Alajas" },
+      { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/leo/Gabriel_Loreno.webp  ", name: "Gabriel Loreno" },
+      { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/leo/Gabriel_Lor  eño.webp", name: "Gabriel Loreño" },
+      { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/leo/Ivy_G._Chavez.webp  ", name: "Ivy G. Chavez" },
+      { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/leo/Jhoy_A._Ceno.webp  ", name: "Jhoy A. Ceno" },
+      { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/leo/Jilamae_B._Pasadas.webp  ", name: "Jilamae B. Pasadas" },
+      { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/leo/John_Michael_A._Samocino.webp  ", name: "John Michael A. Samocino" },
+      { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/leo/John_Paul_L._Cumpio.webp  ", name: "John Paul L. Cumpio" },
+      { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/leo/Joyce_M._Sabonsolin.webp  ", name: "Joyce M. Sabonsolin" },
+      { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/leo/Julian_P._Cabal.webp  ", name: "Julian P. Cabal" },
+      { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/leo/Julius_D._Olazo.webp  ", name: "Julius D. Olazo" },
+      { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/leo/Justine_J._Moquia.webp  ", name: "Justine J. Moquia" },
+      { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/leo/Kevin_G._Delgado.webp  ", name: "Kevin G. Delgado" },
+      { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/leo/King_B._Cinco.webp  ", name: "King B. Cinco" },
+      { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/leo/Louise_Joy_L._Almaden.webp  ", name: "Louise Joy L. Almaden" },
+      { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/leo/Lovely_Joy_P._Lumbre.webp  ", name: "Lovely Joy P. Lumbre" },
+      { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/leo/Ma._Jenny_A._Gabrera.webp  ", name: "Ma. Jenny A. Gabrera" },
+      { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/leo/Madelyn_E._Garcia.webp  ", name: "Madelyn E. Garcia" },
+      { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/leo/Madonna_C._Noveda.webp  ", name: "Madonna C. Noveda" },
+      { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/leo/Mariel_A._Impuesto.webp  ", name: "Mariel A. Impuesto" },
+      { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/leo/Meriam_O._Kininahan.webp  ", name: "Meriam O. Kininahan" },
+      { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/leo/Nimfa_V._Impuesto.webp  ", name: "Nimfa V. Impuesto" },
+      { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/leo/Princess_Diane_V._Ringor.webp  ", name: "Princess Diane V. Ringor" },
+      { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/leo/Rainier_D._De_Paz.webp  ", name: "Rainier D. De Paz" },
+      { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/leo/Rea_Daisylyn_A._Vallejos.webp  ", name: "Rea Daisylyn A. Vallejos" },
+      { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/leo/Reymart_A._Gabrera.webp  ", name: "Reymart A. Gabrera" },
+      { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/leo/Rhea_Mae_D._Baristo.webp  ", name: "Rhea Mae D. Baristo" },
+      { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/leo/Rhea_Mae_D._Mecairan.webp  ", name: "Rhea Mae D. Mecairan" },
+      { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/leo/Rica_Mae_M._Bisnar.webp  ", name: "Rica Mae M. Bisnar" },
+      { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/leo/Rieza_Mae_C._De_Paz.webp  ", name: "Rieza Mae C. De Paz" },
+      { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/leo/Sabelle_O._Tisado.webp  ", name: "Sabelle O. Tisado" },
+      { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/leo/Shiena_Mae_L._Ritaga.webp  ", name: "Shiena Mae L. Ritaga" },
+      { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/leo/Wesley_Franz_P._Cultura.webp  ", name: "Wesley Franz P. Cultura" }
+    ]
+  },
+  aries: {
+    title: "Aries Section",
+    motto: "Bold, Energetic, Trailblazing",
+    colorPrimary: "#e74c3c",
+    colorPrimaryDark: "#c0392b",
+    students: [
+      { img: "https://via.placeholder.com/180x180/e0e0e0/999999?text=AR1  ", name: "Aries Student 1" },
+      { img: "https://via.placeholder.com/180x180/e0e0e0/999999?text=AR2  ", name: "Aries Student 2" },
+      { img: "https://via.placeholder.com/180x180/e0e0e0/999999?text=AR3  ", name: "Aries Student 3" },
+      { img: "https://via.placeholder.com/180x180/e0e0e0/999999?text=AR4  ", name: "Aries Student 4" },
+      { img: "https://via.placeholder.com/180x180/e0e0e0/999999?text=AR5  ", name: "Aries Student 5" },
+      { img: "https://via.placeholder.com/180x180/e0e0e0/999999?text=AR6  ", name: "Aries Student 6" },
+      { img: "https://via.placeholder.com/180x180/e0e0e0/999999?text=AR7  ", name: "Aries Student 7" },
+      { img: "https://via.placeholder.com/180x180/e0e0e0/999999?text=AR8  ", name: "Aries Student 8" },
+      { img: "https://via.placeholder.com/180x180/e0e0e0/999999?text=AR9  ", name: "Aries Student 9" },
+      { img: "https://via.placeholder.com/180x180/e0e0e0/999999?text=AR10 ", name: "Aries Student 10" },
+      { img: "https://via.placeholder.com/180x180/e0e0e0/999999?text=AR11 ", name: "Aries Student 11" },
+      { img: "https://via.placeholder.com/180x180/e0e0e0/999999?text=AR12 ", name: "Aries Student 12" },
+      { img: "https://via.placeholder.com/180x180/e0e0e0/999999?text=AR13 ", name: "Aries Student 13" },
+      { img: "https://via.placeholder.com/180x180/e0e0e0/999999?text=AR14 ", name: "Aries Student 14" },
+      { img: "https://via.placeholder.com/180x180/e0e0e0/999999?text=AR15 ", name: "Aries Student 15" },
+      { img: "https://via.placeholder.com/180x180/e0e0e0/999999?text=AR16 ", name: "Aries Student 16" },
+      { img: "https://via.placeholder.com/180x180/e0e0e0/999999?text=AR17 ", name: "Aries Student 17" },
+      { img: "https://via.placeholder.com/180x180/e0e0e0/999999?text=AR18 ", name: "Aries Student 18" },
+      { img: "https://via.placeholder.com/180x180/e0e0e0/999999?text=AR19 ", name: "Aries Student 19" },
+      { img: "https://via.placeholder.com/180x180/e0e0e0/999999?text=AR20 ", name: "Aries Student 20" }
+    ]
+  }
+};
+
+// 🏆 Shared achievements (works across sections)
+const achievements = {
+  "Aaron P. Atienza": ["Most Improved Student", "Math Olympiad Winner"],
+  "Allison Fate P. Dalugdugan": ["Best in English", "Leadership Award", "Science Fair Champion"],
+  "Adrian D. Gallos": ["Athlete of the Year", "Community Service Award"],
+  "Ashley A. Riños": [
+    "Most Creative Project", "Most Improved Student",
+    "Leadership Award", "Athlete of the Year",
+    "Outstanding Collaboration", "Digital Media Innovation",
+    "Best Portfolio", "Spirit of ANHS Award", "bobo"
+  ],
+  "Christian James D. Reas": ["Programming Contest Winner", "Debate Champion"],
+  "Cherry Ann B. Adonis": ["Art Excellence Award"]
+};
+
+const otherAwards = {
+  "Most Improved Student": ["Aaron P. Atienza", "April Jean E. Delgado", "Ashley A. Riños"],
+  "Leadership Award": ["Allison Fate P. Dalugdugan", "Althea Genesis S. Tarinque", "Ashley A. Riños"],
+  "Athlete of the Year": ["Adrian D. Gallos", "Darwin S. Castro", "Ashley A. Riños"],
+  "Art Excellence Award": ["Ashley A. Riños", "Cherry Ann B. Adonis"],
+  "Science Fair Champion": ["Allison Fate P. Dalugdugan", "Anghelo L. Olita", "Ashley A. Riños"],
+  "haha": ["Ashley A. Riños"]
+};
+
+// 🔁 Merge awards into achievements (deduped)
+Object.entries(otherAwards).forEach(([award, names]) => {
+  names.forEach(rawName => {
+    const normName = normalize(rawName);
+    let matchedKey = Object.keys(achievements).find(k => normalize(k) === normName);
+    if (!matchedKey) {
+      matchedKey = rawName;
+      achievements[matchedKey] = [];
+    }
+    if (!achievements[matchedKey].some(a => normalize(a) === normalize(award))) {
+      achievements[matchedKey].push(award);
+    }
+  });
+});
+
+function normalize(str) {
+  return str
+    .toLowerCase()
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .replace(/\s+/g, " ")
+    .trim();
+}
+
+// 🎨 Apply section theme
+function applySectionTheme(sectionKey) {
+  const sec = sectionsData[sectionKey];
+  const root = document.documentElement;
+  root.style.setProperty('--primary', sec.colorPrimary);
+  root.style.setProperty('--primary-dark', sec.colorPrimaryDark);
+  root.style.setProperty('--secondary', sec.colorPrimary.replace('#', '#') + 'cc');
+  document.getElementById('section-title').textContent = sec.title;
+  document.getElementById('section-motto').textContent = sec.motto;
+  document.getElementById('students-title').textContent = `Meet Our ${sec.title.split(' ')[0]} Stars`;
+  document.getElementById('page-title').textContent = `${sec.title} — ANHS-SH 2025`;
+  document.getElementById('footer-section').textContent = sec.title.split(' ')[0];
+  document.querySelector('.nav-logo').innerHTML = `<i class="fas fa-graduation-cap"></i> ${sec.title}`;
+}
+
+// 🖥️ Fullscreen modal
+function openFullscreenImageModal(src, altText) {
+  const fullscreenModal = document.getElementById('fullscreenImageModal');
+  const fullscreenImg = document.getElementById('fullscreenImg');
+  fullscreenImg.src = src;
+  fullscreenImg.alt = altText || 'Student photo';
+  fullscreenModal.classList.add('active');
+  document.body.style.overflow = 'hidden';
+
+  const close = () => {
+    fullscreenModal.classList.remove('active');
+    document.body.style.overflow = '';
+    document.removeEventListener('keydown', escHandler);
+  };
+
+  const escHandler = (e) => { if (e.key === 'Escape') close(); };
+  document.addEventListener('keydown', escHandler);
+  fullscreenModal.onclick = (e) => { if (e.target === fullscreenModal) close(); };
+  document.getElementById('closeFullscreenModal').onclick = close;
+}
+
+function downloadImage(url, filename) {
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = filename;
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+}
+
+// 🧠 MAIN LOGIC — Optimized for large sections
+document.addEventListener('DOMContentLoaded', () => {
+  const sectionKey = getSectionFromURL();
+  const sectionData = sectionsData[sectionKey];
+
+  // 1. Apply theme
+  applySectionTheme(sectionKey);
+
+  // 2. Populate dropdown
+  const dropdownContent = document.getElementById('dropdownContent');
+  dropdownContent.innerHTML = Object.entries(sectionsData).map(([key, data]) => 
+    `<a href="?section=${key}" role="menuitem">
+      <i class="fas fa-star"></i> ${data.title}
+    </a>`
+  ).join('');
+
+  // 3. 🚀 SMART INFINITE SCROLL GRID (12 per batch)
+  const container = document.getElementById('students-container');
+  const students = sectionData.students;
+  const batchSize = 12;
+  let loadedCount = 0;
+
+  // Batch loading sentinel
+  const sentinel = document.createElement('div');
+  sentinel.style.height = '1px';
+  sentinel.style.margin = '0';
+  container.appendChild(sentinel);
+
+  // Batch loader
+  let isLoadingBatch = false;
+  const batchObserver = new IntersectionObserver((entries) => {
+    if (entries[0].isIntersecting && !isLoadingBatch && loadedCount < students.length) {
+      loadNextBatch();
+    }
+  }, { rootMargin: '200px' });
+  batchObserver.observe(sentinel);
+
+  // Per-image lazy loader
+  const imgObserver = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        const img = entry.target;
+        if (img.dataset.src) {
+          img.src = img.dataset.src;
+          img.removeAttribute('data-src');
+          img.onload = () => img.style.filter = 'none';
+          img.onerror = () => {
+            img.style.filter = 'none';
+            img.parentElement.style.opacity = '0.75';
+            img.src = 'https://via.placeholder.com/180/e0e0e0/999999?text=No+Photo';
+          };
+          imgObserver.unobserve(img);
+        }
+      }
+    });
+  }, { rootMargin: '100px' });
+
+  function loadNextBatch() {
+    if (isLoadingBatch) return;
+    isLoadingBatch = true;
+
+    const start = loadedCount;
+    const end = Math.min(start + batchSize, students.length);
+    const fragment = document.createDocumentFragment();
+
+    for (let i = start; i < end; i++) {
+      const student = students[i];
+      const card = document.createElement('div');
+      card.className = 'student-card';
+      card.setAttribute('role', 'button');
+      card.setAttribute('tabindex', '0');
+      card.setAttribute('aria-label', `View profile of ${student.name}`);
+      
+      card.innerHTML = `
+        <img 
+          data-src="${student.img.trim()}" 
+          alt="${student.name}"
+          loading="lazy"
+          decoding="async"
+          style="filter: blur(4px); transition: filter 0.3s;"
+          onerror="this.style.filter='none'; this.parentElement.style.opacity='0.75'"
+        >
+        <h3>${student.name}</h3>
+      `;
+
+      card.addEventListener('click', () => openModal(student));
+      card.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault();
+          openModal(student);
+        }
+      });
+
+      fragment.appendChild(card);
+    }
+
+    container.insertBefore(fragment, sentinel);
+    loadedCount = end;
+
+    // Lazy-load images in this batch
+    const batchImages = container.querySelectorAll(`.student-card:nth-child(n+${start + 1}):nth-child(-n+${end}) img[data-src]`);
+    batchImages.forEach(img => imgObserver.observe(img));
+
+    isLoadingBatch = false;
+
+    if (loadedCount >= students.length) {
+      batchObserver.unobserve(sentinel);
+    }
+  }
+
+  // Load first batch
+  loadNextBatch();
+
+  // 4. 🎯 Modal logic
+  const modal = document.getElementById('studentModal');
+  const closeModalBtn = document.getElementById('closeModal');
+
+  function closeModal() {
+    modal.classList.remove('active');
+    document.body.style.overflow = '';
+  }
+
+  window.openModal = function(student) {
+    const imgSrc = student.img.trim(); // ✅ CRITICAL: fixes broken URLs
+    const modalImg = document.getElementById('modal-img');
+    const modalName = document.getElementById('modal-name');
+    const modalSubtitle = document.getElementById('modal-subtitle');
+    const modalAwards = document.getElementById('modal-awards');
+
+    modalImg.src = imgSrc;
+    modalImg.alt = student.name;
+    modalName.textContent = student.name;
+    modalSubtitle.textContent = `${sectionData.title.split(' ')[0]} Section • Class of 2025`;
+
+    const normName = normalize(student.name);
+    const matchedKey = Object.keys(achievements).find(k => normalize(k) === normName);
+    const awards = matchedKey 
+      ? [...new Set(achievements[matchedKey])].sort()
+      : [];
+
+    const awardsHTML = awards.length
+      ? `
+        <div class="award-section">
+          <h3><i class="fas fa-trophy"></i> Awards & Recognitions</h3>
+          <div class="award-list">
+            <ul>${awards.map(a => `<li>${a}</li>`).join('')}</ul>
+          </div>
+        </div>`
+      : `<p class="no-awards"><i class="fas fa-info-circle"></i> No awards listed.</p>`;
+
+    const isPlaceholder = !imgSrc || imgSrc.includes('placeholder.com') || imgSrc.includes('No+Photo');
+    const actionButtons = !isPlaceholder
+      ? `
+        <div style="display:flex;gap:0.75rem;justify-content:center;margin-top:1.25rem;flex-wrap:wrap">
+          <button class="view-full-btn" id="viewFullscreenBtn" aria-label="View full-size image">
+            <i class="fas fa-expand"></i> View Full Image
+          </button>
+          <button class="view-full-btn" id="downloadBtn" aria-label="Download image">
+            <i class="fas fa-download"></i> Download Image
+          </button>
+        </div>`
+      : '';
+
+    modalAwards.innerHTML = awardsHTML + actionButtons;
+    
+    if (!isPlaceholder) {
+      document.getElementById('viewFullscreenBtn')?.addEventListener('click', e => {
+        e.preventDefault();
+        openFullscreenImageModal(imgSrc, student.name);
+      });
+      document.getElementById('downloadBtn')?.addEventListener('click', e => {
+        e.preventDefault();
+        const safeName = student.name.replace(/\s+/g, '_').replace(/[^a-z0-9_ñÑáéíóúÁÉÍÓÚ\s]/gi, '');
+        downloadImage(imgSrc, `${safeName}.jpg`);
+      });
+    }
+
+    modal.classList.add('active');
+    document.body.style.overflow = 'hidden';
+    setTimeout(() => closeModalBtn.focus(), 100);
+  };
+
+  closeModalBtn.addEventListener('click', closeModal);
+  modal.addEventListener('click', (e) => { if (e.target === modal) closeModal(); });
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && modal.classList.contains('active')) closeModal();
+  });
+
+  // ✅ Dropdown (unchanged)
+  const dropdownBtn = document.getElementById('dropdownBtn');
+  function toggleDropdown() {
+    const isExpanded = dropdownBtn.getAttribute('aria-expanded') === 'true';
+    dropdownBtn.setAttribute('aria-expanded', !isExpanded);
+  }
+  dropdownBtn.addEventListener('click', (e) => { e.stopPropagation(); toggleDropdown(); });
+  document.addEventListener('click', (e) => {
+    if (!e.target.closest('.dropdown')) dropdownBtn.setAttribute('aria-expanded', 'false');
+  });
+  dropdownBtn.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); toggleDropdown(); }
+    else if (e.key === 'Escape') { dropdownBtn.setAttribute('aria-expanded', 'false'); dropdownBtn.focus(); }
+    else if (e.key === 'ArrowDown') {
+      e.preventDefault();
+      dropdownBtn.setAttribute('aria-expanded', 'true');
+      setTimeout(() => dropdownContent.querySelector('a')?.focus(), 50);
+    }
+  });
+  dropdownContent.addEventListener('keydown', (e) => {
+    const items = Array.from(dropdownContent.querySelectorAll('a'));
+    const idx = items.indexOf(document.activeElement);
+    if (e.key === 'ArrowDown') { e.preventDefault(); (items[idx + 1] || items[0])?.focus(); }
+    else if (e.key === 'ArrowUp') { e.preventDefault(); (items[idx - 1] || items[items.length - 1])?.focus(); }
+    else if (e.key === 'Escape') { dropdownBtn.setAttribute('aria-expanded', 'false'); dropdownBtn.focus(); }
+  });
+  dropdownContent.querySelectorAll('a').forEach(link => {
+    link.addEventListener('click', () => dropdownBtn.setAttribute('aria-expanded', 'false'));
+  });
+});
+</script>
+
+</body>
+</html>
