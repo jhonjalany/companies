@@ -420,11 +420,18 @@
       transition: var(--transition);
       background: rgba(0,0,0,0.05);
     }
-    .close-btn:hover,
-    .close-btn:focus {
+    .close-btn:hover {
       color: var(--primary);
       background: rgba(229, 142, 38, 0.1);
       transform: rotate(90deg);
+    }
+
+    /* Keep focus visible for accessibility, but no rotation */
+    .close-btn:focus {
+      outline: 2px solid var(--primary);
+      outline-offset: 2px;
+      background: rgba(229, 142, 38, 0.1);
+      /* ❌ Do NOT rotate on focus alone */
     }
     .modal-img-wrapper {
       margin: 0 auto 1.5rem;
