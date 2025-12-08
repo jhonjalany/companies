@@ -586,12 +586,14 @@
 
 <header>
   <h1 id="section-title">Section</h1>
+  <!-- ✅ Change here -->
   <p id="section-tagline">Class of 2025 — <span id="section-motto">Loading…</span></p>
 </header>
 
 <nav>
   <div class="nav-container">
     <div class="nav-logo">
+      <!-- ✅ Change here -->
       <i class="fas fa-graduation-cap"></i>
       ANHS-SH-Yearbook
     </div>
@@ -644,6 +646,7 @@
 </div>
 
 <footer>
+  <!-- ✅ Change here -->
   <p>© 2025 ANHS Senior High Yearbook | <span id="footer-section">Section</span> Section</p>
 </footer>
 
@@ -651,13 +654,16 @@
 // 🔁 Universal: Get section from URL (e.g. ?section=leo) or fallback
 function getSectionFromURL() {
   const urlParams = new URLSearchParams(window.location.search);
-  let section = urlParams.get('section')?.toLowerCase() || 'leo';
+  //✅ Change here as default
+  let section = urlParams.get('section')?.toLowerCase() || 'aries';
   // Validate: only allow known sections
-  if (!sectionsData[section]) section = 'leo';
+  //✅ Change here
+  if (!sectionsData[section]) section = 'aries';
   return section;
 }
 
 // 📚 Centralized Data (All sections + awards)
+//✅ Change here
 const sectionsData = {
   leo: {
     title: "Leo Section",
@@ -771,6 +777,7 @@ const sectionsData = {
 };
 
 // 🏆 Shared achievements (works across sections)
+//✅ Change here
 const achievements = {
   "Aaron P. Atienza": ["Most Improved Student", "Math Olympiad Winner"],
   "Allison Fate P. Dalugdugan": ["Best in English", "Leadership Award", "Science Fair Champion"],
@@ -785,6 +792,7 @@ const achievements = {
   "Cherry Ann B. Adonis": ["Art Excellence Award"]
 };
 
+//✅ Change here
 const otherAwards = {
   "Most Improved Student": ["Aaron P. Atienza", "April Jean E. Delgado", "Ashley A. Riños"],
   "Leadership Award": ["Allison Fate P. Dalugdugan", "Althea Genesis S. Tarinque", "Ashley A. Riños"],
@@ -986,7 +994,7 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   window.openModal = function(student) {
-    const imgSrc = student.img.trim(); // ✅ CRITICAL: fixes broken URLs
+    const imgSrc = student.img.trim(); //  CRITICAL: fixes broken URLs
     const modalImg = document.getElementById('modal-img');
     const modalName = document.getElementById('modal-name');
     const modalSubtitle = document.getElementById('modal-subtitle');
@@ -1051,7 +1059,7 @@ document.addEventListener('DOMContentLoaded', () => {
     if (e.key === 'Escape' && modal.classList.contains('active')) closeModal();
   });
 
-  // ✅ Dropdown (unchanged)
+  //  Dropdown (unchanged)
   const dropdownBtn = document.getElementById('dropdownBtn');
   function toggleDropdown() {
     const isExpanded = dropdownBtn.getAttribute('aria-expanded') === 'true';
