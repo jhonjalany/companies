@@ -1,0 +1,2135 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover"/>
+  <title>ANHS-SH 2025 Yearbook</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <style>
+    :root {
+      --primary: #4a69bd;
+      --primary-dark: #3a59a8;
+      --secondary: #6a89cc;
+      --accent: #55efc4;
+      --light: #f5f6fa;
+      --dark: #2f3542;
+      --glass-bg: rgba(255, 255, 255, 0.85);
+      --glass-border: rgba(255, 255, 255, 0.4);
+      --shadow-sm: 0 4px 12px rgba(0,0,0,0.08);
+      --shadow-md: 0 8px 24px rgba(0,0,0,0.12);
+      --shadow-lg: 0 16px 40px rgba(0,0,0,0.15);
+      --radius-sm: 8px;
+      --radius-md: 12px;
+      --radius-lg: 16px;
+      --transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    }
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      touch-action: manipulation;
+    }
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      line-height: 1.6;
+      background: linear-gradient(135deg, #fafafa, #eef2f7);
+      color: #333;
+      min-height: 100vh;
+    }
+    header {
+      background: linear-gradient(120deg, var(--primary), var(--secondary));
+      color: white;
+      padding: 1.5rem 2rem;
+      text-align: center;
+      box-shadow: var(--shadow-sm);
+      position: relative;
+      overflow: hidden;
+    }
+    header::before {
+      content: '';
+      position: absolute;
+      top: -50%;
+      left: -50%;
+      width: 200%;
+      height: 200%;
+      background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
+      transform: rotate(30deg);
+    }
+    header h1 {
+      font-size: clamp(1.8rem, 5vw, 2.4rem);
+      font-weight: 800;
+      letter-spacing: -0.5px;
+      text-shadow: 0 2px 4px rgba(0,0,0,0.2);
+    }
+    header p {
+      font-size: clamp(1.1rem, 3.5vw, 1.2rem);
+      opacity: 0.95;
+      max-width: 700px;
+      margin: 0.5rem auto 0;
+    }
+    nav {
+      background: white;
+      box-shadow: var(--shadow-sm);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+    .nav-container {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0.8rem 1.25rem;
+    }
+    .nav-logo {
+      font-size: 1.4rem;
+      font-weight: bold;
+      color: var(--primary);
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    .nav-links {
+      display: flex;
+      gap: 1rem;
+      flex-wrap: wrap;
+    }
+    .nav-links a,
+    .dropdown-btn {
+      text-decoration: none;
+      color: var(--dark);
+      padding: 0.6rem 1rem;
+      border-radius: var(--radius-sm);
+      transition: var(--transition);
+      background: var(--glass-bg);
+      border: 1px solid var(--glass-border);
+      backdrop-filter: blur(6px);
+    }
+    .nav-links a:hover,
+    .dropdown-btn:hover {
+      background: rgba(74, 105, 189, 0.12);
+      color: var(--primary-dark);
+      transform: translateY(-1px);
+      box-shadow: var(--shadow-sm);
+    }
+
+    
+    .dropdown {
+      position: relative;
+      display: inline-block;
+    }
+
+    .dropdown-btn {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 0.5rem;
+      background: var(--glass-bg);
+      color: #444;
+      padding: 0.65rem 1.25rem;
+      border-radius: var(--radius-sm);
+      font-weight: 600;
+      text-decoration: none;
+      border: 1px solid var(--glass-border);
+      backdrop-filter: blur(10px);
+      transition: var(--transition);
+      cursor: pointer;
+      min-width: 120px;
+      text-align: left;
+      box-shadow: var(--shadow-sm);
+    }
+
+    .dropdown-btn:hover,
+    .dropdown-btn:focus {
+      background: rgba(74, 105, 189, 0.12);
+      color: var(--primary-dark);
+      transform: translateY(-1px);
+      box-shadow: var(--shadow-md);
+      outline: none;
+    }
+
+    .dropdown-btn::after {
+      content: "▼";
+      font-size: 0.7rem;
+      transition: transform 0.25s ease;
+    }
+
+    .dropdown-btn[aria-expanded="true"]::after {
+      transform: rotate(180deg);
+    }
+
+    .dropdown-content {
+      position: absolute;
+      top: calc(100% + 6px);
+      left: 0;
+      background: white;
+      min-width: 180px;
+      border-radius: var(--radius-md);
+      box-shadow: var(--shadow-lg);
+      z-index: 101;
+      backdrop-filter: blur(12px);
+      border: 1px solid var(--glass-border);
+      opacity: 0;
+      visibility: hidden;
+      transform: translateY(-8px);
+      transition: 
+        opacity 0.25s ease,
+        visibility 0.25s,
+        transform 0.25s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      overflow: hidden;
+    }
+
+    .dropdown-btn[aria-expanded="true"] + .dropdown-content {
+      opacity: 1;
+      visibility: visible;
+      transform: translateY(0);
+    }
+
+    .dropdown-content a {
+      display: flex;
+      align-items: center;
+      padding: 0.85rem 1.25rem;
+      color: #333;
+      text-decoration: none;
+      font-weight: 500;
+      transition: var(--transition);
+      gap: 0.75rem;
+      border-bottom: 1px solid rgba(0, 0, 0, 0.04);
+      position: relative;
+    }
+
+    .dropdown-content a:last-child {
+      border-bottom: none;
+    }
+
+    .dropdown-content a::before {
+      content: '';
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 4px;
+      height: 100%;
+      background: var(--primary);
+      transform: scaleY(0);
+      transform-origin: top;
+      transition: transform 0.25s ease;
+    }
+
+    .dropdown-content a:hover,
+    .dropdown-content a:focus {
+      background: rgba(245, 246, 250, 0.85);
+      color: var(--primary-dark);
+      padding-left: 1.35rem;
+      outline: none;
+    }
+
+    .dropdown-content a:hover::before,
+    .dropdown-content a:focus::before {
+      transform: scaleY(1);
+    }
+
+    .dropdown-content i {
+      color: var(--secondary);
+      font-size: 1rem;
+      width: 1.2em;
+      text-align: center;
+      flex-shrink: 0;
+    }
+
+    /* ===== HAMBURGER & MOBILE MENU ===== */
+    .hamburger-btn {
+      display: none;
+      background: none;
+      border: none;
+      font-size: 1.5rem;
+      color: var(--dark);
+      cursor: pointer;
+      padding: 0.5rem;
+      margin-left: auto;
+    }
+
+    @media (max-width: 768px) {
+      .hamburger-btn {
+        display: block;
+      }
+      .nav-links {
+        position: absolute;
+        top: 100%;
+        left: 0;
+        right: 0;
+        background: white;
+        flex-direction: column;
+        align-items: flex-start;
+        padding: 1rem 1.5rem;
+        box-shadow: var(--shadow-md);
+        border-bottom: 1px solid #eee;
+        display: none;
+        z-index: 102;
+      }
+      .nav-links.active {
+        display: flex;
+      }
+
+      /* Mobile dropdown override */
+      .dropdown {
+        width: 100%;
+        position: relative;
+      }
+      .dropdown-btn {
+        width: 100%;
+        text-align: left;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+      .dropdown-content {
+        position: static;
+        opacity: 1;
+        visibility: visible;
+        max-height: 0;
+        overflow: hidden;
+        transition: max-height 0.3s ease, padding 0.3s ease;
+        box-shadow: none;
+        border: none;
+        margin-top: 0.5rem;
+      }
+      .dropdown-btn[aria-expanded="true"] + .dropdown-content {
+        max-height: 500px;
+        padding: 0.5rem 0 0;
+      }
+      .dropdown-content a {
+        padding: 0.75rem 1rem;
+        border-radius: var(--radius-sm);
+        justify-content: center;
+      }
+      .nav-container {
+        flex-wrap: nowrap;
+      }
+    }
+
+    /* ===== REST OF STYLES (UNCHANGED) ===== */
+    main {
+      width: min(98vw, 1400px);
+      margin: 2rem auto;
+      padding: 0 clamp(1.5rem, 3vw, 2rem);
+    }
+    .section {
+      display: none;
+      animation: fadeIn 0.5s ease-in-out;
+    }
+    .section.active {
+      display: block;
+    }
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    h2 {
+      color: var(--primary);
+      margin-bottom: 1.5rem;
+      padding-bottom: 0.5rem;
+      border-bottom: 2px solid var(--secondary);
+      font-weight: 800;
+      font-size: clamp(1.6rem, 4.2vw, 2rem);
+    }
+    h3 {
+      font-size: clamp(1.3rem, 3.5vw, 1.6rem);
+    }
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+      gap: 1.5rem;
+      margin-bottom: 2rem;
+    }
+    .card {
+      background: var(--glass-bg);
+      border-radius: var(--radius-md);
+      overflow: hidden;
+      box-shadow: var(--shadow-sm);
+      transition: var(--transition);
+      cursor: pointer;
+      border: 1px solid var(--glass-border);
+      backdrop-filter: blur(8px);
+      height: 100%;
+    }
+    .card:hover {
+      transform: translateY(-6px);
+      box-shadow: var(--shadow-md);
+    }
+    .card img {
+      width: 100%;
+      height: 250px;
+      object-fit: contain;
+      object-position: top;
+      display: block;
+      transition: filter 0.3s;
+      aspect-ratio: 3 / 4;
+    }
+    .card:hover img {
+      filter: brightness(1.05);
+    }
+    .card h4 {
+      padding: 1rem;
+      text-align: center;
+      font-size: clamp(0.95rem, 2.8vw, 1.05rem);
+      font-weight: 700;
+      color: #333;
+    }
+    .speech-card, .award-card {
+      background: white;
+      border-radius: var(--radius-md);
+      padding: clamp(1rem, 3vw, 1.5rem);
+      margin-bottom: 1.5rem;
+      box-shadow: var(--shadow-sm);
+      transition: var(--transition);
+    }
+    .speech-card:hover, .award-card:hover {
+      box-shadow: var(--shadow-md);
+      transform: translateY(-2px);
+    }
+    .award-list {
+      margin-left: 1.5rem;
+    }
+    .award-list li {
+      margin-bottom: 0.4rem;
+    }
+    .memories-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 1.25rem;
+      margin-bottom: 2rem;
+    }
+    .carousel-wrapper {
+      position: relative;
+      max-width: 95%;
+      margin: 0 auto 2rem;
+      overflow: hidden;
+    }
+    .memory-card {
+      background: var(--glass-bg);
+      border-radius: var(--radius-md);
+      overflow: hidden;
+      box-shadow: var(--shadow-sm);
+      transition: var(--transition);
+      cursor: pointer;
+      backdrop-filter: blur(6px);
+      border: 1px solid var(--glass-border);
+      height: 100%;
+    }
+    .memory-card:hover {
+      transform: translateY(-6px);
+      box-shadow: var(--shadow-md);
+    }
+    .memory-card img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      object-position: top;
+      border-radius: var(--radius-md) var(--radius-md) 0 0;
+      aspect-ratio: 4 / 3;
+    }
+    #song .song-section {
+      background: linear-gradient(145deg, #fdfcff, #f0f5ff);
+      border-radius: var(--radius-lg);
+      padding: clamp(2rem, 5vw, 3rem);
+      box-shadow: var(--shadow-md);
+      position: relative;
+      overflow: hidden;
+      border: 1px solid var(--glass-border);
+      backdrop-filter: blur(6px);
+      margin-bottom: 2rem;
+    }
+    #song .song-section::before,
+    #song .song-section::after {
+      content: '';
+      position: absolute;
+      width: 100%;
+      height: 1px;
+      background: repeating-linear-gradient(
+        to right,
+        transparent,
+        transparent 10px,
+        rgba(74, 105, 189, 0.1) 10px,
+        rgba(74, 105, 189, 0.1) 12px
+      );
+      z-index: 0;
+    }
+    #song .song-section::before { top: 3.5rem; }
+    #song .song-section::after { bottom: 3.5rem; }
+    #song .song-header {
+      text-align: center;
+      margin-bottom: 2.5rem;
+      position: relative;
+    }
+    #song .song-title {
+      font-family: 'Georgia', 'Times New Roman', serif;
+      font-size: clamp(2rem, 6vw, 3rem);
+      font-weight: 900;
+      color: var(--primary);
+      margin: 0;
+      letter-spacing: -1px;
+      line-height: 1.1;
+      text-shadow: 0 2px 4px rgba(74, 105, 189, 0.1);
+    }
+    #song .song-subtitle {
+      font-size: clamp(1rem, 3vw, 1.2rem);
+      color: #777;
+      margin-top: 0.5rem;
+      font-weight: 600;
+    }
+    #song .song-title::after {
+      content: '';
+      display: block;
+      width: 120px;
+      height: 3px;
+      background: linear-gradient(to right, var(--accent), var(--primary));
+      margin: 1rem auto;
+      border-radius: 2px;
+    }
+    #song .lyrics {
+      font-family: 'Cormorant Garamond', 'Georgia', serif;
+      font-size: clamp(0.5rem, 3.5vw, 1.4rem);
+      line-height: 1;
+      color: #2d3748;
+      text-align: center;
+      position: relative;
+      z-index: 1;
+      padding: 0 1rem;
+      max-width: 800px;
+      margin: 0 auto;
+    }
+    #song .lyrics::before,
+    #song .lyrics::after {
+      content: '“';
+      display: block;
+      font-size: clamp(3rem, 8vw, 5rem);
+      color: rgba(74, 105, 189, 0.08);
+      line-height: 1;
+      height: 1em;
+      margin: 0.5em auto;
+    }
+    #song .lyrics::after {
+      content: '”';
+    }
+    #song .lyrics span.line {
+      display: block;
+      margin: 0.5em 0;
+      position: relative;
+    }
+    #song .song-footer {
+      text-align: center;
+      margin-top: 2rem;
+      color: #718096;
+      font-style: italic;
+      font-size: clamp(0.95rem, 2.8vw, 1.1rem);
+    }
+    #song .song-emblem {
+      text-align: center;
+      margin: 1.5rem 0 1rem;
+    }
+    #song .song-emblem img {
+      width: 90px;
+      height: 90px;
+      margin: 0 auto;
+      border-radius: 50%;
+      background: white;
+      padding: 0.6rem;
+      box-shadow: var(--shadow-sm);
+      border: 2px solid var(--primary);
+      object-fit: contain;
+    }
+    @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&display=swap');
+    .modal {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.85);
+      backdrop-filter: blur(10px);
+      justify-content: center;
+      align-items: center;
+      padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);
+      opacity: 0;
+      visibility: hidden;
+      transition: opacity 0.3s, visibility 0.3s;
+      z-index: 2000;
+    }
+    .modal.active {
+      opacity: 1;
+      visibility: visible;
+      display: flex;
+    }
+    .modal-content {
+      background: white;
+      border-radius: var(--radius-lg);
+      width: 100%;
+      max-width: min(95vw, 600px);
+      padding: clamp(1rem, 3vw, 2rem);
+      text-align: center;
+      position: relative;
+      box-shadow: var(--shadow-lg);
+      transform: scale(0.95);
+      transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      max-height: 90vh;
+      overflow-y: auto;
+    }
+    .modal.active .modal-content {
+      transform: scale(1);
+    }
+    .close-btn {
+      position: absolute;
+      top: clamp(0.75rem, 2vw, 1.25rem);
+      right: clamp(0.75rem, 2vw, 1.25rem);
+      font-size: 1.5rem;
+      cursor: pointer;
+      color: #aaa;
+      width: 44px;
+      height: 44px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 50%;
+      transition: var(--transition);
+      background: rgba(0,0,0,0.08);
+      border: none;
+    }
+    .close-btn:hover,
+    .close-btn:focus {
+      color: var(--primary);
+      background: rgba(74, 105, 189, 0.2);
+      transform: rotate(90deg);
+      outline: none;
+    }
+    .modal-img-wrapper {
+      margin: 0 auto 1.5rem;
+      width: clamp(100px, 25vw, 140px);
+      height: clamp(100px, 25vw, 140px);
+      border-radius: 50%;
+      overflow: hidden;
+      box-shadow: var(--shadow-md);
+      border: 4px solid white;
+    }
+    .modal img {
+      width: 100%;
+      object-fit: cover;
+      object-position: top;
+    }
+    .modal-title {
+      margin-bottom: 0.5rem;
+      color: var(--primary);
+      font-size: clamp(1.5rem, 4vw, 1.75rem);
+      font-weight: 800;
+    }
+    .subtitle {
+      color: #666;
+      font-size: clamp(0.9rem, 2.8vw, 1rem);
+      margin-bottom: 1.5rem;
+    }
+    .award-section {
+      margin-top: 1.5rem;
+    }
+    .award-section h3 {
+      color: var(--primary-dark);
+      font-size: clamp(1.15rem, 3vw, 1.25rem);
+      margin-bottom: 1rem;
+      font-weight: 700;
+    }
+    .award-list {
+      text-align: left;
+      max-height: 180px;
+      overflow-y: auto;
+      padding-right: 8px;
+    }
+    .award-list ul {
+      list-style: none;
+      padding-left: 0;
+    }
+    .award-list li {
+      padding: 0.5rem 0 0.5rem 2rem;
+      position: relative;
+      border-bottom: 1px dashed #eee;
+      font-size: clamp(0.85rem, 2.5vw, 0.95rem);
+    }
+    .award-list li:last-child {
+      border-bottom: none;
+    }
+    .award-list li::before {
+      content: '★';
+      position: absolute;
+      left: 0;
+      color: var(--accent);
+      font-weight: bold;
+    }
+    .no-awards {
+      color: #888;
+      font-style: italic;
+      padding: 1rem;
+    }
+    .view-full-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      background: linear-gradient(90deg, var(--primary), var(--primary-dark));
+      color: white;
+      padding: clamp(0.6rem, 2vw, 0.75rem) clamp(1rem, 4vw, 1.5rem);
+      border-radius: 50px;
+      text-decoration: none;
+      font-weight: 600;
+      font-size: clamp(0.95rem, 2.8vw, 1rem);
+      transition: var(--transition);
+      box-shadow: 0 4px 12px rgba(74, 105, 189, 0.3);
+      border: none;
+      cursor: pointer;
+    }
+    .view-full-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 16px rgba(74, 105, 189, 0.4);
+    }
+    .view-full-btn:active {
+      transform: translateY(0);
+    }
+    .carousel-btn {
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
+      background: rgba(0,0,0,0.5);
+      color: white;
+      border: none;
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      cursor: pointer;
+      z-index: 10;
+      transition: background 0.3s;
+    }
+    .carousel-btn:hover {
+      background: rgba(0,0,0,0.75);
+    }
+    @media (max-width: 768px) {
+      .nav-container { flex-direction: row; gap: 0.75rem; }
+      .nav-links { justify-content: center; flex-wrap: wrap; }
+      .grid { grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); }
+      main { margin: 1rem auto; }
+      h2 { margin-bottom: 1rem; }
+    }
+    @media (max-width: 480px) {
+      .nav-links { gap: 0.5rem; }
+      .grid { grid-template-columns: repeat(2, 1fr); }
+      .modal-content { max-width: calc(100vw - 2rem); }
+      .modal-img-wrapper { width: 120px; height: 120px; }
+      .view-full-btn { font-size: 0.9rem; padding: 0.6rem 1.2rem; }
+      .memories-grid {
+        grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+      }
+    }
+    @media (max-width: 360px) {
+      .nav-logo { font-size: 1.1rem; gap: 0.3rem; }
+      .nav-logo i { font-size: 1rem; }
+      .grid { gap: 0.75rem; }
+      .card h4 { font-size: 0.9rem; padding: 0.75rem; }
+    }
+    .carousel-3d {
+      perspective: 1200px;
+    }
+    .carousel-3d .card {
+      transform-style: preserve-3d;
+      transition: transform 0.5s ease, box-shadow 0.3s ease;
+    }
+    .carousel-3d .card:hover {
+      transform: translateZ(40px) scale(1.05);
+      box-shadow: var(--shadow-lg);
+      z-index: 2;
+    }
+    .carousel-3d .card:not(:hover) {
+      transform: translateZ(0);
+    }
+    .achievement-profile-card {
+      background: white;
+      border-radius: var(--radius-lg);
+      padding: clamp(1.25rem, 4vw, 1.75rem);
+      text-align: center;
+      box-shadow: var(--shadow-md);
+      transition: var(--transition);
+      max-width: 500px;
+      margin: 0 auto 1.5rem;
+    }
+    .achievement-profile-card:hover {
+      box-shadow: var(--shadow-lg);
+      transform: translateY(-3px);
+    }
+    .achievement-profile-card .card-img-wrapper {
+      width: clamp(100px, 22vw, 140px);
+      height: clamp(100px, 22vw, 140px);
+      margin: 0 auto 1.25rem;
+      border-radius: 50%;
+      overflow: hidden;
+      box-shadow: var(--shadow-md);
+      border: 4px solid white;
+    }
+    .achievement-profile-card img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      object-position: top;
+    }
+    .achievement-profile-card .card-title {
+      margin: 0 0 0.35rem;
+      color: var(--primary);
+      font-size: clamp(1.4rem, 3.8vw, 1.6rem);
+      font-weight: 800;
+    }
+    .achievement-profile-card .card-subtitle {
+      color: #666;
+      font-size: clamp(0.9rem, 2.8vw, 1rem);
+      margin-bottom: 1.25rem;
+    }
+    .achievement-profile-card .award-list {
+      text-align: left;
+      max-height: 180px;
+      overflow-y: auto;
+      padding-right: 8px;
+      margin-bottom: 1.25rem;
+    }
+    .achievement-profile-card .award-list ul {
+      list-style: none;
+      padding-left: 0;
+    }
+    .achievement-profile-card .award-list li {
+      padding: 0.5rem 0 0.5rem 2rem;
+      position: relative;
+      border-bottom: 1px dashed #eee;
+      font-size: clamp(0.875rem, 2.6vw, 0.95rem);
+    }
+    .achievement-profile-card .award-list li:last-child {
+      border-bottom: none;
+    }
+    .achievement-profile-card .award-list li::before {
+      content: '★';
+      position: absolute;
+      left: 0;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--accent);
+      font-weight: bold;
+    }
+    .achievements-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 1.5rem;
+      margin-bottom: 2rem;
+    }
+    @media (min-width: 768px) {
+      .achievements-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+    @media (min-width: 1024px) {
+      .achievements-grid {
+        grid-template-columns: repeat(3, 1fr);
+      }
+    }
+    @media (min-width: 1400px) {
+      .achievements-grid {
+        grid-template-columns: repeat(4, 1fr);
+      }
+    }
+    .achievements-grid .achievement-profile-card {
+      width: 100%;
+      max-width: none;
+      margin: 0;
+    }
+    .achievements-container {
+      display: flex;
+      flex-direction: column;
+      gap: 2.25rem;
+    }
+    .achievement-section-header {
+      background: var(--glass-bg);
+      padding: 1rem 1.5rem;
+      border-radius: var(--radius-md);
+      border-left: 4px solid var(--primary);
+      margin-bottom: 1.25rem;
+    }
+    .achievement-section-header h3 {
+      margin: 0;
+      font-weight: 800;
+      color: var(--primary-dark);
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+    }
+    .award-card {
+      background: white;
+      border-radius: var(--radius-md);
+      padding: 1.25rem;
+      margin-bottom: 1rem;
+      box-shadow: var(--shadow-sm);
+      transition: var(--transition);
+    }
+    .award-card:hover {
+      box-shadow: var(--shadow-md);
+      transform: translateY(-2px);
+    }
+    .award-card h3 {
+      margin: 0 0 0.75rem;
+      color: var(--primary);
+      font-weight: 700;
+      font-size: 1.25rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    .award-card h3 small {
+      font-weight: normal;
+      color: #777;
+      font-size: 0.875rem;
+    }
+    .award-list {
+      list-style: none;
+      padding-left: 0;
+    }
+    .award-list li {
+      padding-left: 1.75rem;
+      position: relative;
+      margin-bottom: 0.4rem;
+      color: #444;
+      font-size: 0.95rem;
+    }
+    .award-list li::before {
+      content: '✓';
+      position: absolute;
+      left: 0;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 20px;
+      height: 20px;
+      background: var(--accent);
+      color: #222;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: bold;
+      font-size: 0.7rem;
+    }
+    .award-card .view-full-btn {
+      font-size: clamp(0.85rem, 2.5vw, 0.95rem);
+      padding: 0.5rem 0.9rem;
+    }
+    .carousel-wrapper {
+      touch-action: pan-y;
+    }
+    .carousel-wrapper:focus {
+      outline: 2px solid var(--primary);
+      outline-offset: 2px;
+    }
+    footer {
+      background: var(--glass-bg);
+      border-top: 1px solid var(--glass-border);
+      padding: 1.25rem 2rem;
+      text-align: center;
+      font-size: clamp(0.875rem, 2.5vw, 1rem);
+      color: #666;
+      margin-top: 3rem;
+      backdrop-filter: blur(8px);
+      box-shadow: 0 -4px 12px rgba(0,0,0,0.03);
+    }
+    footer p {
+      margin: 0;
+      line-height: 1.5;
+    }
+    footer p::before {
+      content: "🎓 ";
+    }
+    @media (max-width: 480px) {
+      footer {
+        padding: 1rem;
+        font-size: 0.85rem;
+      }
+    }
+  </style>
+</head>
+<body>
+<header>
+  <!-- ✅ Change here -->
+  <h1>ANHS-SH Graduating Class of 2025</h1>
+  <p>Forever Grateful, Forever Proud</p>
+</header>
+<nav>
+  <div class="nav-container">
+    <div class="nav-logo">
+      <!-- ✅ Change here -->
+      <i class="fas fa-graduation-cap"></i> ANHS-Yearbook
+    </div>
+    <button id="hamburger" class="hamburger-btn" aria-label="Toggle navigation menu" aria-expanded="false">
+      <i class="fas fa-bars"></i>
+    </button>
+    <div class="nav-links" id="navLinks">
+      <a href="#" onclick="showSection('overview')">Overview</a>
+
+       
+      <div class="dropdown">
+        <button id="dropdownBtn" class="dropdown-btn" aria-haspopup="true" aria-expanded="false" aria-label="Navigate sections">
+          Sections
+        </button>
+        <!-- ✅ Change here -->
+        <div id="dropdownContent" class="dropdown-content" role="menu">
+          <a href="sections.html?section=leo" target="_blank" role="menuitem">
+            <i class="fas fa-star"></i> Leo
+          </a>
+          <a href="sections.html?section=aquarius" target="_blank" role="menuitem">
+            <i class="fas fa-star"></i> Aquarius
+          </a>
+          <a href="sections.html?section=aries" target="_blank" role="menuitem">
+            <i class="fas fa-star"></i> Aries
+          </a>
+          <a href="sections.html?section=capricorn" target="_blank" role="menuitem">
+            <i class="fas fa-star"></i> Capricorn
+          </a>
+          <a href="sections.html?section=gemini" target="_blank" role="menuitem">
+            <i class="fas fa-star"></i> Gemini
+          </a>
+          <a href="sections.html?section=libra" target="_blank" role="menuitem">
+            <i class="fas fa-star"></i> Libra
+          </a>
+          <a href="sections.html?section=sagittarius" target="_blank" role="menuitem">
+            <i class="fas fa-star"></i> Sagittarius
+          </a>
+          <a href="sections.html?section=taurus" target="_blank" role="menuitem">
+            <i class="fas fa-star"></i> Taurus
+          </a>
+          <a href="sections.html?section=virgo" target="_blank" role="menuitem">
+            <i class="fas fa-star"></i> Virgo
+          </a>
+        </div>
+      </div>
+
+      <a href="#" onclick="showSection('achievement')">Achievements</a>
+      <a href="#" onclick="showSection('teachers')">Teachers</a>
+      <a href="#" onclick="showSection('speeches')">Speeches</a>
+      <a href="#" onclick="showSection('memories')">Memories</a>
+      <a href="#" onclick="showSection('song')">Graduation Song</a>
+    </div>
+  </div>
+</nav>
+<main>
+  <section id="overview" class="section active">
+    <h2>🎓 Overview</h2>
+    <div id="overview-school-banner"></div>
+    <h3>Top Students</h3>
+    <div id="overview-students"></div>
+    <h3>Teachers</h3>
+    <div id="overview-teachers"></div>
+    <h3>Top Achiever</h3>
+    <div id="top-achiever" class="speech-card"></div>
+    <h3>Featured Speech</h3>
+    <div id="featured-speech"></div>
+    <h3>Memories</h3>
+    <div id="overview-memories"></div>
+  </section>
+  <section id="achievement" class="section">
+    <h2>🏆 Achievements & Awards</h2>
+    <div id="all-achievements" class="achievements-container"></div>
+  </section>
+  <section id="teachers" class="section">
+    <h2>Teachers</h2>
+    <div class="grid" id="all-teachers"></div>
+  </section>
+  <section id="speeches" class="section">
+    <h2>🎤 Speeches</h2>
+    <div id="all-speeches"></div>
+  </section>
+  <section id="memories" class="section">
+    <h2>📸 Memories</h2>
+    <div class="memories-grid" id="all-memories"></div>
+  </section>
+  <section id="song" class="section">
+    <h2>🎵 Graduation Song</h2>
+    <div class="song-section">
+      <div class="song-emblem">
+        <img src="https://via.placeholder.com/90/e0e0e0/999999?text=ANHS"
+             alt="ANHS Seal"
+             onerror="this.style.display='none'">
+      </div>
+      <div class="song-header">
+        <h1 class="song-title">We Are</h1>
+        <!-- ✅ Change here -->
+        <p class="song-subtitle">Official Graduation Song — Class of 2025</p>
+      </div>
+      <figure>
+        <blockquote class="lyrics" id="grad-song-lyrics"></blockquote>
+      </figure>
+      <!-- ✅ Change here -->
+      <div class="song-footer">
+        — Composed with love for the ANHS-SH Graduating Class of 2025
+      </div>
+    </div>
+  </section>
+</main>
+
+<!-- MODALS -->
+<div id="studentModal" class="modal" role="dialog" aria-labelledby="modal-title" aria-modal="true">
+  <div class="modal-content">
+    <button class="close-btn" id="closeModal" aria-label="Close modal">
+      <i class="fas fa-times"></i>
+    </button>
+    <div class="modal-img-wrapper">
+      <img id="modal-img" src="" alt="" loading="lazy" />
+    </div>
+    <h2 id="modal-name" class="modal-title">Student Name</h2>
+    <!-- ✅ Change here -->
+    <p id="modal-subtitle" class="subtitle">Section • Class of 2025</p>
+    <div id="modal-awards"></div>
+  </div>
+</div>
+<div id="fullscreenModal" class="modal" role="dialog" aria-modal="true">
+  <div style="position:relative;width:100%;height:100%;display:flex;justify-content:center;align-items:center;background:black;">
+    <button id="closeFullscreenBtn" class="close-btn" style="position:absolute;top:1rem;right:1rem;z-index:10;" aria-label="Close full image">
+      <i class="fas fa-times"></i>
+    </button>
+    <img id="fullscreenImg" src="" alt="" loading="lazy"
+         style="max-width:95vw;max-height:calc(100vh - 4rem);object-fit:contain;border-radius:8px;" />
+  </div>
+</div>
+
+<footer>
+  <!-- ✅ Change here -->
+  <p>© 2025 ANHS-SH Senior High Yearbook | Made with ❤️ for the Class of 2025</p>
+</footer>
+
+<script>
+// 📚 DATA — unchanged
+//✅ Change here
+const students = {
+  "aquarius": [
+    { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/aquarius/Ashley_A._Rinos.webp", name: "Ashley A. Rinos" },
+   { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/taurus/Arianne_Mae_V._Austero.webp", name: "Arianne Mae V. Austero" }],
+
+  "aries": [
+    { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/aries/Aira_B._Delon.webp", name: "Aira B. Delon" }],
+
+  "capricorn": [
+    { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/capricorn/Aaron_P._Atienza.webp", name: "Aaron P. Atienza" }],
+
+  "gemini": [
+    { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/gemini/Angelou_S._Daniel.webp", name: "Angelou S. Daniel" }],
+
+  "leo": [
+    { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/leo/Aira_B._De_Paz.webp", name: "Aira B. De Paz" }],
+
+  "libra": [
+    { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/libra/A-J_F._Lucapa.webp", name: "A-J F. Lucapa" }],
+
+  "sagittarius": [
+    { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/sagittarius/Adeliza_D._Mendoza.webp", name: "Adeliza D. Mendoza" }],
+
+  "taurus": [
+    { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/taurus/Alkhilies_V._Tingcungco.webp", name: "Alkhilies V. Tingcungco" }],
+
+  "virgo": [
+    { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/virgo/ABUANA,_CAMILLE_.webp", name: "ABUANA, CAMILLE" }]
+
+};
+//✅ Change here top 10
+const topStudents = [
+  { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/aquarius/Ashley_A._Rinos.webp", name: "Ashley A. Rinos" },
+  { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/aquarius/Aldred_C._Salcedo.webp", name: "Aldred C. Salcedo" },
+  { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/aries/Aira_B._Delon.webp", name: "Aira B. Delon" },
+  { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/aquarius/Aldred_C._Salcedo.webp", name: "Aldred C. Salcedo" },
+  { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/aries/Aira_B._Delon.webp", name: "Chris John D. Mayola" }
+];
+
+//✅ Change here top 10, section_name can be "None", "Capricorn", etc.
+const teachers = [
+  { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/libra/Frenz_Jay_O._Felizarta.webp", name: "Frenz Jay O. Felizarta", section_name: "None" },
+  { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/libra/Fritz_N._Dioso.webp", name: "Fritz N. Dioso", section_name: "Aquarius" },
+  { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/libra/Izzy_N._Robes.webp", name: "Izzy N. Robes", section_name: "Capricorn" },
+  { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/taurus/Andrie_Ken_C._Donayre.webp", name: "Andrie Ken C. Donayre", section_name: "Capricorn" },
+  { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/taurus/Angelou_B._Montana.webp", name: "Angelou B. Montana", section_name: "Capricorn" },
+  { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/taurus/Arianne_Mae_V._Austero.webp", name: "Arianne Mae V. Austero", section_name: "Capricorn" },
+  { img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/taurus/Chris_John_D._Mayola.webp", name: "Chris John D. Mayola", section_name: "Capricorn" }
+];
+
+// ✅ Change here Keys must exactly match student names used in "students" (whitespace/case-sensitive)
+const achievements = {
+  "Aira B. Delon": ["Leadership Award", "Best in Filipino", "Peer Mentor of the Year", "Values Excellence"],
+  "Ashley A. Rinos": ["Math Olympiad Winner", "Art Excellence Award", "Most Creative Project", "Leadership Award", "Athlete of the Year", "Science Fair Finalist", "Debate Semi-Finalist", "Community Service Star", "Best in English"],
+  "Allison Fate P. Dalugdugan": ["Best in English", "Leadership Award", "Science Fair Champion", "Research Awardee", "Quiz Bee Runner-up"],
+  "Adrian D. Gallos": ["Athlete of the Year", "Community Service Award", "Sportsmanship Award", "Captain’s Award"],
+  "Aaron P. Atienza": ["Most Improved Student", "Math Olympiad Winner", "STEM Advocate"],
+  "Althea Genesis S. Tarinque": ["Leadership Award", "Peer Tutor of the Year", "Values Excellence"]
+};
+
+// ✅ Change here Keys must exactly match student names used in "students" (whitespace/case-sensitive)
+const otherAwards = {
+  "Most Improved Student": ["Aaron P. Atienza", "April Jean E. Delgado", "Ashley A. Rinos","Chris John D. Mayola"],
+  "Leadership Award": ["Aira B. Delon", "Allison Fate P. Dalugdugan", "Althea Genesis S. Tarinque", "Ashley A. Rinos"],
+  "Athlete of the Year": ["Adrian D. Gallos", "Darwin S. Castro", "Ashley A. Rinos"],
+  "Art Excellence Award": ["Ashley A. Rinos", "Cherry Ann B. Adonis"],
+  "Science Fair Champion": ["Allison Fate P. Dalugdugan", "Anghelo L. Olita","Arianne Mae V. Austero"]
+};
+
+// ✅ Change here Keys must exactly match student names used in "teachers" (whitespace/case-sensitive)
+const teacherAwards = {
+  "Frenz Jay O. Felizarta": ["Excellence in Teaching", "Best Adviser 2024"],
+  "Fritz N. Dioso": ["Leadership in STEM", "DepEd Recognition Award"],
+  "Izzy N. Robes": ["Innovation in Pedagogy"],
+  "Andrie Ken C. Donayre": ["Outstanding Mentor"],
+  "Angelou B. Montana": ["Values Formation Champion"],
+  "Arianne Mae V. Austero": ["Rookie Teacher of the Year"],
+  "Chris John D. Mayola": ["Digital Teaching Pioneer"]
+};
+
+// ✅ Change here
+const speeches = [
+  {
+    name: "Dr. Maria Santos",
+    status: "Principal",
+    img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/libra/Frenz_Jay_O._Felizarta.webp",
+    message: "To the graduating class of 2025, you have shown remarkable resilience and dedication throughout your journey at ANHS-SHTTo the graduating class of 2025, you have shown remarkable resilience and dedication throughout your journey at ANHS-SHTTo the graduating class of 2025, you have shown remarkable resilience and dedication throughout your journey at ANHS-SHTTo the graduating class of 2025, you have shown remarkable resilience and dedication throughout your journey at ANHS-SHTTo the graduating class of 2025, you have shown remarkable resilience and dedication throughout your journey at ANHS-SHTTo the graduating class of 2025, you have shown remarkable resilience and dedication throughout your journey at ANHS-SHTTo the graduating class of 2025, you have shown remarkable resilience and dedication throughout your journey at ANHS-SHTTo the graduating class of 2025, you have shown remarkable resilience and dedication throughout your journey at ANHS-SHTTo the graduating class of 2025, you have shown remarkable resilience and dedication throughout your journey at ANHS-SHTTo the graduating class of 2025, you have shown remarkable resilience and dedication throughout your journey at ANHS-SHT..."
+  },
+  {
+    name: "John Reyes",
+    status: "Student Council Secretary",
+    img: "https://via.placeholder.com/150",
+    message: "Fellow students, what a journey it has been! From early morning classes to late-night study sessions..."
+  },
+  {
+    name: "Aira B. Delon",
+    status: "Class Valedictorian",
+    img: "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/aries/Aira_B._Delon.webp",
+    message: "Standing before you today is not just the culmination of years of hard work, but a testament to the power of unity..."
+  }
+];
+
+// ✅ Change here
+const memories = [
+  "https://via.placeholder.com/400x300/e3f2fd/4a69bd?text=School+Building",
+  "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/libra/Frenz_Jay_O._Felizarta.webp",
+  "https://via.placeholder.com/400x300/e8f5e9/2e7d32?text=Science+Fair",
+  "https://via.placeholder.com/400x300/fff8e1/ff8f00?text=Arts+Exhibition",
+  "anhs-school.jpg",
+  "https://via.placeholder.com/400x300/ffebee/e91e63?text=Christmas+Party",
+  "https://via.placeholder.com/400x300/e0f7fa/0277bd?text=Debate+Competition",
+  "https://via.placeholder.com/400x300/fbe9e7/ff5722?text=Volunteer+Activity",
+  "https://via.placeholder.com/400x300/ede7f6/5e35b1?text=Graduation+Practice",
+  "https://via.placeholder.com/400x300/dcedc8/689f38?text=Sports+Day",
+  "https://via.placeholder.com/400x300/ffecb3/f57f17?text=Career+Day",
+  "https://cached-file-link.jhondumanhog.workers.dev/files/anhs-sh-2025/libra/Frenz_Jay_O._Felizarta.webp"
+];
+
+// ✅ Change here
+const graduationLyrics = {
+  title: "We Are",
+  lyrics: `We walked these halls with dreams so wide,
+Through every storm, we stood with pride.
+From morning bells to sunset cheers,
+We faced our hopes, we faced our fears.
+Now caps fly high, hearts beat as one,
+Our chapter ends—but not our run.
+
+ANHS-SH, you shaped our way,
+We’ll carry you in all we say.
+So here’s to friends, to teachers true,
+To every laugh, to all we knew.
+Though paths may part, our bond stays strong—
+Graduates of 2025, we all belong.
+
+From morning bells to sunset cheers,
+We faced our hopes, we faced our fears.
+Now caps fly high, hearts beat as one,`
+};
+
+function normalize(str) {
+  return str.toLowerCase()
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .replace(/\s+/g, " ")
+    .trim();
+}
+function findSection(studentName) {
+  for (const [section, list] of Object.entries(students)) {
+    if (list.some(s => normalize(s.name) === normalize(studentName))) {
+      return section;
+    }
+  }
+  return "Unknown";
+}
+function lockScroll(lock = true) {
+  if (lock) {
+    const scrollY = window.scrollY;
+    document.body.style.position = 'fixed';
+    document.body.style.top = `-${scrollY}px`;
+    document.body.style.width = '100%';
+    document.body.setAttribute('data-scroll-y', scrollY);
+  } else {
+    const scrollY = document.body.getAttribute('data-scroll-y') || 0;
+    document.body.style.position = '';
+    document.body.style.top = '';
+    document.body.style.width = '';
+    window.scrollTo(0, parseInt(scrollY));
+    document.body.removeAttribute('data-scroll-y');
+  }
+}
+
+//  FULL DOM READY – UPDATED DROPDOWN LOGIC
+document.addEventListener('DOMContentLoaded', () => {
+  // Hamburger
+  const hamburger = document.getElementById('hamburger');
+  const navLinks = document.getElementById('navLinks');
+  hamburger.addEventListener('click', () => {
+    const isExpanded = hamburger.getAttribute('aria-expanded') === 'true';
+    hamburger.setAttribute('aria-expanded', !isExpanded);
+    navLinks.classList.toggle('active');
+    hamburger.innerHTML = isExpanded 
+      ? '<i class="fas fa-bars"></i>' 
+      : '<i class="fas fa-times"></i>';
+  });
+  navLinks.querySelectorAll('a').forEach(link => {
+    link.addEventListener('click', () => {
+      navLinks.classList.remove('active');
+      hamburger.setAttribute('aria-expanded', 'false');
+      hamburger.innerHTML = '<i class="fas fa-bars"></i>';
+    });
+  });
+
+  
+  const dropdownBtn = document.getElementById('dropdownBtn');
+  const dropdownContent = document.getElementById('dropdownContent');
+
+  if (dropdownBtn && dropdownContent) {
+    function toggleDropdown() {
+      const isExpanded = dropdownBtn.getAttribute('aria-expanded') === 'true';
+      dropdownBtn.setAttribute('aria-expanded', !isExpanded);
+      // Optional: close others (not needed here, but future-proof)
+      document.querySelectorAll('.dropdown-btn').forEach(btn => {
+        if (btn !== dropdownBtn) {
+          btn.setAttribute('aria-expanded', 'false');
+        }
+      });
+    }
+
+    dropdownBtn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      toggleDropdown();
+    });
+
+    dropdownBtn.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter' || e.key === ' ') {
+        e.preventDefault();
+        toggleDropdown();
+      } else if (e.key === 'Escape') {
+        dropdownBtn.setAttribute('aria-expanded', 'false');
+        dropdownBtn.focus();
+      } else if (e.key === 'ArrowDown') {
+        e.preventDefault();
+        dropdownBtn.setAttribute('aria-expanded', 'true');
+        setTimeout(() => dropdownContent.querySelector('a')?.focus(), 50);
+      }
+    });
+
+    dropdownContent.addEventListener('keydown', (e) => {
+      const items = Array.from(dropdownContent.querySelectorAll('a'));
+      const idx = items.indexOf(document.activeElement);
+      if (e.key === 'ArrowDown') {
+        e.preventDefault();
+        (items[idx + 1] || items[0])?.focus();
+      } else if (e.key === 'ArrowUp') {
+        e.preventDefault();
+        (items[idx - 1] || items[items.length - 1])?.focus();
+      } else if (e.key === 'Escape') {
+        dropdownBtn.setAttribute('aria-expanded', 'false');
+        dropdownBtn.focus();
+      }
+    });
+
+    document.addEventListener('click', (e) => {
+      if (!e.target.closest('.dropdown')) {
+        dropdownBtn.setAttribute('aria-expanded', 'false');
+      }
+    });
+
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') {
+        dropdownBtn.setAttribute('aria-expanded', 'false');
+      }
+    });
+  }
+
+  // Render content
+  renderOverview();
+  renderCombinedAchievements();
+  renderTeachers();
+  renderSpeeches();
+  renderMemories();
+  renderSong(); // Now called only once (no double DOMContentLoaded)
+});
+
+
+function createResponsiveCarousel(items, renderItem, opts = {}) {
+  const {
+    autoplayInterval = 4000,
+    visibleCountFn = () => (window.innerWidth < 480 ? 1 : (window.innerWidth < 768 ? 2 : 3)),
+    ariaLabel = "Carousel",
+    snapToIndividual = false
+  } = opts;
+  const wrapper = document.createElement('div');
+  wrapper.className = 'carousel-wrapper';
+  wrapper.setAttribute('aria-label', ariaLabel);
+  wrapper.setAttribute('role', 'region');
+  wrapper.setAttribute('tabindex', '0');
+  const track = document.createElement('div');
+  track.style.display = 'flex';
+  track.style.gap = '1rem';
+  track.style.alignItems = 'flex-start';
+  track.style.transition = 'transform 0.4s cubic-bezier(0.22, 0.61, 0.36, 1)';
+  track.style.width = 'fit-content';
+  const indicators = document.createElement('div');
+  indicators.style.display = 'flex';
+  indicators.style.justifyContent = 'center';
+  indicators.style.marginTop = '0.75rem';
+  indicators.style.gap = '0.4rem';
+  indicators.style.flexWrap = 'wrap';
+  let currentIndex = 0;
+  let autoplay;
+  let cardWidth = 250;
+  let gap = 16;
+  let isAnimating = false;
+
+  function updateCardDimensions() {
+    const containerWidth = wrapper.clientWidth || window.innerWidth * 0.95;
+    gap = parseFloat(getComputedStyle(track).gap) || 16;
+    const visible = Math.max(1, visibleCountFn());
+    cardWidth = (containerWidth - gap * (visible - 1)) / visible;
+  }
+
+  function getMaxIndex() {
+    return snapToIndividual ? items.length - 1 : Math.max(0, items.length - Math.max(1, visibleCountFn()));
+  }
+
+  function getValidIndex(idx) {
+    const maxIdx = getMaxIndex();
+    return Math.min(Math.max(0, idx), maxIdx);
+  }
+
+  function goToSlide(idx, animate = true) {
+    if (isAnimating && animate) return;
+    idx = getValidIndex(idx);
+    currentIndex = idx;
+    if (animate) {
+      isAnimating = true;
+      track.style.transition = 'transform 0.4s cubic-bezier(0.22, 0.61, 0.36, 1)';
+    } else {
+      track.style.transition = 'none';
+    }
+    const translateX = -(currentIndex * (cardWidth + gap));
+    track.style.transform = `translateX(${translateX}px)`;
+    if (animate) setTimeout(() => isAnimating = false, 450);
+    updateIndicators();
+  }
+
+  function next() {
+    if (currentIndex < getMaxIndex()) goToSlide(currentIndex + 1);
+  }
+
+  function prev() {
+    if (currentIndex > 0) goToSlide(currentIndex - 1);
+  }
+
+  function renderItems() {
+    track.innerHTML = '';
+    items.forEach((item, idx) => {
+      const slide = document.createElement('div');
+      slide.style.flex = '0 0 auto';
+      slide.style.width = `${cardWidth}px`;
+      const content = renderItem(item, idx);
+      slide.appendChild(content);
+      track.appendChild(slide);
+    });
+    track.style.width = `${items.length * (cardWidth + gap)}px`;
+  }
+
+  function updateIndicators() {
+    indicators.innerHTML = '';
+    const totalGroups = Math.max(1, Math.ceil(items.length / Math.max(1, visibleCountFn())));
+    for (let i = 0; i < totalGroups; i++) {
+      const dot = document.createElement('button');
+      dot.type = 'button';
+      dot.setAttribute('aria-label', `Go to group ${i + 1}`);
+      dot.style.width = '10px';
+      dot.style.height = '10px';
+      dot.style.borderRadius = '50%';
+      dot.style.border = 'none';
+      dot.style.background = (i === Math.floor(currentIndex / Math.max(1, visibleCountFn()))) ? 'var(--primary)' : '#ccc';
+      dot.style.cursor = 'pointer';
+      dot.onclick = () => goToSlide(i * Math.max(1, visibleCountFn()));
+      indicators.appendChild(dot);
+    }
+  }
+
+  const prevBtn = document.createElement('button');
+  prevBtn.className = 'carousel-btn';
+  prevBtn.style.left = '-20px';
+  prevBtn.innerHTML = '<i class="fas fa-chevron-left"></i>';
+  prevBtn.onclick = prev;
+  prevBtn.setAttribute('aria-label', 'Previous');
+  const nextBtn = document.createElement('button');
+  nextBtn.className = 'carousel-btn';
+  nextBtn.style.right = '-20px';
+  nextBtn.innerHTML = '<i class="fas fa-chevron-right"></i>';
+  nextBtn.onclick = next;
+  nextBtn.setAttribute('aria-label', 'Next');
+  let startX = 0, currentX = 0, velX = 0, startTime = 0;
+  let rafId = null;
+  let isDragging = false;
+
+  function onTouchStart(e) {
+    if (e.touches?.length !== 1) return;
+    startX = currentX = e.touches[0].clientX;
+    startTime = Date.now();
+    isDragging = true;
+    if (rafId) cancelAnimationFrame(rafId);
+    track.style.transition = 'none';
+  }
+  function onTouchMove(e) {
+    if (!isDragging) return;
+    const x = e.touches[0].clientX;
+    const dx = x - startX;
+    const dt = Date.now() - startTime;
+    velX = dt > 0 ? (x - currentX) / dt : 0;
+    currentX = x;
+    const baseX = -currentIndex * (cardWidth + gap);
+    const elasticity = 0.6;
+    const overdx = Math.abs(dx) > 100 ? dx * elasticity : dx;
+    track.style.transform = `translateX(${baseX + overdx}px)`;
+  }
+  function onTouchEnd() {
+    if (!isDragging) return;
+    isDragging = false;
+    const dx = currentX - startX;
+    const dt = Date.now() - startTime;
+    const threshold = cardWidth * 0.3;
+    if (Math.abs(velX) > 0.8 || Math.abs(dx) > threshold) {
+      if (velX < -0.8 || dx < -threshold) next();
+      else if (velX > 0.8 || dx > threshold) prev();
+      else goToSlide(currentIndex);
+    } else {
+      goToSlide(currentIndex);
+    }
+    if (items.length > Math.max(1, visibleCountFn())) startAutoplay();
+  }
+
+  track.addEventListener('touchstart', onTouchStart, { passive: true });
+  track.addEventListener('touchmove', onTouchMove, { passive: true });
+  track.addEventListener('touchend', onTouchEnd, { passive: true });
+  track.addEventListener('touchcancel', () => isDragging = false, { passive: true });
+  wrapper.addEventListener('keydown', (e) => {
+    if (e.key === 'ArrowRight') next();
+    else if (e.key === 'ArrowLeft') prev();
+  });
+
+  const onResize = () => {
+    updateCardDimensions();
+    renderItems();
+    goToSlide(currentIndex, false);
+  };
+
+  function startAutoplay() {
+    stopAutoplay();
+    if (items.length <= Math.max(1, visibleCountFn())) return;
+    autoplay = setInterval(() => {
+      if (!document.hidden) {
+        if (currentIndex >= getMaxIndex()) goToSlide(0);
+        else next();
+      }
+    }, autoplayInterval);
+  }
+
+  function stopAutoplay() {
+    if (autoplay) clearInterval(autoplay);
+  }
+
+  wrapper.addEventListener('mouseenter', stopAutoplay);
+  wrapper.addEventListener('mouseleave', startAutoplay);
+
+  updateCardDimensions();
+  renderItems();
+  goToSlide(0, false);
+  updateIndicators();
+  window.addEventListener('resize', onResize);
+  if (items.length > Math.max(1, visibleCountFn())) startAutoplay();
+
+  wrapper.appendChild(prevBtn);
+  wrapper.appendChild(track);
+  wrapper.appendChild(nextBtn);
+  if (items.length > Math.max(1, visibleCountFn())) {
+    wrapper.appendChild(indicators);
+  }
+
+  return {
+    element: wrapper,
+    goToSlide: (idx) => goToSlide(idx),
+    next,
+    prev,
+    destroy: () => {
+      stopAutoplay();
+      window.removeEventListener('resize', onResize);
+      if (rafId) cancelAnimationFrame(rafId);
+    }
+  };
+}
+
+function renderCombinedAchievements() {
+  const div = document.getElementById('all-achievements');
+  div.innerHTML = '';
+  const studentsWithPersonalAwards = {};
+  Object.entries(achievements).forEach(([name, awards]) => {
+    studentsWithPersonalAwards[name] = [...new Set(awards)];
+  });
+  Object.entries(otherAwards).forEach(([award, names]) => {
+    names.forEach(name => {
+      if (!studentsWithPersonalAwards[name]) studentsWithPersonalAwards[name] = [];
+      studentsWithPersonalAwards[name].push(award);
+    });
+  });
+  Object.keys(studentsWithPersonalAwards).forEach(name => {
+    studentsWithPersonalAwards[name] = [...new Set(studentsWithPersonalAwards[name])];
+  });
+  if (Object.keys(studentsWithPersonalAwards).length > 0) {
+    const header = document.createElement('div');
+    header.className = 'achievement-section-header';
+    header.innerHTML = `<h3><i class="fas fa-user-graduate"></i> Students with Personal Award Records</h3>`;
+    div.appendChild(header);
+    const gridContainer = document.createElement('div');
+    gridContainer.className = 'achievements-grid';
+    const sortedNames = Object.keys(achievements);
+    sortedNames.forEach(name => {
+      const awards = studentsWithPersonalAwards[name] || [];
+      const section = findSection(name);
+      const student = Object.values(students).flat().find(s => normalize(s.name) === normalize(name));
+      const imgUrl = student?.img?.trim() || '';
+      const card = document.createElement('div');
+      card.className = 'achievement-profile-card';
+      const awardsHTML = awards.map(a => `<li>${a}</li>`).join('');
+      card.innerHTML = `
+        <div class="card-img-wrapper">
+          <img src="${imgUrl || 'https://via.placeholder.com/180/e0e0e0/999999?text=No+Photo'}"
+               alt="${name}" loading="lazy"
+               onerror="this.src='https://via.placeholder.com/180/e0e0e0/999999?text=No+Photo'">
+        </div>
+        <h3 class="card-title">${name}</h3>
+        <p class="card-subtitle">${section ? `${section.charAt(0).toUpperCase() + section.slice(1)} • ` : ''}Class of 2025</p>
+        <div class="award-section">
+          <h3 style="color: var(--primary-dark); font-size: 1.15rem; margin-bottom: 0.75rem; font-weight: 700;">
+            <i class="fas fa-trophy"></i> Awards & Recognitions
+          </h3>
+          <div class="award-list">
+            <ul>${awardsHTML || '<li style="color:#888;font-style:italic;">No awards listed.</li>'}</ul>
+          </div>
+        </div>
+      `;
+      card.addEventListener('click', () => openStudentModal({ name, img: imgUrl, section }, section || 'Student'));
+      card.style.cursor = 'pointer';
+      gridContainer.appendChild(card);
+    });
+    div.appendChild(gridContainer);
+  }
+  const allAwardedNames = new Set();
+  Object.values(otherAwards).forEach(names => names.forEach(n => allAwardedNames.add(n)));
+  Object.keys(achievements).forEach(n => allAwardedNames.add(n));
+  const studentsOnlyInOtherAwards = Array.from(allAwardedNames).filter(name => !achievements.hasOwnProperty(name));
+  const groupedByAward = {};
+  Object.entries(otherAwards).forEach(([award, names]) => {
+    const onlyThese = names.filter(name => studentsOnlyInOtherAwards.includes(name));
+    if (onlyThese.length > 0) {
+      groupedByAward[award] = onlyThese;
+    }
+  });
+  if (Object.keys(groupedByAward).length > 0) {
+    const header = document.createElement('div');
+    header.className = 'achievement-section-header';
+    header.innerHTML = `<h3><i class="fas fa-medal"></i> Award by Category</h3>`;
+    div.appendChild(header);
+    const sortedAwardNames = Object.keys(groupedByAward).sort();
+    sortedAwardNames.forEach(awardName => {
+      const recipients = groupedByAward[awardName];
+      const card = document.createElement('div');
+      card.className = 'award-card';
+      card.style.borderLeft = '4px solid var(--accent)';
+      card.style.background = 'var(--glass-bg)';
+      card.style.padding = '1.25rem';
+      const recipientsHtml = recipients.map(name => {
+        const section = findSection(name);
+        const student = Object.values(students).flat().find(s => normalize(s.name) === normalize(name));
+        const imgUrl = student?.img?.trim() || '';
+        const displayName = `${name}${section ? ` (${section.charAt(0).toUpperCase() + section.slice(1)})` : ''}`;
+        return `
+          <button class="view-full-btn" style="margin:0.25rem;flex:1;min-width:140px;max-width:220px;"
+                  onclick="openStudentModal({name:'${name.replace(/'/g, "\\'")}', img:'${(imgUrl || '').replace(/'/g, "\\'")}', section:'${section}'}, '${section || 'Student'}')">
+            ${displayName}
+          </button>`;
+      }).join('');
+      card.innerHTML = `
+        <h3 style="margin:0 0 1rem;font-weight:700;color:var(--primary-dark);display:flex;align-items:center;gap:0.5rem;">
+          <i class="fas fa-award"></i> ${awardName}
+        </h3>
+        <div style="display:flex;flex-wrap:wrap;gap:0.5rem;justify-content:flex-start;">
+          ${recipientsHtml}
+        </div>
+      `;
+      div.appendChild(card);
+    });
+  }
+  if (div.children.length === 0) {
+    div.innerHTML = '<p style="text-align:center;color:#888;"><i class="fas fa-info-circle"></i> No achievements or awards recorded.</p>';
+  }
+}
+function renderOverview() {
+  const bannerContainer = document.getElementById('overview-school-banner');
+  bannerContainer.innerHTML = `
+    <div style="margin-bottom:2rem;border-radius:var(--radius-md);overflow:hidden;box-shadow:var(--shadow-md);position:relative;">
+      <img src="anhs-school.jpg"
+           alt="Angeles National High School – Senior High main building"
+           style="width:100%;height:auto;max-height:400px;object-fit:cover;display:block;"
+           loading="lazy"
+           onerror="this.src='https://via.placeholder.com/1200x400/e0e0e0/999999?text=School+Image+Unavailable'">
+      <div style="position:absolute;bottom:0;left:0;width:100%;background:linear-gradient(transparent, rgba(0,0,0,0.75));padding:1rem;color:white;text-align:center;font-weight:700;font-size:1.1rem;">
+        <!-- ✅ Change here -->
+        <i class="fas fa-school"></i> Abuyog National High School – Senior High
+      </div>
+    </div>
+  `;
+  const ovStudents = document.getElementById('overview-students');
+  const studentCarousel = createResponsiveCarousel(
+    topStudents,
+    (student, idx) => {
+      const section = findSection(student.name);
+      const card = document.createElement('div');
+      card.className = 'card';
+      const safeImg = student.img?.trim() || 'https://via.placeholder.com/180/e0e0e0/999999?text=No+Photo';
+      card.innerHTML = `
+        <img src="${safeImg}" alt="${student.name}" loading="lazy"
+            onerror="this.src='https://via.placeholder.com/180/e0e0e0/999999?text=No+Photo'; this.style.display='block'">
+        <h4>${student.name}<br><small>${section.charAt(0).toUpperCase() + section.slice(1)}</small></h4>
+      `;
+      card.addEventListener('click', () => openStudentModal({ ...student, section }, section));
+      return card;
+    },
+    {
+      visibleCountFn: () => window.innerWidth < 480 ? 2 : (window.innerWidth < 768 ? 3 : 4),
+      snapToIndividual: true
+    }
+  );
+  ovStudents.innerHTML = '';
+  ovStudents.appendChild(studentCarousel.element);
+  const ovTeachers = document.getElementById('overview-teachers');
+  const visibleTeachers = teachers.slice(0, 10);
+  const teacherCarousel = createResponsiveCarousel(
+    visibleTeachers,
+    (teacher, idx) => {
+      const card = document.createElement('div');
+      card.className = 'card';
+      const safeImg = teacher.img?.trim() || 'https://via.placeholder.com/180/e0e0e0/999999?text=No+Photo';
+      card.innerHTML = `
+        <img src="${safeImg}" alt="${teacher.name}" loading="lazy"
+            onerror="this.src='https://via.placeholder.com/180/e0e0e0/999999?text=No+Photo'; this.style.display='block'">
+        <h4>${teacher.name}<br><small>${teacher.section_name || 'Advisor'}</small></h4>
+      `;
+      card.addEventListener('click', () => openStudentModal(teacher, 'Teacher'));
+      return card;
+    },
+    {
+      visibleCountFn: () => window.innerWidth < 480 ? 1 : (window.innerWidth < 768 ? 3 : 4),
+      snapToIndividual: true
+    }
+  );
+  ovTeachers.innerHTML = '';
+  ovTeachers.appendChild(teacherCarousel.element);
+  const topAchieverData = topStudents[0];
+  const sectionName = findSection(topAchieverData.name);
+  let topAchieverAwards = [];
+  const matchedKey = Object.keys(achievements).find(k => normalize(k) === normalize(topAchieverData.name));
+  if (matchedKey) topAchieverAwards = [...new Set(achievements[matchedKey])];
+  Object.entries(otherAwards).forEach(([award, rs]) => {
+    if (rs.some(r => normalize(r) === normalize(topAchieverData.name))) topAchieverAwards.push(award);
+  });
+  topAchieverAwards = [...new Set(topAchieverAwards)];
+  const topAchieverImg = topAchieverData.img?.trim() || 'https://via.placeholder.com/150/e0e0e0/999999?text=No+Photo';
+  const topAchieverCard = document.getElementById('top-achiever');
+  topAchieverCard.className = 'speech-card';
+  topAchieverCard.style.background = 'linear-gradient(135deg, #f8f9fa, #e9ecef)';
+  topAchieverCard.style.borderLeft = '4px solid var(--accent)';
+  topAchieverCard.innerHTML = `
+    <div style="display:flex;gap:1.25rem;align-items:center;flex-wrap:wrap;">
+      <div style="flex:0 0 100px;">
+        <img src="${topAchieverImg}" alt="${topAchieverData.name}" loading="lazy"
+            style="width:100px;height:100px;border-radius:50%;object-fit:cover;object-position:top;box-shadow:var(--shadow-md);">
+      </div>
+      <div style="text-align:left;flex:1;">
+        <h3 style="margin:0;color:var(--primary);display:flex;align-items:center;gap:0.5rem;">
+          <i class="fas fa-crown" style="color:gold;"></i> ${topAchieverData.name}
+        </h3>
+        <p style="margin:0.25rem 0;color:#666;font-size:0.95rem;">
+          ${sectionName.charAt(0).toUpperCase() + sectionName.slice(1)} • ${topAchieverAwards.length} Award${topAchieverAwards.length !== 1 ? 's' : ''}
+        </p>
+        <div style="margin-top:0.5rem;display:flex;flex-wrap:wrap;gap:0.3rem;max-height:3.5em;overflow:hidden;">
+          ${topAchieverAwards.slice(0,4).map(a => 
+            `<span style="background:#e3f2fd;color:#1976d2;padding:0.2rem 0.6rem;border-radius:20px;font-size:0.82rem;">${a}</span>`
+          ).join('')}
+          ${topAchieverAwards.length > 4 
+            ? `<span style="color:#666;font-size:0.85rem;">+${topAchieverAwards.length - 4} more</span>` 
+            : ''}
+        </div>
+        <button class="view-full-btn" style="margin-top:0.75rem;" id="topAchieverViewBtn">
+          <i class="fas fa-user-graduate"></i> View Full Profile
+        </button>
+      </div>
+    </div>
+  `;
+  document.getElementById('topAchieverViewBtn').onclick = () => {
+    openStudentModal({ ...topAchieverData, section: sectionName }, sectionName);
+  };
+  const featuredSpeechContainer = document.getElementById('featured-speech');
+  featuredSpeechContainer.innerHTML = `
+    <div id="speech-cards-container" style="display:flex;flex-wrap:wrap;gap:1.25rem;justify-content:center;"></div>
+  `;
+  const container = document.getElementById('speech-cards-container');
+  speeches.slice(0, 2).forEach((s, idx) => {
+    const card = document.createElement('div');
+    card.className = 'speech-card';
+    card.style.flex = '1 1 400px';
+    card.style.minWidth = '300px';
+    if (idx === 0) {
+      card.style.background = 'linear-gradient(135deg, #fff9f0, #fdf7e9)';
+      card.style.border = '1px solid #ffe0b2';
+    } else {
+      card.style.background = 'linear-gradient(135deg, #f0faff, #f5f9ff)';
+      card.style.border = '1px solid #bbdefb';
+    }
+    const borderColor = idx === 0 ? '#ffb300' : '#2196f3';
+    const label = idx === 0 ? "Principal's Address" : "Student Council Address";
+    card.innerHTML = `
+      <div style="display:flex;gap:1.25rem;align-items:center;margin-bottom:1rem;flex-wrap:wrap;">
+        <div style="flex:0 0 80px;">
+          <img src="${s.img}" alt="${s.name}" loading="lazy"
+              style="width:80px;height:80px;border-radius:50%;object-fit:cover;object-position:top;box-shadow:var(--shadow-md);border:3px solid #ffd54f;">
+        </div>
+        <div style="flex:1;text-align:left;">
+          <h3 style="margin:0;color:${idx === 0 ? '#e65100' : '#1565c0'};font-weight:800;">${s.name}</h3>
+          <p style="margin:0.25rem 0;color:#5d4037;font-weight:600;">${s.status}</p>
+          <div style="display:flex;gap:0.25rem;margin-top:0.3rem;">
+            <i class="fas fa-quote-left" style="color:${idx === 0 ? '#ffb300' : '#64b5f6'};font-size:0.9rem;"></i>
+            <span style="color:#9e9e9e;font-size:0.85rem;">${label}</span>
+          </div>
+        </div>
+      </div>
+      <p style="font-style:italic;line-height:1.7;color:#424242;border-left:3px solid ${borderColor};padding-left:1rem;margin:0.5rem 0;">
+        “${s.message.substring(0, 150)}${s.message.length > 150 ? '…' : ''}”
+      </p>
+      <button class="view-full-btn" style="margin-top:0.75rem;width:100%;"
+              onclick="showSection('speeches'); setTimeout(() => document.getElementById('speeches').scrollIntoView({behavior:'smooth'}), 100);">
+        <i class="fas fa-comments"></i> Read Full Speech
+      </button>
+    `;
+    container.appendChild(card);
+  });
+  const ovMem = document.getElementById('overview-memories');
+  const memToShow = memories.slice(0, 10);
+  const memoryCarousel = createResponsiveCarousel(
+    memToShow,
+    (url, idx) => {
+      const card = document.createElement('div');
+      card.className = 'memory-card';
+      const img = document.createElement('img');
+      img.src = url;
+      img.alt = `Memory ${idx + 1}`;
+      img.loading = 'lazy';
+      img.onerror = () => {
+        img.src = 'https://via.placeholder.com/400x300/e0e0e0/999999?text=Memory';
+        img.style.display = 'block';
+      };
+      card.appendChild(img);
+      card.addEventListener('click', () => openFullscreenModal(url, 'Memory'));
+      return card;
+    },
+    {
+      visibleCountFn: () => window.innerWidth < 480 ? 1 : (window.innerWidth < 768 ? 2 : 3),
+      snapToIndividual: true
+    }
+  );
+  ovMem.innerHTML = '';
+  ovMem.appendChild(memoryCarousel.element);
+  const teacherSeeMore = document.createElement('div');
+  teacherSeeMore.style.textAlign = 'center';
+  teacherSeeMore.style.marginTop = '1rem';
+  teacherSeeMore.innerHTML = `<button class="view-full-btn" onclick="showSection('teachers')"><i class="fas fa-chalkboard-teacher"></i> See All Teachers</button>`;
+  ovTeachers.appendChild(teacherSeeMore);
+  const memorySeeMore = document.createElement('div');
+  memorySeeMore.style.textAlign = 'center';
+  memorySeeMore.style.marginTop = '1rem';
+  memorySeeMore.innerHTML = `<button class="view-full-btn" onclick="showSection('memories')"><i class="fas fa-images"></i> See All Memories</button>`;
+  ovMem.appendChild(memorySeeMore);
+  const sectionLinks = document.createElement('div');
+  sectionLinks.style.margin = '1.5rem 0';
+  sectionLinks.style.textAlign = 'center';
+  sectionLinks.innerHTML = `
+    <h4 style="color: var(--primary); margin-bottom: 0.75rem;">📚 Browse All Sections</h4>
+    <div style="display:flex;flex-wrap:wrap;gap:0.5rem;justify-content:center;">
+      ${Object.keys(students).map(sec => `
+        <!-- ✅ Change here -->
+        <a href="sections.html?section=${sec}" target="_blank"
+           style="padding:0.4rem 0.8rem;background:var(--glass-bg);border:1px solid var(--glass-border);border-radius:20px;text-decoration:none;color:var(--primary-dark);font-weight:600;transition:var(--transition);"
+           onmouseover="this.style.transform='scale(1.05)'; this.style.boxShadow='var(--shadow-sm)'"
+           onmouseout="this.style.transform=''; this.style.boxShadow=''"
+        >
+          ${sec.charAt(0).toUpperCase() + sec.slice(1)}
+        </a>
+      `).join('')}
+    </div>
+  `;
+  ovStudents.appendChild(sectionLinks);
+}
+function renderTeachers() {
+  const div = document.getElementById('all-teachers');
+  div.innerHTML = '';
+  teachers.forEach(t => {
+    const card = document.createElement('div');
+    card.className = 'card';
+    const safeImg = t.img?.trim() || 'https://via.placeholder.com/180/e0e0e0/999999?text=No+Photo';
+    card.innerHTML = `
+      <img src="${safeImg}" alt="${t.name}" loading="lazy"
+           onerror="this.src='https://via.placeholder.com/180/e0e0e0/999999?text=No+Photo'; this.style.display='block'">
+      <h4>${t.name}<br><small>${t.section_name || 'Advisor'}</small></h4>
+    `;
+    card.addEventListener('click', () => openStudentModal(t, 'Teacher'));
+    div.appendChild(card);
+  });
+}
+function renderSpeeches() {
+  const div = document.getElementById('all-speeches');
+  div.innerHTML = '';
+  const colorSchemes = [
+    { bg: 'linear-gradient(135deg, #f0faff, #f5f9ff)', border: '#bbdefb', text: '#1565c0', quote: '#64b5f6' },
+    { bg: 'linear-gradient(135deg, #f0faff, #f5f9ff)', border: '#bbdefb', text: '#1565c0', quote: '#64b5f6' },
+    { bg: 'linear-gradient(135deg, #f0faff, #f5f9ff)', border: '#bbdefb', text: '#1565c0', quote: '#64b5f6' },
+    { bg: 'linear-gradient(135deg, #f0faff, #f5f9ff)', border: '#bbdefb', text: '#1565c0', quote: '#64b5f6' },
+    { bg: 'linear-gradient(135deg, #f0faff, #f5f9ff)', border: '#bbdefb', text: '#1565c0', quote: '#64b5f6' }
+  ];
+  speeches.forEach((s, idx) => {
+    const scheme = colorSchemes[idx % colorSchemes.length];
+    const card = document.createElement('div');
+    card.className = 'speech-card';
+    card.style.background = scheme.bg;
+    card.style.border = `1px solid ${scheme.border}`;
+    card.style.borderRadius = 'var(--radius-md)';
+    card.style.padding = '1.5rem';
+    card.style.boxShadow = 'var(--shadow-sm)';
+    card.style.transition = 'var(--transition)';
+    let label = "Speech";
+    if (s.status.includes('Principal')) label = "Principal's Address";
+    else if (s.status.includes('Valedictorian')) label = "Valedictorian Speech";
+    else if (s.status.includes('Secretary')) label = "Student Council Address";
+    const avatarWrapper = document.createElement('div');
+    avatarWrapper.style.flex = '0 0 90px';
+    avatarWrapper.style.cursor = 'pointer';
+    avatarWrapper.onclick = () => openFullscreenModal(s.img || 'https://via.placeholder.com/150', s.name);
+    const avatarImg = document.createElement('img');
+    avatarImg.src = s.img || 'https://via.placeholder.com/150/e0e0e0/999999?text=?';
+    avatarImg.alt = s.name;
+    avatarImg.loading = 'lazy';
+    avatarImg.style.width = '90px';
+    avatarImg.style.height = '90px';
+    avatarImg.style.borderRadius = '50%';
+    avatarImg.style.objectFit = 'cover';
+    avatarImg.style.objectPosition = 'top';
+    avatarImg.style.boxShadow = '0 4px 12px rgba(0,0,0,0.15)';
+    avatarImg.style.border = `3px solid ${scheme.quote}`;
+    avatarImg.onerror = () => { avatarImg.src = 'https://via.placeholder.com/150/e0e0e0/999999?text=?'; };
+    avatarWrapper.appendChild(avatarImg);
+    const metaDiv = document.createElement('div');
+    metaDiv.style.flex = '1';
+    metaDiv.style.textAlign = 'left';
+    metaDiv.innerHTML = `
+      <h3 style="margin:0;color:${scheme.text};font-weight:800;">${s.name}</h3>
+      <p style="margin:0.25rem 0;color:#5d4037;font-weight:600;">${s.status}</p>
+      <div style="display:flex;gap:0.25rem;margin-top:0.3rem;align-items:center;">
+        <i class="fas fa-quote-left" style="color:${scheme.quote};font-size:0.9rem;"></i>
+        <span style="color:#9e9e9e;font-size:0.85rem;">${label}</span>
+      </div>
+    `;
+    const messageEl = document.createElement('p');
+    messageEl.style.fontStyle = 'italic';
+    messageEl.style.lineHeight = '1.7';
+    messageEl.style.color = '#424242';
+    messageEl.style.borderLeft = `3px solid ${scheme.quote}`;
+    messageEl.style.paddingLeft = '1rem';
+    messageEl.style.margin = '1rem 0';
+    messageEl.textContent = `“${s.message}”`;
+    const headerDiv = document.createElement('div');
+    headerDiv.style.display = 'flex';
+    headerDiv.style.gap = '1.25rem';
+    headerDiv.style.alignItems = 'center';
+    headerDiv.style.flexWrap = 'wrap';
+    headerDiv.appendChild(avatarWrapper);
+    headerDiv.appendChild(metaDiv);
+    card.appendChild(headerDiv);
+    card.appendChild(messageEl);
+    card.onmouseenter = () => card.style.transform = 'translateY(-3px)';
+    card.onmouseleave = () => card.style.transform = '';
+    div.appendChild(card);
+  });
+}
+function renderMemories() {
+  const div = document.getElementById('all-memories');
+  div.innerHTML = '';
+  memories.forEach(url => {
+    const card = document.createElement('div');
+    card.className = 'memory-card';
+    const img = document.createElement('img');
+    img.src = url;
+    img.alt = "Memory";
+    img.loading = "lazy";
+    img.onerror = () => {
+      img.src = 'https://via.placeholder.com/400x300/e0e0e0/999999?text=Memory';
+      img.style.display = 'block';
+    };
+    card.appendChild(img);
+    card.addEventListener('click', () => openFullscreenModal(url, 'Memory'));
+    div.appendChild(card);
+  });
+}
+function renderSong() {
+  const title = graduationLyrics.title || 'Graduation Song';
+  const lyrics = graduationLyrics.lyrics || '';
+  const lines = lyrics.split('\n').map(line => 
+    line.trim() === '' ? '<br>' : `<span class="line">${line}</span>`
+  ).join('\n');
+  document.getElementById('grad-song-lyrics').innerHTML = lines;
+  if (window.location.hash === '#song') {
+    setTimeout(() => document.getElementById('song').scrollIntoView({ behavior: 'smooth' }), 300);
+  }
+}
+
+
+
+function openStudentModal(student, sectionName = "Student") {
+  const src = student.img?.trim() || '';
+  const modalImg = document.getElementById('modal-img');
+  const modalName = document.getElementById('modal-name');
+  const modalSubtitle = document.getElementById('modal-subtitle');
+  const modalAwards = document.getElementById('modal-awards');
+
+  // Set basic modal content
+  modalImg.src = src || 'https://via.placeholder.com/180/e0e0e0/999999?text=No+Photo';
+  modalImg.alt = student.name;
+  modalName.textContent = student.name;
+  modalSubtitle.textContent = `${sectionName} • Class of 2025`;
+
+  // Determine awards based on role
+  let allAwards = [];
+
+  if (sectionName === "Teacher") {
+    // 🌟 Teacher award lookup
+    if (teacherAwards[student.name]) {
+      allAwards = [...new Set(teacherAwards[student.name])];
+    }
+  } else {
+    // 🎓 Student award lookup (original logic)
+    const matchedKey = Object.keys(achievements).find(k => normalize(k) === normalize(student.name));
+    if (matchedKey) {
+      allAwards = [...new Set(achievements[matchedKey])];
+    }
+    Object.entries(otherAwards).forEach(([award, recipients]) => {
+      if (recipients.some(r => normalize(r) === normalize(student.name))) {
+        allAwards.push(award);
+      }
+    });
+    allAwards = [...new Set(allAwards)];
+  }
+
+  // Render awards section
+  const awardsHTML = allAwards.length
+    ? `<div class="award-section">
+         <h3><i class="fas fa-trophy"></i> Awards & Recognitions</h3>
+         <div class="award-list">
+           <ul>${allAwards.map(a => `<li>${a}</li>`).join('')}</ul>
+         </div>
+       </div>`
+    : `<p class="no-awards"><i class="fas fa-info-circle"></i> No awards listed.</p>`;
+
+  // Optional image actions (view/download)
+  const isPlaceholder = !src || src.includes('placeholder') || src.includes('No+Photo');
+  const actions = !isPlaceholder
+    ? `<div style="display:flex;gap:0.75rem;justify-content:center;margin-top:1.25rem;flex-wrap:wrap">
+         <button class="view-full-btn" onclick="openFullscreenModal('${src.replace(/'/g, "\\'")}', '${student.name.replace(/'/g, "\\'")}')">
+           <i class="fas fa-expand"></i> View Full
+         </button>
+         <button class="view-full-btn" onclick="downloadImage('${src.replace(/'/g, "\\'")}', '${student.name.replace(/'/g, "\\'")}')">
+           <i class="fas fa-download"></i> Download
+         </button>
+       </div>`
+    : '';
+
+  modalAwards.innerHTML = awardsHTML + actions;
+
+  // Show and lock scroll
+  document.getElementById('studentModal').classList.add('active');
+  lockScroll(true);
+}
+
+
+function closeModal() {
+  document.getElementById('studentModal').classList.remove('active');
+  lockScroll(false);
+}
+document.getElementById('closeModal').onclick = closeModal;
+document.getElementById('studentModal').onclick = (e) => {
+  if (e.target === document.getElementById('studentModal')) closeModal();
+};
+function openFullscreenModal(src, alt) {
+  const img = document.getElementById('fullscreenImg');
+  img.src = src;
+  img.alt = alt;
+  document.getElementById('fullscreenModal').classList.add('active');
+  lockScroll(true);
+}
+function closeFullscreenModal() {
+  document.getElementById('fullscreenModal').classList.remove('active');
+  lockScroll(false);
+}
+document.getElementById('closeFullscreenBtn').onclick = closeFullscreenModal;
+document.getElementById('fullscreenModal').onclick = (e) => {
+  if (e.target === document.getElementById('fullscreenModal')) closeFullscreenModal();
+};
+function downloadImage(url, name) {
+  const a = document.createElement('a');
+  a.href = url;
+  const safeName = name.replace(/[^a-z0-9_\sñÑáéíóúÁÉÍÓÚ]/gi, '_').replace(/\s+/g, '_');
+  a.download = `${safeName}.jpg`;
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+}
+document.addEventListener('keydown', (e) => {
+  if (e.key === 'Escape') {
+    if (document.getElementById('studentModal').classList.contains('active')) closeModal();
+    if (document.getElementById('fullscreenModal').classList.contains('active')) closeFullscreenModal();
+  }
+});
+function showSection(id) {
+  document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+  const targetSection = document.getElementById(id);
+  if (targetSection) {
+    targetSection.classList.add('active');
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+    if (id === 'song') {
+      setTimeout(renderSong, 100);
+    }
+  }
+}
+</script>
+</body>
+</html>
