@@ -580,6 +580,84 @@
       background: var(--primary);
       border-radius: 10px;
     }
+
+    
+    /* ===== Back to Top Button ===== */
+.back-to-top {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  width: 52px;
+  height: 52px;
+  background: var(--primary);
+  color: white;
+  border: none;
+  border-radius: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  box-shadow: var(--shadow-md);
+  cursor: pointer;
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(20px);
+  transition: 
+    opacity 0.3s ease,
+    visibility 0.3s,
+    transform 0.3s ease,
+    background 0.2s;
+  z-index: 999;
+}
+.back-to-top.show {
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(0);
+}
+.back-to-top:hover {
+  background: var(--primary-dark);
+  transform: translateY(-3px) scale(1.05);
+  box-shadow: var(--shadow-lg);
+}
+
+/* ===== Floating Share Bar ===== */
+.share-bar {
+  position: fixed;
+  bottom: 20px;
+  left: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  z-index: 998;
+}
+.share-btn {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  background: white;
+  border: 2px solid var(--glass-border);
+  color: var(--primary);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  box-shadow: var(--shadow-sm);
+  cursor: pointer;
+  transition: var(--transition);
+}
+.share-btn:hover {
+  background: var(--primary);
+  color: white;
+  transform: scale(1.1);
+  box-shadow: var(--shadow-md);
+}
+.share-btn:active {
+  transform: scale(1);
+}
+
+/* Responsive: hide share bar on very small screens */
+@media (max-width: 380px) {
+  .share-bar { display: none; }
+}
+
   </style>
 </head>
 <body>
@@ -643,6 +721,25 @@
     </button>
     <img id="fullscreenImg" src="" alt="" style="max-width:95vw;max-height:90vh;object-fit:contain;border-radius:8px;" />
   </div>
+</div>
+
+
+<!-- Back to Top Button -->
+<button id="backToTopBtn" class="back-to-top"
+        aria-label="Scroll to top"
+        title="Back to Top">
+  <i class="fas fa-arrow-up"></i>
+</button>
+
+<!-- Social Share Container (Floating) -->
+<div id="shareBar" class="share-bar">
+  <button id="copyLinkBtn" class="share-btn" title="Copy page link" aria-label="Copy link">
+    <i class="fas fa-link"></i>
+  </button>
+  <button id="shareNativeBtn" class="share-btn" title="Share via device" aria-label="Share" 
+          style="display: none;"> <!-- Hidden on unsupported browsers -->
+    <i class="fas fa-share-alt"></i>
+  </button>
 </div>
 
 <footer>
@@ -1089,6 +1186,59 @@ document.addEventListener('DOMContentLoaded', () => {
     link.addEventListener('click', () => dropdownBtn.setAttribute('aria-expanded', 'false'));
   });
 });
+
+
+
+// ===== Back to Top Button Logic =====
+const backToTopBtn = document.getElementById('backToTopBtn');
+window.addEventListener('scroll', () => {
+  if (window.scrollY > 400) {
+    backToTopBtn.classList.add('show');
+  } else {
+    backToTopBtn.classList.remove('show');
+  }
+});
+backToTopBtn.addEventListener('click', () => {
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+});
+
+// ===== Social Sharing =====
+const copyLinkBtn = document.getElementById('copyLinkBtn');
+const shareNativeBtn = document.getElementById('shareNativeBtn');
+
+// Show native share button only if supported
+if (navigator.share) {
+  shareNativeBtn.style.display = 'flex';
+}
+
+copyLinkBtn.addEventListener('click', async () => {
+  try {
+    await navigator.clipboard.writeText(window.location.href);
+    copyLinkBtn.innerHTML = '<i class="fas fa-check"></i>';
+    setTimeout(() => {
+      copyLinkBtn.innerHTML = '<i class="fas fa-link"></i>';
+    }, 2000);
+  } catch (err) {
+    alert('Failed to copy link. Please copy manually.');
+  }
+});
+
+shareNativeBtn.addEventListener('click', async () => {
+  try {
+    await navigator.share({
+      //✅ Change here
+      title: 'ANHS-SH 2025 Yearbook',
+      text: '🎓 Check out our digital yearbook — memories, achievements, and more!',
+      url: window.location.href
+    });
+  } catch (err) {
+    if (err.name !== 'AbortError') {
+      // Fallback: copy if share fails
+      copyLinkBtn.click();
+    }
+  }
+});
+
 </script>
 
 </body>
