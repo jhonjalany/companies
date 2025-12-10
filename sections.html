@@ -653,6 +653,12 @@
   transform: scale(1);
 }
 
+.dropdown-btn[aria-expanded="true"] + .dropdown-content {
+  max-height: 70vh; /* leave room for header/footer */
+  padding: 0.25rem 0;
+  overflow-y: auto;
+  overscroll-behavior: contain; /* prevent body scroll pull */
+}
 
   </style>
 </head>
@@ -1239,4 +1245,5 @@ shareNativeBtn.addEventListener('click', async () => {
 
 </body>
 </html>
+
 
