@@ -1992,10 +1992,10 @@ function renderOverview() {
     ).join('') + (awards.length > 4 ? `<span style="color:#666;font-size:0.85rem;">+${awards.length - 4} more</span>` : '');
 
     topCard.innerHTML = `
-      <div style="display:flex;gap:1.25rem;align-items:center;flex-wrap:wrap;">
+      <div style="display:flex;align-items:center;flex-wrap:wrap;">
         <div style="flex:0 0 100px;">
           <img src="${imgSrc}" alt="${topStudent.name}" loading="lazy"
-              style="width:100px;height:100px;border-radius:50%;object-fit:cover;box-shadow:var(--shadow-md);">
+              style="width:85px;height:85px;border-radius:50%;object-fit:cover;box-shadow:var(--shadow-md); object-position: top;">
         </div>
         <div style="text-align:left;flex:1;">
           <h3 style="margin:0;color:var(--primary);display:flex;align-items:center;gap:0.5rem;">
@@ -2008,7 +2008,7 @@ function renderOverview() {
             ${badgeHtml}
           </div>
           <button class="view-full-btn" style="margin-top:0.75rem;" id="topAchieverViewBtn">
-            <i class="fas fa-user-graduate"></i> View Full Profile
+            <i class="fas fa-user-graduate"></i> Full Profile
           </button>
         </div>
       </div>
@@ -2059,7 +2059,7 @@ function renderOverview() {
         <div style="display:flex;gap:1.25rem;align-items:center;margin-bottom:1rem;flex-wrap:wrap;">
           <div style="flex:0 0 80px;cursor:pointer;" onclick="openFullscreenModal('${safeImg(s.img)}', '${s.name}')">
             <img src="${safeImg(s.img)}" alt="${s.name}" loading="lazy"
-                style="width:80px;height:80px;border-radius:50%;object-fit:cover;box-shadow:var(--shadow-md);border:3px solid ${quoteColor};">
+                style="width:80px;height:80px;border-radius:50%;object-fit:cover; object-position:top; box-shadow:var(--shadow-md);border:3px solid ${quoteColor};">
           </div>
           <div style="flex:1;text-align:left;">
             <h3 style="margin:0;color:${textColor};font-weight:800;">${s.name}</h3>
