@@ -1460,6 +1460,49 @@ shareNativeBtn.addEventListener('click', async () => {
   }
 });
 
+// 🔒 Disable right-click (context menu)
+document.addEventListener('contextmenu', (e) => {
+  e.preventDefault();
+  return false;
+});
+
+// 🔒 Disable key combinations for copying, viewing source, DevTools, etc.
+document.addEventListener('keydown', (e) => {
+  // Prevent Ctrl+C / Cmd+C (copy)
+  if ((e.ctrlKey || e.metaKey) && e.key === 'c') {
+    e.preventDefault();
+    return false;
+  }
+
+  // Prevent Ctrl+U (view source) — works in some browsers
+  if ((e.ctrlKey || e.metaKey) && e.key === 'u') {
+    e.preventDefault();
+    return false;
+  }
+
+  // Prevent Ctrl+Shift+I / F12 / Ctrl+Shift+J (DevTools)
+  if (
+    e.key === 'F12' ||
+    ((e.ctrlKey || e.metaKey) && e.shiftKey && (e.key === 'I' || e.key === 'J')) ||
+    ((e.ctrlKey || e.metaKey) && e.key === 'U') // redundant but reinforced
+  ) {
+    e.preventDefault();
+    return false;
+  }
+
+  // Prevent Ctrl+Shift+C (DevTools element picker — common in Chrome)
+  if ((e.ctrlKey || e.metaKey) && e.shiftKey && e.key === 'C') {
+    e.preventDefault();
+    return false;
+  }
+
+  // Optional: Prevent Ctrl+A (select all)
+  // if ((e.ctrlKey || e.metaKey) && e.key === 'a') {
+  //   e.preventDefault();
+  //   return false;
+  // }
+});
+
 </script>
 
 </body>
