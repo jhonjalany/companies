@@ -1,0 +1,591 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>📁 Folder Explorer — Multi-Upload & Smart Search</title>
+  <style>
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      margin: 0;
+      padding: 20px;
+      background: #f8f9fa;
+      color: #333;
+    }
+    .container {
+      max-width: 1000px;
+      margin: 0 auto;
+    }
+    header {
+      text-align: center;
+      margin-bottom: 16px;
+    }
+    h1 {
+      font-weight: 600;
+    }
+
+    #filter-badge {
+      text-align: center;
+      margin-bottom: 16px;
+    }
+    #filter-badge span {
+      background: #28a745;
+      color: white;
+      padding: 6px 14px;
+      border-radius: 16px;
+      font-size: 0.95em;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+    }
+    #clear-filter {
+      font-size: 0.9em;
+      color: #fff;
+      background: #155724;
+      border: none;
+      padding: 3px 8px;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+    #clear-filter:hover {
+      background: #0e3d19;
+    }
+
+    .upload-area {
+      border: 2px dashed #007bff;
+      border-radius: 8px;
+      padding: 40px 20px;
+      text-align: center;
+      margin-bottom: 24px;
+      background: #e9f2ff;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+    .upload-area.dragover {
+      background: #b8daff;
+      border-color: #0056b3;
+    }
+    #upload-btn {
+      margin-top: 12px;
+      padding: 8px 16px;
+      background: #007bff;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+    #upload-btn:hover {
+      background: #0069d9;
+    }
+
+    #search-bar {
+      width: 100%;
+      padding: 12px;
+      font-size: 16px;
+      margin-bottom: 20px;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+      box-sizing: border-box;
+    }
+
+    #results {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+      gap: 16px;
+    }
+
+    .folder-card {
+      background: white;
+      border-radius: 6px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+      overflow: hidden;
+      transition: transform 0.2s;
+    }
+    .folder-card:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+    }
+    .folder-header {
+      background: #007bff;
+      color: white;
+      padding: 12px 16px;
+      font-weight: bold;
+      display: flex;
+      justify-content: space-between;
+    }
+    .file-count {
+      opacity: 0.9;
+      font-size: 0.9em;
+    }
+    .file-list {
+      padding: 0;
+      margin: 0;
+      list-style: none;
+      max-height: 300px;
+      overflow-y: auto;
+    }
+    .file-item {
+      padding: 10px 16px;
+      border-bottom: 1px solid #f0f0f0;
+      word-break: break-all;
+      font-family: monospace;
+      font-size: 0.95em;
+      background: #fafafa;
+    }
+    .file-item:last-child {
+      border-bottom: none;
+    }
+
+    .search-results {
+      margin-top: 24px;
+    }
+    .search-results h2 {
+      color: #28a745;
+      margin-bottom: 12px;
+    }
+    .match-item {
+      background: #d4edda;
+      padding: 10px 14px;
+      margin-bottom: 8px;
+      border-radius: 4px;
+      display: flex;
+      justify-content: space-between;
+      font-family: monospace;
+      border-left: 4px solid #28a745;
+    }
+    .match-folder {
+      color: #155724;
+      font-weight: bold;
+      font-size: 0.95em;
+    }
+
+    /* Pagination Styles */
+    .pagination {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 8px;
+      margin-top: 16px;
+    }
+    .pagination button {
+      padding: 6px 12px;
+      background: #f1f3f4;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 0.9em;
+    }
+    .pagination button:hover:not(:disabled) {
+      background: #e9ecef;
+    }
+    .pagination button:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+    .pagination .page-number {
+      min-width: 32px;
+      text-align: center;
+    }
+
+    .status {
+      text-align: center;
+      margin-top: 10px;
+      font-size: 0.9em;
+      color: #666;
+      min-height: 1.5em;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <h1>📁 Folder Explorer</h1>
+      <p>Drag & drop folders (multiple times), or use the button. Search across all files.</p>
+    </header>
+
+    <div id="filter-badge" style="display: none;">
+      <span>
+        🔍 Filtering active
+        <button id="clear-filter">Clear</button>
+      </span>
+    </div>
+
+    <div id="upload-area" class="upload-area">
+      <p>📁 Drag & drop folders here (multiple allowed)</p>
+      <p>or</p>
+      <button id="upload-btn">➕ Select Folders</button>
+      <div class="status" id="status"></div>
+    </div>
+
+    <input type="text" id="search-bar" placeholder="🔍 Search filenames or paths (e.g., 'name/age/config.json')" />
+
+    <div id="results"></div>
+
+    <div id="search-results" class="search-results" style="display: none;">
+      <h2>🔍 All Matches</h2>
+      <div id="matches"></div>
+      <div id="pagination" class="pagination"></div>
+    </div>
+  </div>
+
+  <script>
+    let fileMap = {};
+
+    function getAllFoldersFromFiles() {
+      const folders = new Set();
+      for (const filePath of Object.keys(fileMap)) {
+        let parts = filePath.split('/');
+        let path = '';
+        for (let i = 0; i < parts.length - 1; i++) {
+          path = i === 0 ? parts[0] : `${path}/${parts[i]}`;
+          folders.add(path);
+        }
+      }
+      return Array.from(folders).sort((a, b) => a.localeCompare(b));
+    }
+
+    function getFilesInFolder(folderPath) {
+      return Object.keys(fileMap)
+        .filter(filePath => {
+          if (folderPath === '') {
+            return !filePath.includes('/');
+          }
+          return filePath.startsWith(folderPath + '/') &&
+                 filePath.slice(folderPath.length + 1).indexOf('/') === -1;
+        });
+    }
+
+    // --- Modern API: showDirectoryPicker ---
+    async function handleDirectoryHandles(dirHandles) {
+      for (const dirHandle of dirHandles) {
+        await traverseDirectoryModern(dirHandle, '');
+      }
+      updateStatus(`✅ Added ${dirHandles.length} folder(s)`);
+      renderResults();
+    }
+
+    async function traverseDirectoryModern(dirHandle, currentPath) {
+      for await (const entry of dirHandle.values()) {
+        const path = currentPath ? `${currentPath}/${entry.name}` : entry.name;
+        if (entry.kind === 'file') {
+          fileMap[path] = true;
+        } else if (entry.kind === 'directory') {
+          await traverseDirectoryModern(entry, path);
+        }
+      }
+    }
+
+    // --- Legacy/Fallback: webkitGetAsEntry ---
+    async function handleEntry(entry, currentPath = '') {
+      return new Promise((resolve) => {
+        const path = currentPath ? `${currentPath}/${entry.name}` : entry.name;
+        if (entry.isFile) {
+          fileMap[path] = true;
+          resolve();
+        } else if (entry.isDirectory) {
+          const dirReader = entry.createReader();
+          const readEntries = () => {
+            dirReader.readEntries(async (entries) => {
+              if (entries.length === 0) {
+                resolve();
+              } else {
+                await Promise.all(
+                  entries.map(e => handleEntry(e, path))
+                );
+                readEntries();
+              }
+            }, () => resolve());
+          };
+          readEntries();
+        } else {
+          resolve();
+        }
+      });
+    }
+
+    // --- UI & Utils ---
+    const uploadArea = document.getElementById('upload-area');
+    const uploadBtn = document.getElementById('upload-btn');
+    const searchBar = document.getElementById('search-bar');
+    const resultsDiv = document.getElementById('results');
+    const searchResultsDiv = document.getElementById('search-results');
+    const matchesDiv = document.getElementById('matches');
+    const paginationDiv = document.getElementById('pagination');
+    const statusDiv = document.getElementById('status');
+    const filterBadge = document.getElementById('filter-badge');
+    const clearFilterBtn = document.getElementById('clear-filter');
+
+    let currentPage = 1;
+    const matchesPerPage = 10;
+    let allMatchingFiles = [];
+
+    function updateStatus(msg) {
+      statusDiv.textContent = msg;
+      setTimeout(() => {
+        if (statusDiv.textContent === msg) statusDiv.textContent = '';
+      }, 3000);
+    }
+
+    function renderResults() {
+      resultsDiv.innerHTML = '';
+      const folders = getAllFoldersFromFiles();
+      const rootFiles = getFilesInFolder('');
+
+      if (folders.length === 0 && rootFiles.length === 0) {
+        resultsDiv.innerHTML = '<p style="text-align:center;color:#888">No folders or files uploaded yet.</p>';
+        filterBadge.style.display = 'none';
+        searchResultsDiv.style.display = 'none';
+        return;
+      }
+
+      if (rootFiles.length > 0) {
+        const rootCard = document.createElement('div');
+        rootCard.className = 'folder-card';
+        rootCard.innerHTML = `
+          <div class="folder-header">
+            <span>📁 (root)</span>
+            <span class="file-count">${rootFiles.length} file${rootFiles.length !== 1 ? 's' : ''}</span>
+          </div>
+          <ul class="file-list">
+            ${rootFiles.map(f => `<li class="file-item">${f}</li>`).join('')}
+          </ul>
+        `;
+        resultsDiv.appendChild(rootCard);
+      }
+
+      folders.forEach(folderPath => {
+        const files = getFilesInFolder(folderPath);
+        const card = document.createElement('div');
+        card.className = 'folder-card';
+        card.innerHTML = `
+          <div class="folder-header">
+            <span>📁 ${folderPath}</span>
+            <span class="file-count">${files.length} file${files.length !== 1 ? 's' : ''}</span>
+          </div>
+          <ul class="file-list">
+            ${files.length > 0 
+              ? files.map(f => `<li class="file-item">${f.split('/').pop()}</li>`).join('')
+              : '<li class="file-item" style="color:#999">No files</li>'
+            }
+          </ul>
+        `;
+        resultsDiv.appendChild(card);
+      });
+
+      filterBadge.style.display = 'none';
+      searchResultsDiv.style.display = 'none';
+    }
+
+    // Render only current page of matches
+    function renderMatchesPage() {
+      const start = (currentPage - 1) * matchesPerPage;
+      const end = start + matchesPerPage;
+      const paginatedMatches = allMatchingFiles.slice(start, end);
+
+      matchesDiv.innerHTML = paginatedMatches.length
+        ? paginatedMatches.map(fp => {
+            const folder = fp.substring(0, fp.lastIndexOf('/') || 0) || '(root)';
+            return `
+              <div class="match-item">
+                <span>${fp}</span>
+                <span class="match-folder">📁 ${folder}</span>
+              </div>`;
+          }).join('')
+        : '<p style="color:#666">No matching files found.</p>';
+
+      renderPagination();
+    }
+
+    function renderPagination() {
+      const totalPages = Math.ceil(allMatchingFiles.length / matchesPerPage);
+      paginationDiv.innerHTML = '';
+
+      if (totalPages <= 1) {
+        paginationDiv.style.display = 'none';
+        return;
+      }
+      paginationDiv.style.display = 'flex';
+
+      const prevButton = document.createElement('button');
+      prevButton.textContent = '◀ Prev';
+      prevButton.disabled = currentPage === 1;
+      prevButton.onclick = () => {
+        if (currentPage > 1) {
+          currentPage--;
+          renderMatchesPage();
+        }
+      };
+
+      const nextButton = document.createElement('button');
+      nextButton.textContent = 'Next ▶';
+      nextButton.disabled = currentPage === totalPages;
+      nextButton.onclick = () => {
+        if (currentPage < totalPages) {
+          currentPage++;
+          renderMatchesPage();
+        }
+      };
+
+      paginationDiv.appendChild(prevButton);
+
+      // Show up to 5 page numbers around current
+      const startPage = Math.max(1, currentPage - 2);
+      const endPage = Math.min(totalPages, startPage + 4);
+      for (let i = startPage; i <= endPage; i++) {
+        const pageButton = document.createElement('button');
+        pageButton.className = 'page-number';
+        pageButton.textContent = i;
+        pageButton.style.fontWeight = i === currentPage ? 'bold' : 'normal';
+        pageButton.onclick = () => {
+          currentPage = i;
+          renderMatchesPage();
+        };
+        paginationDiv.appendChild(pageButton);
+      }
+
+      paginationDiv.appendChild(nextButton);
+    }
+
+    function renderFilteredResults(query) {
+      const lowerQuery = query.toLowerCase();
+      allMatchingFiles = Object.keys(fileMap).filter(fp => fp.toLowerCase().includes(lowerQuery));
+      currentPage = 1;
+
+      searchResultsDiv.style.display = 'block';
+
+      // Render matches list (paginated)
+      renderMatchesPage();
+
+      // Render folder cards (only folders with direct matches)
+      resultsDiv.innerHTML = '';
+      const rootMatches = allMatchingFiles.filter(fp => !fp.includes('/'));
+      if (rootMatches.length > 0) {
+        const card = document.createElement('div');
+        card.className = 'folder-card';
+        card.innerHTML = `
+          <div class="folder-header">
+            <span>📁 (root)</span>
+            <span class="file-count">${rootMatches.length} match${rootMatches.length !== 1 ? 'es' : ''}</span>
+          </div>
+          <ul class="file-list">
+            ${rootMatches.map(f => `<li class="file-item">${f}</li>`).join('')}
+          </ul>`;
+        resultsDiv.appendChild(card);
+      }
+
+      const folders = getAllFoldersFromFiles();
+      folders.forEach(folderPath => {
+        const directMatches = allMatchingFiles.filter(fp =>
+          fp.startsWith(folderPath + '/') && 
+          fp.slice(folderPath.length + 1).indexOf('/') === -1
+        );
+        if (directMatches.length === 0) return;
+
+        const card = document.createElement('div');
+        card.className = 'folder-card';
+        card.innerHTML = `
+          <div class="folder-header">
+            <span>📁 ${folderPath}</span>
+            <span class="file-count">${directMatches.length} match${directMatches.length !== 1 ? 'es' : ''}</span>
+          </div>
+          <ul class="file-list">
+            ${directMatches.map(f => `<li class="file-item">${f.split('/').pop()}</li>`).join('')}
+          </ul>`;
+        resultsDiv.appendChild(card);
+      });
+
+      if (resultsDiv.children.length === 0) {
+        resultsDiv.innerHTML = '<p style="text-align:center;color:#888">No folders contain matching files.</p>';
+      }
+
+      filterBadge.style.display = 'block';
+    }
+
+    let searchTimeout;
+    function performSearch(query) {
+      const clean = query.trim();
+      if (!clean) {
+        renderResults();
+      } else {
+        renderFilteredResults(clean);
+      }
+    }
+
+    // --- Event Handlers ---
+    uploadBtn.addEventListener('click', async () => {
+      if ('showDirectoryPicker' in window) {
+        try {
+          const dirHandles = await window.showDirectoryPicker({ multiple: true });
+          await handleDirectoryHandles(dirHandles);
+        } catch (err) {
+          if (err.name !== 'AbortError') {
+            alert('📁 Folder selection failed: ' + err.message);
+          }
+        }
+      } else {
+        alert('⚠️ Your browser doesn’t support folder selection via button.\n' +
+              '👉 Try dragging folders directly into the upload area instead.');
+      }
+    });
+
+    ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+      uploadArea.addEventListener(eventName, preventDefaults, false);
+    });
+
+    function preventDefaults(e) {
+      e.preventDefault();
+      e.stopPropagation();
+    }
+
+    uploadArea.addEventListener('dragenter', () => uploadArea.classList.add('dragover'));
+    uploadArea.addEventListener('dragover', () => uploadArea.classList.add('dragover'));
+    uploadArea.addEventListener('dragleave', () => uploadArea.classList.remove('dragover'));
+    uploadArea.addEventListener('drop', () => uploadArea.classList.remove('dragover'));
+
+    uploadArea.addEventListener('drop', async (e) => {
+      const items = e.dataTransfer.items;
+      const entries = [];
+      for (let i = 0; i < items.length; i++) {
+        const item = items[i].webkitGetAsEntry?.();
+        if (item && item.isDirectory) {
+          entries.push(item);
+        }
+      }
+
+      if (entries.length === 0) {
+        updateStatus('⚠️ No folders detected. Drag folders, not files.');
+        return;
+      }
+
+      for (const entry of entries) {
+        await handleEntry(entry);
+      }
+
+      updateStatus(`✅ Added ${entries.length} folder(s) via drag`);
+      renderResults();
+    });
+
+    searchBar.addEventListener('input', (e) => {
+      clearTimeout(searchTimeout);
+      searchTimeout = setTimeout(() => performSearch(e.target.value), 100);
+    });
+
+    searchBar.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') {
+        searchBar.value = '';
+        performSearch('');
+        searchBar.blur();
+      }
+    });
+
+    clearFilterBtn.addEventListener('click', () => {
+      searchBar.value = '';
+      performSearch('');
+      searchBar.focus();
+    });
+
+    renderResults();
+  </script>
+</body>
+</html>
