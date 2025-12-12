@@ -1,0 +1,1341 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Static Web Data Analyzer</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
+    <style>
+        :root {
+            --primary: #3b82f6;
+            --primary-dark: #2563eb;
+            --secondary: #64748b;
+            --success: #10b981;
+            --warning: #f59e0b;
+            --danger: #ef4444;
+            --light: #f8fafc;
+            --dark: #1e293b;
+            --gray-100: #f1f5f9;
+            --gray-200: #e2e8f0;
+            --gray-300: #cbd5e1;
+            --gray-400: #94a3b8;
+            --border: #e2e8f0;
+            --shadow: 0 1px 3px rgba(0,0,0,0.1);
+            --shadow-md: 0 4px 6px rgba(0,0,0,0.1);
+            --shadow-lg: 0 10px 15px rgba(0,0,0,0.1);
+            --transition: all 0.2s ease-in-out;
+        }
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f8fafc;
+            color: #1e293b;
+            line-height: 1.6;
+        }
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 1rem;
+        }
+        /* Header Styles */
+        header {
+            background: white;
+            box-shadow: var(--shadow);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem 0;
+        }
+        .logo {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--dark);
+        }
+        .logo span {
+            color: var(--primary);
+        }
+        /* Upload Section */
+        .upload-section {
+            background: white;
+            border-radius: 0.5rem;
+            padding: 1.5rem;
+            margin: 1.5rem 0;
+            box-shadow: var(--shadow-md);
+        }
+        .upload-area {
+            border: 2px dashed var(--gray-300);
+            border-radius: 0.5rem;
+            padding: 2rem;
+            text-align: center;
+            cursor: pointer;
+            transition: var(--transition);
+            background: var(--gray-100);
+        }
+        .upload-area:hover, .upload-area.drag-active {
+            border-color: var(--primary);
+            background: #eff6ff;
+        }
+        .upload-area i {
+            font-size: 3rem;
+            color: var(--primary);
+            margin-bottom: 1rem;
+        }
+        .upload-area h3 {
+            font-size: 1.25rem;
+            margin-bottom: 0.5rem;
+            color: var(--dark);
+        }
+        .upload-area p {
+            color: var(--secondary);
+            margin-bottom: 1rem;
+        }
+        .file-input {
+            display: none;
+        }
+        .btn {
+            display: inline-block;
+            padding: 0.75rem 1.5rem;
+            border-radius: 0.5rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition);
+            text-decoration: none;
+            border: none;
+            font-size: 0.9rem;
+        }
+        .btn-primary {
+            background: var(--primary);
+            color: white;
+        }
+        .btn-primary:hover {
+            background: var(--primary-dark);
+        }
+        .btn-outline {
+            background: transparent;
+            border: 2px solid var(--primary);
+            color: var(--primary);
+        }
+        .btn-outline:hover {
+            background: var(--primary);
+            color: white;
+        }
+        .btn-sm {
+            padding: 0.5rem 1rem;
+            font-size: 0.8rem;
+        }
+        .btn-danger {
+            background: var(--danger);
+            color: white;
+        }
+        .btn-danger:hover {
+            background: #dc2626;
+        }
+        /* Controls Section */
+        .controls-section {
+            background: white;
+            border-radius: 0.5rem;
+            padding: 1.5rem;
+            margin: 1.5rem 0;
+            box-shadow: var(--shadow-md);
+        }
+        .section-title {
+            font-size: 1.25rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+            color: var(--dark);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        .section-title i {
+            color: var(--primary);
+        }
+        /* Advanced Search */
+        .advanced-search {
+            margin-top: 1rem;
+        }
+        .advanced-search-content {
+            display: none;
+            margin-top: 1rem;
+        }
+        .advanced-search-content.active {
+            display: block;
+        }
+        .filter-group {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1rem;
+            margin-bottom: 1rem;
+            padding: 1rem;
+            background: var(--gray-100);
+            border-radius: 0.5rem;
+            align-items: flex-end;
+        }
+        .filter-item {
+            display: flex;
+            gap: 0.5rem;
+            align-items: center;
+        }
+        .filter-select, .filter-input {
+            padding: 0.5rem;
+            border: 1px solid var(--gray-300);
+            border-radius: 0.375rem;
+            font-size: 0.875rem;
+            min-width: 120px;
+        }
+        .filter-select {
+            min-width: 140px;
+        }
+        .filter-input {
+            min-width: 150px;
+        }
+        .filter-input-range {
+            display: flex;
+            gap: 0.5rem;
+        }
+        .filter-input-range input {
+            min-width: 100px;
+        }
+        .remove-filter {
+            background: var(--danger);
+            color: white;
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            font-size: 0.8rem;
+        }
+        .add-filter {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: var(--primary);
+            font-weight: 500;
+            cursor: pointer;
+            margin-top: 0.5rem;
+        }
+        .add-filter:hover {
+            color: var(--primary-dark);
+        }
+        /* Logic Toggle */
+        .logic-toggle {
+            display: flex;
+            gap: 1rem;
+            margin: 1rem 0;
+            padding: 1rem;
+            background: var(--gray-100);
+            border-radius: 0.5rem;
+        }
+        .logic-option {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        .logic-option input {
+            margin: 0;
+        }
+        /* Column Filters in Table Header */
+        .table-header-cell {
+            position: relative;
+            padding: 0.75rem 1rem 0.25rem 1rem !important;
+            background: var(--gray-100);
+        }
+        .column-filter-container {
+            margin-top: 0.5rem;
+        }
+        .column-filter-input {
+            width: 100%;
+            padding: 0.375rem 0.5rem;
+            border: 1px solid var(--gray-300);
+            border-radius: 0.25rem;
+            font-size: 0.75rem;
+            transition: var(--transition);
+        }
+        .column-filter-input:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.1);
+        }
+        .filter-icon {
+            position: absolute;
+            right: 0.5rem;
+            top: 0.875rem;
+            color: var(--gray-400);
+            font-size: 0.625rem;
+        }
+        /* Results Section */
+        .results-section {
+            background: white;
+            border-radius: 0.5rem;
+            padding: 1.5rem;
+            margin: 1.5rem 0;
+            box-shadow: var(--shadow-md);
+        }
+        .results-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid var(--gray-200);
+        }
+        .results-info {
+            font-size: 0.875rem;
+            color: var(--secondary);
+        }
+        .results-info strong {
+            color: var(--dark);
+        }
+        .filters-count {
+            display: flex;
+            align-items: center;
+            gap: 0.25rem;
+            font-size: 0.875rem;
+            color: var(--primary);
+        }
+        .operator-hint {
+            font-size: 0.75rem;
+            color: var(--gray-400);
+            margin-top: 0.25rem;
+        }
+        /* Data Table */
+        .data-table-container {
+            overflow-x: auto;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            min-width: 800px;
+        }
+        thead th {
+            background: var(--gray-100);
+            padding: 0.75rem 1rem;
+            text-align: left;
+            font-weight: 600;
+            color: var(--dark);
+            font-size: 0.875rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            border-bottom: 2px solid var(--gray-300);
+        }
+        tbody td {
+            padding: 0.75rem 1rem;
+            border-bottom: 1px solid var(--gray-200);
+            font-size: 0.875rem;
+        }
+        tbody tr:nth-child(even) {
+            background: var(--gray-100);
+        }
+        tbody tr:hover {
+            background: #dbeafe;
+        }
+        /* Empty States */
+        .empty-state {
+            text-align: center;
+            padding: 3rem 1rem;
+        }
+        .empty-state i {
+            font-size: 3rem;
+            color: var(--gray-300);
+            margin-bottom: 1rem;
+        }
+        .empty-state h3 {
+            font-size: 1.25rem;
+            color: var(--dark);
+            margin-bottom: 0.5rem;
+        }
+        .empty-state p {
+            color: var(--secondary);
+            max-width: 500px;
+            margin: 0 auto 1rem;
+        }
+        /* Status Badges */
+        .status {
+            display: inline-block;
+            padding: 0.25rem 0.75rem;
+            border-radius: 9999px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+        .status-active {
+            background: #dcfce7;
+            color: #166534;
+        }
+        .status-inactive {
+            background: #fee2e2;
+            color: #991b1b;
+        }
+        .status-pending {
+            background: #fef3c7;
+            color: #92400e;
+        }
+        /* Responsive */
+        @media (max-width: 768px) {
+            .header-content {
+                flex-direction: column;
+                gap: 1rem;
+            }
+            .results-header {
+                flex-direction: column;
+                gap: 0.5rem;
+                align-items: flex-start;
+            }
+            .column-filter-input {
+                font-size: 0.625rem;
+                padding: 0.25rem 0.5rem;
+            }
+            .filter-group {
+                flex-direction: column;
+                align-items: stretch;
+            }
+            .pagination-controls {
+                flex-direction: column;
+                gap: 0.75rem;
+            }
+        }
+        /* Animation */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .fade-in {
+            animation: fadeIn 0.3s ease-out;
+        }
+        /* Loading */
+        .loading {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 2rem;
+        }
+        .spinner {
+            width: 2rem;
+            height: 2rem;
+            border: 3px solid var(--gray-300);
+            border-top: 3px solid var(--primary);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        /* Tooltip */
+        .tooltip {
+            position: relative;
+            display: inline-block;
+        }
+        .tooltip .tooltiptext {
+            visibility: hidden;
+            width: 200px;
+            background-color: var(--dark);
+            color: #fff;
+            text-align: center;
+            border-radius: 6px;
+            padding: 5px;
+            position: absolute;
+            z-index: 1;
+            bottom: 125%;
+            left: 50%;
+            margin-left: -100px;
+            opacity: 0;
+            transition: opacity 0.3s;
+            font-size: 0.75rem;
+        }
+        .tooltip:hover .tooltiptext {
+            visibility: visible;
+            opacity: 1;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="container">
+            <div class="header-content">
+                <div class="logo">Data<span>Analyzer</span></div>
+                <div class="controls" style="display:flex; gap:0.5rem">
+                    <div class="dataset-selector" id="datasetSelectorContainer" style="display:none">
+                        <label for="datasetSelect" style="font-size:0.875rem">Dataset:</label>
+                        <select id="datasetSelect" class="filter-select" style="margin-left:0.5rem; padding:0.25rem 0.5rem"></select>
+                    </div>
+                    <button id="clearBtn" class="btn btn-outline btn-sm">
+                        <span>🗑️</span> Clear All
+                    </button>
+                </div>
+            </div>
+        </div>
+    </header>
+    <main class="container">
+        <!-- Upload Section -->
+        <section class="upload-section">
+            <div class="upload-area" id="uploadArea">
+                <span>📊</span>
+                <h3>Upload Your Data File(s)</h3>
+                <p>Supports CSV, XLSX (multiple files allowed)</p>
+                <button class="btn btn-primary">Choose File(s)</button>
+                <input type="file" id="fileInput" class="file-input" accept=".csv,.xlsx,.xls" multiple>
+                <p class="mt-2 text-sm text-gray-500">or drag and drop files here</p>
+            </div>
+        </section>
+        <!-- Controls Section -->
+        <section class="controls-section">
+            <div class="section-title">
+                <span>🔍</span>
+                <span>Search & Filter</span>
+            </div>
+            <!-- Advanced Search -->
+            <div class="advanced-search">
+                <button id="toggleAdvanced" class="btn btn-outline">
+                    <span>⚙️</span> Advanced Search
+                </button>
+                <div class="advanced-search-content" id="advancedSearchContent">
+                    <div class="section-title">
+                        <span>🎯</span>
+                        <span>Advanced Filters</span>
+                    </div>
+                    <div class="logic-toggle">
+                        <div class="logic-option">
+                            <input type="radio" id="logicAnd" name="filterLogic" value="and" checked>
+                            <label for="logicAnd">Match ALL conditions (AND)</label>
+                        </div>
+                        <div class="logic-option">
+                            <input type="radio" id="logicOr" name="filterLogic" value="or">
+                            <label for="logicOr">Match ANY condition (OR)</label>
+                        </div>
+                    </div>
+                    <div id="filtersContainer"></div>
+                    <div class="add-filter" id="addFilterBtn">
+                        <span>➕</span>
+                        <span>Add Filter Condition</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+        <!-- Results Section -->
+        <section class="results-section">
+            <div class="results-header">
+                <div class="results-info">
+                    Showing <strong id="showingCount">0</strong> of <strong id="totalCount">0</strong> records
+                </div>
+                <div class="filters-count" id="filtersCount">
+                    <span>🎯</span>
+                    <span>0 active filters</span>
+                </div>
+            </div>
+            <!-- Pagination Controls -->
+            <div class="pagination-controls" id="paginationControls" style="display:flex; justify-content:space-between; align-items:center; margin-top:1rem; font-size:0.875rem;">
+                <div>
+                    <label>Show: 
+                        <select id="pageSizeSelect" class="filter-select" style="width:auto; min-width:60px; padding:0.25rem 0.5rem">
+                            <option value="10">10</option>
+                            <option value="25" selected>25</option>
+                            <option value="50">50</option>
+                            <option value="100">100</option>
+                            <option value="all">All</option>
+                        </select> per page
+                    </label>
+                </div>
+                <div>
+                    <button id="prevPage" class="btn btn-outline btn-sm" disabled>← Prev</button>
+                    <span id="pageInfo" style="margin:0 1rem">Page 1 of 1</span>
+                    <button id="nextPage" class="btn btn-outline btn-sm" disabled>Next →</button>
+                </div>
+            </div>
+            <div class="data-table-container">
+                <div id="tablePlaceholder">
+                    <div class="empty-state">
+                        <span>📊</span>
+                        <h3>No Data Available</h3>
+                        <p>Upload a file to analyze your data with powerful filtering capabilities</p>
+                    </div>
+                </div>
+                <table id="dataTable" style="display: none;">
+                    <thead id="tableHead"></thead>
+                    <tbody id="tableBody"></tbody>
+                </table>
+            </div>
+        </section>
+    </main>
+    <script>
+        // =============== Robust Date Parser (Safe for Any Format) ===============
+        function parseDate(value) {
+            if (value == null || value === '') return null;
+            const str = String(value).trim();
+            if (!str) return null;
+            const native = new Date(str);
+            if (!isNaN(native.getTime())) return native;
+            const patterns = [
+                /^(\d{4})-(\d{2})-(\d{2})$/,
+                /^(\d{2})\/(\d{2})\/(\d{4})$/,
+                /^(\d{2})-(\d{2})-(\d{4})$/,
+                /^(\d{2})\.(\d{2})\.(\d{4})$/,
+                /^(\d{2})\/(\d{2})\/(\d{2})$/,
+                /^(\d{1,2})[\/\-\.](\d{1,2})[\/\-\.](\d{4})$/,
+                /^(\d{1,2})\s+(jan|feb|mar|apr|may|jun|jul|aug|sep|oct|nov|dec)\w*\s+(\d{4})$/i,
+                /^(jan|feb|mar|apr|may|jun|jul|aug|sep|oct|nov|dec)\w*\s+(\d{1,2}),?\s+(\d{4})$/i,
+                /^(\d{4})[\/\-](\d{1,2})[\/\-](\d{1,2})$/
+            ];
+            const months = {
+                'jan': 0, 'feb': 1, 'mar': 2, 'apr': 3, 'may': 4, 'jun': 5,
+                'jul': 6, 'aug': 7, 'sep': 8, 'oct': 9, 'nov': 10, 'dec': 11
+            };
+            for (let i = 0; i < patterns.length; i++) {
+                const match = str.match(patterns[i]);
+                if (match) {
+                    let year, month, day;
+                    switch (i) {
+                        case 0: [_, year, month, day] = match; month--; break;
+                        case 1: [_, month, day, year] = match; month--; break;
+                        case 2: [_, month, day, year] = match; month--; break;
+                        case 3: [_, day, month, year] = match; month--; break;
+                        case 4: [_, month, day, year] = match; year = parseInt(year) < 50 ? 2000 + parseInt(year) : 1900 + parseInt(year); month--; break;
+                        case 5: [_, part1, part2, year] = match; const p1 = parseInt(part1), p2 = parseInt(part2);
+                            if (p1 <= 12 && p2 > 12) { month = p1 - 1; day = p2; }
+                            else if (p2 <= 12 && p1 > 12) { month = p2 - 1; day = p1; }
+                            else { month = p1 - 1; day = p2; }
+                            break;
+                        case 6: [_, day, mon, year] = match; month = months[mon.toLowerCase().substring(0,3)]; break;
+                        case 7: [_, mon, day, year] = match; month = months[mon.toLowerCase().substring(0,3)]; break;
+                        case 8: [_, year, month, day] = match; month--; break;
+                        default: continue;
+                    }
+                    const date = new Date(year, month, day);
+                    if (date.getFullYear() == year && date.getMonth() == month && date.getDate() == day) {
+                        return date;
+                    }
+                }
+            }
+            const fallback = new Date(Date.parse(str));
+            return isNaN(fallback.getTime()) ? null : fallback;
+        }
+        // =============== Column Type Auto-Detection (≥70%) ===============
+        function detectColumnTypes(data) {
+            if (data.length === 0) return {};
+            const headers = Object.keys(data[0]);
+            const typeMap = {};
+            headers.forEach(header => {
+                let textCount = 0, numCount = 0, dateCount = 0, total = 0;
+                data.forEach(row => {
+                    const val = row[header];
+                    if (val == null || val === '' || val === 'null' || val === 'undefined') return;
+                    total++;
+                    const str = String(val).trim();
+                    if (!isNaN(str) && !isNaN(parseFloat(str))) {
+                        numCount++;
+                    } else {
+                        const d = parseDate(str);
+                        if (d !== null) {
+                            dateCount++;
+                        } else {
+                            textCount++;
+                        }
+                    }
+                });
+                const threshold = total * 0.7;
+                if (dateCount >= threshold) typeMap[header] = 'date';
+                else if (numCount >= threshold) typeMap[header] = 'number';
+                else typeMap[header] = 'text';
+            });
+            return typeMap;
+        }
+        // =============== Enhanced Globals ===============
+        let datasets = []; // { name, originalData, columnTypes }[]
+        let currentDatasetIndex = -1;
+        let originalData = [];
+        let currentData = [];
+        let columnFilters = {};
+        let advancedFilters = [];
+        let filterLogic = 'and';
+        let columnTypes = {};
+        let currentPage = 1;
+        let pageSize = 25;
+
+        // DOM Elements
+        const fileInput = document.getElementById('fileInput');
+        const uploadArea = document.getElementById('uploadArea');
+        const advancedSearchContent = document.getElementById('advancedSearchContent');
+        const filtersContainer = document.getElementById('filtersContainer');
+        const toggleAdvancedBtn = document.getElementById('toggleAdvanced');
+        const addFilterBtn = document.getElementById('addFilterBtn');
+        const clearBtn = document.getElementById('clearBtn');
+        const tablePlaceholder = document.getElementById('tablePlaceholder');
+        const dataTable = document.getElementById('dataTable');
+        const tableHead = document.getElementById('tableHead');
+        const tableBody = document.getElementById('tableBody');
+        const showingCountEl = document.getElementById('showingCount');
+        const totalCountEl = document.getElementById('totalCount');
+        const filtersCountEl = document.getElementById('filtersCount');
+        const logicAndRadio = document.getElementById('logicAnd');
+        const logicOrRadio = document.getElementById('logicOr');
+        const datasetSelectorContainer = document.getElementById('datasetSelectorContainer');
+        const datasetSelect = document.getElementById('datasetSelect');
+        const pageSizeSelect = document.getElementById('pageSizeSelect');
+        const prevPageBtn = document.getElementById('prevPage');
+        const nextPageBtn = document.getElementById('nextPage');
+        const pageInfo = document.getElementById('pageInfo');
+
+        // Filter Operators (same as before)
+        const filterOperators = [
+            { value: 'contains', label: 'Contains', type: 'text', hint: 'Text contains value' },
+            { value: 'notContains', label: 'Not Contains', type: 'text', hint: 'Text does not contain value' },
+            { value: 'equals', label: 'Equals', type: 'text', hint: 'Exact text match' },
+            { value: 'notEquals', label: 'Not Equals', type: 'text', hint: 'Text is not equal to value' },
+            { value: 'startsWith', label: 'Starts With', type: 'text', hint: 'Text starts with value' },
+            { value: 'endsWith', label: 'Ends With', type: 'text', hint: 'Text ends with value' },
+            { value: 'isEmpty', label: 'Is Empty', type: 'boolean', hint: 'Field is empty or null' },
+            { value: 'isNotEmpty', label: 'Is Not Empty', type: 'boolean', hint: 'Field has any value' },
+            { value: 'greaterThan', label: 'Greater Than', type: 'number', hint: 'Number > value' },
+            { value: 'lessThan', label: 'Less Than', type: 'number', hint: 'Number < value' },
+            { value: 'greaterThanOrEqual', label: 'Greater Than or Equal', type: 'number', hint: 'Number >= value' },
+            { value: 'lessThanOrEqual', label: 'Less Than or Equal', type: 'number', hint: 'Number <= value' },
+            { value: 'between', label: 'Between', type: 'range', hint: 'Number between min and max (inclusive)' },
+            { value: 'notBetween', label: 'Not Between', type: 'range', hint: 'Number outside min and max range' },
+            { value: 'dateEquals', label: 'Date Equals', type: 'date', hint: 'Date matches exactly' },
+            { value: 'dateBefore', label: 'Date Before', type: 'date', hint: 'Date is before specified date' },
+            { value: 'dateAfter', label: 'Date After', type: 'date', hint: 'Date is after specified date' },
+            { value: 'dateBetween', label: 'Date Between', type: 'dateRange', hint: 'Date between two dates (inclusive)' },
+            { value: 'inList', label: 'In List', type: 'list', hint: 'Value matches any in comma-separated list' },
+            { value: 'notInList', label: 'Not In List', type: 'list', hint: 'Value does not match any in list' },
+            { value: 'unique', label: 'Is Unique', type: 'boolean', hint: 'Value appears only once in entire column' },
+            { value: 'duplicate', label: 'Is Duplicate', type: 'boolean', hint: 'Value appears more than once in column' },
+            { value: 'isNull', label: 'Is Null/Empty', type: 'boolean', hint: 'Value is null, undefined, or empty' },
+            { value: 'isNotNull', label: 'Is Not Null', type: 'boolean', hint: 'Value exists and is non-empty' },
+            { value: 'regexMatch', label: 'Regex Match', type: 'text', hint: 'Text matches regular expression (e.g. ^A)' },
+            { value: 'minLength', label: 'Min Length', type: 'number', hint: 'String length ≥ N' },
+            { value: 'maxLength', label: 'Max Length', type: 'number', hint: 'String length ≤ N' },
+            { value: 'exactLength', label: 'Exact Length', type: 'number', hint: 'String length = N' },
+            { value: 'topN', label: 'Top N (Global)', type: 'number', hint: 'Keep top N rows by this numeric column (descending)' },
+            { value: 'bottomN', label: 'Bottom N (Global)', type: 'number', hint: 'Keep bottom N rows by this numeric column (ascending)' }
+        ];
+
+        // Event Listeners
+        uploadArea.addEventListener('click', () => fileInput.click());
+        fileInput.addEventListener('change', handleFileUpload);
+        uploadArea.addEventListener('dragover', handleDragOver);
+        uploadArea.addEventListener('dragleave', handleDragLeave);
+        uploadArea.addEventListener('drop', handleDrop);
+        toggleAdvancedBtn.addEventListener('click', toggleAdvancedSearch);
+        addFilterBtn.addEventListener('click', addAdvancedFilter);
+        clearBtn.addEventListener('click', clearAllFilters);
+        logicAndRadio.addEventListener('change', () => filterLogic = 'and');
+        logicOrRadio.addEventListener('change', () => filterLogic = 'or');
+        datasetSelect.addEventListener('change', (e) => useDataset(parseInt(e.target.value)));
+        pageSizeSelect.addEventListener('change', (e) => {
+            pageSize = e.target.value === 'all' ? 'all' : parseInt(e.target.value);
+            currentPage = 1;
+            renderTableBody();
+        });
+        prevPageBtn.addEventListener('click', () => {
+            if (currentPage > 1) {
+                currentPage--;
+                renderTableBody();
+            }
+        });
+        nextPageBtn.addEventListener('click', () => {
+            const totalPages = pageSize === 'all' ? 1 : Math.ceil(currentData.length / pageSize);
+            if (currentPage < totalPages) {
+                currentPage++;
+                renderTableBody();
+            }
+        });
+
+        // File Handling
+        function handleFileUpload(e) {
+            const files = Array.from(e.target.files);
+            if (files.length === 0) return;
+            showLoading();
+            loadMultipleFiles(files, 0);
+        }
+        function handleDragOver(e) { e.preventDefault(); e.stopPropagation(); uploadArea.classList.add('drag-active'); }
+        function handleDragLeave(e) { e.preventDefault(); e.stopPropagation(); uploadArea.classList.remove('drag-active'); }
+        function handleDrop(e) {
+            e.preventDefault(); e.stopPropagation(); uploadArea.classList.remove('drag-active');
+            const files = e.dataTransfer.files;
+            if (files.length) {
+                fileInput.files = files;
+                handleFileUpload({ target: fileInput });
+            }
+        }
+        function loadMultipleFiles(files, index) {
+            if (index >= files.length) {
+                hideLoading();
+                if (datasets.length > 0 && currentDatasetIndex === -1) {
+                    currentDatasetIndex = 0;
+                    useDataset(0);
+                }
+                updateDatasetSelector();
+                return;
+            }
+            const file = files[index];
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                const data = e.target.result;
+                try {
+                    let parsedData = [];
+                    if (file.name.endsWith('.csv')) {
+                        Papa.parse(data, {
+                            header: true,
+                            skipEmptyLines: true,
+                            complete: function(results) {
+                                parsedData = results.data.filter(row => Object.keys(row).length > 0);
+                                addDataset(file.name, parsedData);
+                                loadMultipleFiles(files, index + 1);
+                            }
+                        });
+                        return;
+                    } else {
+                        const workbook = XLSX.read(data, { type: 'array' });
+                        const firstSheet = workbook.Sheets[workbook.SheetNames[0]];
+                        const jsonData = XLSX.utils.sheet_to_json(firstSheet, { header: 1 });
+                        if (jsonData.length > 0) {
+                            const headers = jsonData[0];
+                            parsedData = jsonData.slice(1).map(row => {
+                                const obj = {};
+                                headers.forEach((header, i) => {
+                                    obj[header] = row[i] !== undefined ? row[i] : '';
+                                });
+                                return obj;
+                            }).filter(row => Object.keys(row).length > 0);
+                        }
+                        addDataset(file.name, parsedData);
+                        loadMultipleFiles(files, index + 1);
+                    }
+                } catch (err) {
+                    console.error('Error loading', file.name, err);
+                    alert(`Failed to load ${file.name}`);
+                    loadMultipleFiles(files, index + 1);
+                }
+            };
+            if (file.name.endsWith('.csv')) {
+                reader.readAsText(file);
+            } else {
+                reader.readAsArrayBuffer(file);
+            }
+        }
+        function addDataset(name, data) {
+            if (data.length === 0) return;
+            const columnTypes = detectColumnTypes(data);
+            datasets.push({ name, originalData: data, columnTypes });
+        }
+        function useDataset(index) {
+            if (index < 0 || index >= datasets.length) return;
+            const ds = datasets[index];
+            currentDatasetIndex = index;
+            originalData = ds.originalData;
+            columnTypes = ds.columnTypes;
+            columnFilters = {};
+            advancedFilters = [];
+            filtersContainer.innerHTML = '';
+            currentPage = 1;
+            filterData();
+            renderTable();
+            updateDatasetSelector();
+        }
+        function updateDatasetSelector() {
+            if (datasets.length === 0) {
+                datasetSelectorContainer.style.display = 'none';
+                return;
+            }
+            datasetSelectorContainer.style.display = 'flex';
+            datasetSelect.innerHTML = datasets.map((ds, i) =>
+                `<option value="${i}" ${i === currentDatasetIndex ? 'selected' : ''}>${ds.name}</option>`
+            ).join('');
+        }
+
+        function processSampleData() {
+            const sampleData = [
+                { id: 1, name: 'John Smith', email: 'john.smith@example.com', department: 'Engineering', salary: 75000, status: 'Active', startDate: '2023-01-15', rating: 4.5, skills: 'JavaScript,React,Node' },
+                { id: 2, name: 'Sarah Johnson', email: 'sarah.j@example.com', department: 'Marketing', salary: 65000, status: 'Active', startDate: '08/22/2022', rating: 4.2, skills: 'SEO,Content,Analytics' },
+                { id: 3, name: 'Michael Chen', email: 'm.chen@example.com', department: 'Engineering', salary: 85000, status: 'Inactive', startDate: '30-11-2021', rating: 3.8, skills: 'Python,Django,SQL' },
+                { id: 'dgh4', name: 'Emily Davis', email: 'emily.d@example.com', department: 'HR', salary: 60000, status: 'Active', startDate: '10 Mar 2023', rating: 4.7, skills: 'Recruiting,Training,HRIS' },
+                { id: 'fgfg5', name: 'Robert Wilson', email: 'r.wilson@example.com', department: 'Sales', salary: 70000, status: 'Active', startDate: 'May 18, 2022', rating: 4.0, skills: 'Negotiation,Closing,CRM' },
+                { id: 'fdf6', name: 'Lisa Brown', email: 'lisa.b@example.com', department: 'Marketing', salary: 68000, status: 'Pending', startDate: '2023.07.01', rating: 4.3, skills: 'Design,Adobe,Content' },
+                { id: 'dff7', name: 'David Lee', email: 'david.l@example.com', department: 'Engineering', salary: 90000, status: 'Active', startDate: '2020/12/05', rating: 4.9, skills: 'C++,Systems,Architecture' },
+                { id: '8rer', name: 'Jennifer Taylor', email: 'j.taylor@example.com', department: 'Finance', salary: 72000, status: 'Active', startDate: '15/10/2022', rating: 4.1, skills: 'Accounting,Budgeting,Forecasting' },
+                { id: '9fgf', name: 'Kevin Moore', email: 'k.moore@example.com', department: 'Sales', salary: 67000, status: 'Inactive', startDate: '20-Sep-2021', rating: 3.5, skills: 'Prospecting,CRM,Salesforce' },
+                { id: '10gf', name: 'Amanda Garcia', email: 'a.garcia@example.com', department: 'HR', salary: 58000, status: 'Active', startDate: 'February 28, 2023', rating: 4.6, skills: 'Benefits,Compliance,Onboarding' }
+            ];
+            addDataset('Sample Data', sampleData);
+            currentDatasetIndex = 0;
+            useDataset(0);
+            updateDatasetSelector();
+        }
+
+        function showLoading() {
+            tablePlaceholder.innerHTML = `<div class="loading"><div class="spinner"></div></div>`;
+            dataTable.style.display = 'none';
+        }
+        function hideLoading() {
+            if (originalData.length === 0 && datasets.length === 0) {
+                tablePlaceholder.innerHTML = `
+                    <div class="empty-state">
+                        <span>📊</span>
+                        <h3>No Data Available</h3>
+                        <p>Upload a CSV or Excel file to analyze your data</p>
+                    </div>`;
+            }
+        }
+
+        function renderTable() {
+            if (originalData.length === 0) {
+                tablePlaceholder.style.display = 'block';
+                dataTable.style.display = 'none';
+                showingCountEl.textContent = '0';
+                totalCountEl.textContent = '0';
+                return;
+            }
+            const headers = Object.keys(originalData[0]);
+            let headHtml = '<tr>';
+            headers.forEach(header => {
+                const type = columnTypes[header] || 'text';
+                const placeholder = type === 'date' ? 'YYYY-MM-DD' : 
+                                    type === 'number' ? 'e.g. 100' : 'Search...';
+                const inputType = type === 'date' ? 'date' : 
+                                  type === 'number' ? 'number' : 'text';
+                headHtml += `
+                    <th class="table-header-cell">
+                        <div>${header} <small style="color:#64748b">(${type})</small></div>
+                        <div class="column-filter-container">
+                            <input type="${inputType}" 
+                                   class="column-filter-input" 
+                                   data-column="${header}"
+                                   placeholder="${placeholder}"
+                                   value="${columnFilters[header] || ''}">
+                            <span class="filter-icon">🔍</span>
+                        </div>
+                    </th>
+                `;
+            });
+            headHtml += '</tr>';
+            tableHead.innerHTML = headHtml;
+            document.querySelectorAll('.column-filter-input').forEach(input => {
+                input.addEventListener('input', (e) => {
+                    const column = e.target.dataset.column;
+                    columnFilters[column] = e.target.value;
+                    filterData();
+                    renderTableBody();
+                    updateFiltersCount();
+                });
+            });
+            renderTableBody();
+            tablePlaceholder.style.display = 'none';
+            dataTable.style.display = 'table';
+            showingCountEl.textContent = currentData.length;
+            totalCountEl.textContent = originalData.length;
+        }
+
+        function renderTableBody() {
+            if (originalData.length === 0) return;
+            const headers = Object.keys(originalData[0]);
+
+            const start = (currentPage - 1) * pageSize;
+            const end = pageSize === 'all' ? currentData.length : start + pageSize;
+            const pageData = currentData.slice(start, end);
+
+            let bodyHtml = '';
+            pageData.forEach((row, idxOnPage) => {
+                const realRowIndex = start + idxOnPage;
+                bodyHtml += '<tr>';
+                headers.forEach(header => {
+                    let cellValue = row[header] !== undefined ? row[header] : '';
+                    const colType = columnTypes[header] || 'text';
+                    let displayValue = cellValue;
+                    if (colType === 'date' && cellValue) {
+                        const d = parseDate(cellValue);
+                        displayValue = d ? d.toISOString().split('T')[0] : cellValue;
+                    } else if (colType === 'number' && !isNaN(parseFloat(cellValue))) {
+                        const num = parseFloat(cellValue);
+                        displayValue = num % 1 !== 0 ? num.toFixed(2) : num.toString();
+                    }
+                    let cellContent = displayValue;
+                    if (header.toLowerCase().includes('status')) {
+                        const statusClass = 
+                            displayValue.toLowerCase().includes('active') ? 'status-active' :
+                            displayValue.toLowerCase().includes('inactive') ? 'status-inactive' :
+                            displayValue.toLowerCase().includes('pending') ? 'status-pending' : '';
+                        cellContent = `<span class="status ${statusClass}">${displayValue}</span>`;
+                    }
+                    const isEditable = !header.toLowerCase().includes('status');
+                    const editableAttr = isEditable ? 'contenteditable="true"' : '';
+                    const typeClass = `data-type="${colType}" data-row="${realRowIndex}" data-col="${header}"`;
+                    bodyHtml += `<td ${editableAttr} ${typeClass}>${cellContent}</td>`;
+                });
+                bodyHtml += '</tr>';
+            });
+            tableBody.innerHTML = bodyHtml;
+
+            // Reattach edit handlers
+            tableBody.querySelectorAll('td[contenteditable="true"]').forEach(cell => {
+                cell.addEventListener('blur', handleCellEdit);
+                cell.addEventListener('keydown', (e) => {
+                    if (e.key === 'Enter') {
+                        e.preventDefault();
+                        cell.blur();
+                    }
+                });
+            });
+
+            showingCountEl.textContent = currentData.length;
+            totalCountEl.textContent = originalData.length;
+            updatePaginationUI();
+        }
+
+        function updatePaginationUI() {
+            const totalPages = pageSize === 'all' ? 1 : Math.ceil(currentData.length / pageSize);
+            currentPage = Math.max(1, Math.min(currentPage, totalPages || 1));
+            pageInfo.textContent = `Page ${currentPage} of ${totalPages || 1} (${currentData.length} records)`;
+            prevPageBtn.disabled = currentPage <= 1;
+            nextPageBtn.disabled = currentPage >= totalPages;
+            document.getElementById('paginationControls').style.display = (currentData.length === 0 || pageSize === 'all') ? 'none' : 'flex';
+        }
+
+        function toggleAdvancedSearch() {
+            advancedSearchContent.classList.toggle('active');
+            toggleAdvancedBtn.innerHTML = advancedSearchContent.classList.contains('active') 
+                ? '<span>⚙️</span> Hide Advanced Search' 
+                : '<span>⚙️</span> Advanced Search';
+        }
+
+        function addAdvancedFilter() {
+            const headers = originalData.length > 0 ? Object.keys(originalData[0]) : [];
+            if (headers.length === 0) return;
+            const filterId = Date.now();
+            const operatorsHtml = filterOperators.map(op => 
+                `<option value="${op.value}">${op.label}</option>`
+            ).join('');
+            const filterHtml = `
+                <div class="filter-group" data-filter-id="${filterId}">
+                    <div class="filter-item">
+                        <select class="filter-select column-select" data-filter-id="${filterId}">
+                            ${headers.map(header => `<option value="${header}">${header}</option>`).join('')}
+                        </select>
+                        <select class="filter-select operator-select" data-filter-id="${filterId}">
+                            ${operatorsHtml}
+                        </select>
+                        <div class="value-container" data-filter-id="${filterId}">
+                            <input type="text" class="filter-input value-input" data-filter-id="${filterId}" placeholder="Enter value">
+                        </div>
+                        <div class="remove-filter" data-filter-id="${filterId}">×</div>
+                    </div>
+                    <div class="operator-hint" id="hint-${filterId}">Text contains value</div>
+                </div>
+            `;
+            filtersContainer.insertAdjacentHTML('beforeend', filterHtml);
+            const group = document.querySelector(`[data-filter-id="${filterId}"]`);
+            const columnSelect = group.querySelector('.column-select');
+            const operatorSelect = group.querySelector('.operator-select');
+            const valueContainer = group.querySelector('.value-container');
+            const removeBtn = group.querySelector('.remove-filter');
+            const hintEl = document.getElementById(`hint-${filterId}`);
+
+            function updateInputBasedOnContext() {
+                const column = columnSelect.value;
+                const operator = operatorSelect.value;
+                const opConfig = filterOperators.find(op => op.value === operator);
+                const colType = columnTypes[column] || 'text';
+                let inputHtml = '';
+                const placeholderMap = {
+                    text: 'Enter text',
+                    number: 'Enter number',
+                    date: 'YYYY-MM-DD'
+                };
+                switch (opConfig?.type) {
+                    case 'boolean':
+                        inputHtml = `<input type="hidden" class="filter-input value-input" data-filter-id="${filterId}" value="true">`;
+                        break;
+                    case 'range':
+                        const numType = (colType === 'number') ? 'number' : 'text';
+                        inputHtml = `
+                            <div class="filter-input-range">
+                                <input type="${numType}" step="any" class="filter-input value-input-min" data-filter-id="${filterId}" placeholder="Min">
+                                <span>to</span>
+                                <input type="${numType}" step="any" class="filter-input value-input-max" data-filter-id="${filterId}" placeholder="Max">
+                            </div>`;
+                        break;
+                    case 'date':
+                        inputHtml = `<input type="date" class="filter-input value-input" data-filter-id="${filterId}">`;
+                        break;
+                    case 'dateRange':
+                        inputHtml = `
+                            <div class="filter-input-range">
+                                <input type="date" class="filter-input value-input-min" data-filter-id="${filterId}">
+                                <span>to</span>
+                                <input type="date" class="filter-input value-input-max" data-filter-id="${filterId}">
+                            </div>`;
+                        break;
+                    case 'list':
+                        inputHtml = `<input type="text" class="filter-input value-input" data-filter-id="${filterId}" placeholder="Comma-separated">`;
+                        break;
+                    case 'topN':
+                    case 'bottomN':
+                    case 'minLength':
+                    case 'maxLength':
+                    case 'exactLength':
+                        inputHtml = `<input type="number" min="1" class="filter-input value-input" data-filter-id="${filterId}" placeholder="e.g. 5">`;
+                        break;
+                    case 'regexMatch':
+                        inputHtml = `<input type="text" class="filter-input value-input" data-filter-id="${filterId}" placeholder="/pattern/i or pattern">`;
+                        break;
+                    default:
+                        let inputType = 'text';
+                        if (colType === 'number') inputType = 'number';
+                        else if (colType === 'date' && ['dateEquals','dateBefore','dateAfter'].includes(operator))
+                            inputType = 'date';
+                        const placeholder = placeholderMap[colType] || 'Enter value';
+                        inputHtml = `<input type="${inputType}" class="filter-input value-input" data-filter-id="${filterId}" placeholder="${placeholder}">`;
+                }
+                valueContainer.innerHTML = inputHtml;
+                valueContainer.querySelectorAll('.filter-input').forEach(inp => {
+                    inp.addEventListener('input', updateAdvancedFilters);
+                });
+                if (hintEl) hintEl.textContent = opConfig?.hint || '';
+                updateAdvancedFilters();
+            }
+
+            columnSelect.addEventListener('change', updateInputBasedOnContext);
+            operatorSelect.addEventListener('change', updateInputBasedOnContext);
+            removeBtn.addEventListener('click', () => {
+                group.remove(); updateAdvancedFilters();
+            });
+
+            updateInputBasedOnContext();
+        }
+
+        function updateAdvancedFilters() {
+            advancedFilters = [];
+            document.querySelectorAll('.filter-group').forEach(group => {
+                const filterId = group.dataset.filterId;
+                const column = group.querySelector('.column-select').value;
+                const operator = group.querySelector('.operator-select').value;
+                const opConfig = filterOperators.find(op => op.value === operator);
+                let value;
+                if (opConfig.type === 'boolean') {
+                    value = 'true';
+                } else if (opConfig.type === 'range' || opConfig.type === 'dateRange') {
+                    const min = group.querySelector('.value-input-min')?.value.trim() || '';
+                    const max = group.querySelector('.value-input-max')?.value.trim() || '';
+                    value = { min, max };
+                } else {
+                    value = group.querySelector('.value-input')?.value.trim() || '';
+                }
+                if (opConfig.type === 'boolean' ||
+                    (opConfig.type === 'range' && value.min && value.max) ||
+                    (opConfig.type === 'dateRange' && value.min && value.max) ||
+                    (!['boolean','range','dateRange'].includes(opConfig.type) && value)) {
+                    advancedFilters.push({ column, operator, value });
+                }
+            });
+            filterData();
+            renderTableBody();
+            updateFiltersCount();
+        }
+
+        function clearAllFilters() {
+            columnFilters = {};
+            advancedFilters = [];
+            document.querySelectorAll('.column-filter-input').forEach(i => i.value = '');
+            filtersContainer.innerHTML = '';
+            currentPage = 1;
+            filterData();
+            renderTableBody();
+            updateFiltersCount();
+        }
+
+        function filterData() {
+            currentData = [...originalData];
+            const columnValueCounts = {};
+            advancedFilters.forEach(f => {
+                if (f.operator === 'unique' || f.operator === 'duplicate') {
+                    if (!columnValueCounts[f.column]) {
+                        columnValueCounts[f.column] = {};
+                        originalData.forEach(row => {
+                            const val = String(row[f.column] ?? '').trim();
+                            columnValueCounts[f.column][val] = (columnValueCounts[f.column][val] || 0) + 1;
+                        });
+                    }
+                }
+            });
+            // Column filters
+            Object.keys(columnFilters).forEach(col => {
+                const val = columnFilters[col]?.toLowerCase();
+                if (val) {
+                    currentData = currentData.filter(row => {
+                        let cell = (row[col] || '').toString().toLowerCase();
+                        if (columnTypes[col] === 'date') {
+                            const d = parseDate(row[col]);
+                            if (d) cell = d.toISOString().split('T')[0];
+                        } else if (columnTypes[col] === 'number') {
+                            const n = parseFloat(row[col]);
+                            if (!isNaN(n)) cell = n.toString().toLowerCase();
+                        }
+                        return cell.includes(val);
+                    });
+                }
+            });
+            // Advanced filters
+            if (advancedFilters.length > 0) {
+                currentData = currentData.filter(row => {
+                    const results = advancedFilters.map(filter => {
+                        const { column, operator, value } = filter;
+                        const raw = row[column];
+                        const str = (raw || '').toString();
+                        const lower = str.toLowerCase();
+                        const num = !isNaN(parseFloat(str)) && isFinite(str) ? parseFloat(str) : null;
+                        const date = parseDate(str);
+                        let fNum = null, fMin = null, fMax = null, fDate = null, fDateMin = null, fDateMax = null;
+                        if (value && typeof value === 'object') {
+                            if (value.min) fMin = !isNaN(parseFloat(value.min)) ? parseFloat(value.min) : null;
+                            if (value.max) fMax = !isNaN(parseFloat(value.max)) ? parseFloat(value.max) : null;
+                            if (value.min) fDateMin = parseDate(value.min);
+                            if (value.max) fDateMax = parseDate(value.max);
+                        } else {
+                            fNum = !isNaN(parseFloat(value)) ? parseFloat(value) : null;
+                            fDate = parseDate(value);
+                        }
+                        switch (operator) {
+                            case 'contains': return lower.includes(value.toLowerCase());
+                            case 'notContains': return !lower.includes(value.toLowerCase());
+                            case 'equals': return lower === value.toLowerCase();
+                            case 'notEquals': return lower !== value.toLowerCase();
+                            case 'startsWith': return lower.startsWith(value.toLowerCase());
+                            case 'endsWith': return lower.endsWith(value.toLowerCase());
+                            case 'isEmpty': return raw === '' || raw == null || raw === 'null' || raw === 'undefined';
+                            case 'isNotEmpty': return raw !== '' && raw != null && raw !== 'null' && raw !== 'undefined';
+                            case 'greaterThan': return num !== null && num > fNum;
+                            case 'lessThan': return num !== null && num < fNum;
+                            case 'greaterThanOrEqual': return num !== null && num >= fNum;
+                            case 'lessThanOrEqual': return num !== null && num <= fNum;
+                            case 'between': return num !== null && fMin !== null && fMax !== null && num >= fMin && num <= fMax;
+                            case 'notBetween': return num !== null && fMin !== null && fMax !== null && (num < fMin || num > fMax);
+                            case 'dateEquals': return date && fDate && date.toDateString() === fDate.toDateString();
+                            case 'dateBefore': return date && fDate && date < fDate;
+                            case 'dateAfter': return date && fDate && date > fDate;
+                            case 'dateBetween': return date && fDateMin && fDateMax && date >= fDateMin && date <= fDateMax;
+                            case 'inList': return value.split(',').map(s => s.trim().toLowerCase()).includes(lower);
+                            case 'notInList': return !value.split(',').map(s => s.trim().toLowerCase()).includes(lower);
+                            case 'unique': {
+                                const uniqVal = String(raw ?? '').trim();
+                                return (columnValueCounts[column]?.[uniqVal] || 0) === 1;
+                            }
+                            case 'duplicate': {
+                                const dupVal = String(raw ?? '').trim();
+                                return (columnValueCounts[column]?.[dupVal] || 0) > 1;
+                            }
+                            case 'isNull':
+                                return raw === null || raw === undefined || raw === '' || raw === 'null' || raw === 'undefined';
+                            case 'isNotNull':
+                                return !(raw === null || raw === undefined || raw === '' || raw === 'null' || raw === 'undefined');
+                            case 'regexMatch':
+                                try {
+                                    let pattern = value;
+                                    let flags = '';
+                                    if (pattern.startsWith('/') && pattern.lastIndexOf('/') > 0) {
+                                        const lastSlash = pattern.lastIndexOf('/');
+                                        flags = pattern.slice(lastSlash + 1);
+                                        pattern = pattern.slice(1, lastSlash);
+                                    }
+                                    const re = new RegExp(pattern, flags);
+                                    return re.test(str);
+                                } catch (e) {
+                                    console.warn('Invalid regex:', value, e);
+                                    return false;
+                                }
+                            case 'minLength':
+                                return str.length >= parseInt(value) || false;
+                            case 'maxLength':
+                                return str.length <= parseInt(value) || false;
+                            case 'exactLength':
+                                return str.length === parseInt(value) || false;
+                            default: return true;
+                        }
+                    });
+                    return filterLogic === 'and' ? results.every(Boolean) : results.some(Boolean);
+                });
+            }
+            // TopN / BottomN
+            const topNFilter = advancedFilters.find(f => f.operator === 'topN');
+            const bottomNFilter = advancedFilters.find(f => f.operator === 'bottomN');
+            if (topNFilter) {
+                const { column, value } = topNFilter;
+                const n = parseInt(value) || 10;
+                currentData = currentData
+                    .filter(row => !isNaN(parseFloat(row[column])))
+                    .map(row => ({ ...row, _sortVal: parseFloat(row[column]) }))
+                    .sort((a, b) => b._sortVal - a._sortVal)
+                    .slice(0, n)
+                    .map(({ _sortVal, ...rest }) => rest);
+            } else if (bottomNFilter) {
+                const { column, value } = bottomNFilter;
+                const n = parseInt(value) || 10;
+                currentData = currentData
+                    .filter(row => !isNaN(parseFloat(row[column])))
+                    .map(row => ({ ...row, _sortVal: parseFloat(row[column]) }))
+                    .sort((a, b) => a._sortVal - b._sortVal)
+                    .slice(0, n)
+                    .map(({ _sortVal, ...rest }) => rest);
+            }
+            currentPage = 1;
+        }
+
+        function handleCellEdit(e) {
+            const cell = e.target;
+            const realRowIndex = parseInt(cell.dataset.row);
+            const col = cell.dataset.col;
+            const colType = cell.dataset.type;
+            let newValue = cell.textContent.trim();
+            const originalValue = originalData[realRowIndex][col];
+            if (String(originalValue).trim() === newValue) return;
+
+            if (colType === 'number') {
+                const num = parseFloat(newValue);
+                if (isNaN(num)) {
+                    alert(`⚠️ "${newValue}" is not a valid number for column "${col}". Reverting.`);
+                    cell.textContent = originalValue == null ? '' : originalValue;
+                    return;
+                }
+                newValue = num;
+            } else if (colType === 'date') {
+                if (newValue) {
+                    const d = parseDate(newValue);
+                    if (!d) {
+                        alert(`⚠️ "${newValue}" is not a recognized date format. Try YYYY-MM-DD. Reverting.`);
+                        cell.textContent = originalValue == null ? '' : originalValue;
+                        return;
+                    }
+                    newValue = d.toISOString().split('T')[0];
+                    cell.textContent = newValue;
+                }
+            }
+            originalData[realRowIndex][col] = newValue;
+            filterData();
+            renderTableBody();
+            updateFiltersCount();
+            console.log(`Updated [${realRowIndex}][${col}] →`, newValue);
+        }
+
+        function updateFiltersCount() {
+            const colCount = Object.values(columnFilters).filter(v => v).length;
+            const advCount = advancedFilters.length;
+            const total = colCount + advCount;
+            filtersCountEl.innerHTML = `<span>🎯</span><span>${total} active filter${total !== 1 ? 's' : ''}</span>`;
+        }
+
+        // Initialize with sample data on load
+        document.addEventListener('DOMContentLoaded', processSampleData);
+    </script>
+</body>
+</html>
