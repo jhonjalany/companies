@@ -1326,7 +1326,8 @@ document.addEventListener('DOMContentLoaded', () => {
     const normName = normalize(student.name);
     const matchedKey = Object.keys(achievements).find(k => normalize(k) === normName);
     const awards = matchedKey 
-      ? [...new Set(achievements[matchedKey])].sort()
+      // ? [...new Set(achievements[matchedKey])].sort() // <- sort
+      ? [...new Set(achievements[matchedKey])]  // ← no .sort()
       : [];
 
     const awardsHTML = awards.length
